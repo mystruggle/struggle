@@ -202,9 +202,12 @@ function getErrLevel($iCode){
 class Sle{
     private static $moHandle = null;//isset判断null返回false
     private static $maAttr = array();
-    private $moBug = null;
+    private $moDebug = null;
     private $moRoute = null;
-    public static $itsError = array();
+    public  $aInfo   = array();
+    const   SLE_ALL  = 1;
+    const   SLE_SYS  = 2;
+    const   SLE_APP  = 3;
     
     
     public static function getInstance(){
@@ -224,6 +227,17 @@ class Sle{
     public function __get($sName){
         if (in_array($sName,self::$maAttr))
             return self::$moHandle->$sName;
+    }
+    
+    /**
+     * 记录程序执行信息
+     * @param string       $sInfo    信息内容
+     * @param integer      $iType    信息类型，沿用php内置错误类型，如E_USER_ERROR
+     * @param integer      $iLevel   信息等级，默认SLE_SYS
+     * @param integer      $iRunTime 程序执行当前时间戳
+     */
+    public function hasInfo($sInfo,$iType,$iLevel = sle::SLE_SYS, $iRunTime = 0){
+        //
     }
 
     

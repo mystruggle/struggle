@@ -204,7 +204,7 @@ class Sle{
     private static $maAttr = array();
     private $moDebug = null;
     private $moRoute = null;
-    public  $aInfo   = array();
+    public  $maInfo  = array();
     const   SLE_ALL  = 1;
     const   SLE_SYS  = 2;
     const   SLE_APP  = 3;
@@ -264,7 +264,19 @@ class Sle{
             }
         }
         
+        //建立目录
+        $aBuildAppDir = array(APP_ROOT, APP_CACHE, APP_RUNTIME, APP_BACKEND, APP_CONF, APP_LIB, APP_THEME, APP_THEME.'Default/');
+        foreach ($aBuildAppDir as $sDir){
+            if (!is_dir($sDir)){
+                if (buildDir($sDir)){
+                    $oSle->hasInfo("建立目录{$sDir}", E_USER_NOTICE);
+                }else{
+                    $oSle->hasInfo("建立目录{$sDir}不成功",E_USER_ERROR);
+                }
+            }
+        }
         
+        //
         print_r(self::$moHandle->maInfo);die;
         
         

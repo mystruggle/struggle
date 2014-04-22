@@ -25,6 +25,22 @@ function require_cache($sName){
 }
 
 /**
+ * 建立目录
+ * @param string       $sDirPath   目录路径
+ * @param integer      $iModel     建立该目录的模式，默认755
+ */
+function buildDir($sDirPath, $iModel = 755){
+    if (is_dir($sDirPath)){
+        return true;
+    }else {
+        if (is_writeable(dirname($sDirPath))){
+            return @mkdir($sDirPath,$iModel);
+        }
+    }
+    return false;
+}
+
+/**
  * 导入文件,格式sp.name.name1.。。。
  * sp为特殊标识符,当为@时表示框架库目录为起始位置;
  *               当为Sle时入口文件目录为起始位置;

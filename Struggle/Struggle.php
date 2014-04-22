@@ -40,7 +40,7 @@ if (file_exists($sFuncFile)){
 
 
 
-//创建应用目录
+/*//创建应用目录
 buildAppDir();
 
 //导入配置文件
@@ -50,7 +50,7 @@ importConf();
 importCoreFile();
 
 //开始运行
-Sle::run();
+Sle::run();*/
 
 
 
@@ -237,11 +237,38 @@ class Sle{
      * @param integer      $iRunTime 程序执行当前时间戳
      */
     public function hasInfo($sInfo,$iType,$iLevel = sle::SLE_SYS, $iRunTime = 0){
-        //
+        $oSle = self::getInstance();
+        empty($iRunTime) && $iRunTime = microtime(true);
+        $oSle->maInfo[] = array($sInfo ,$iType, $iLevel, $iRunTime);
     }
 
     
     public static function run(){
+        //系统初始化
+        $oSle = Sle::getInstance();
+        //加载核心函数文件
+        $sFuncFile = CONF_PATH.'functions.php';
+        if (IS_WIN){
+            if (file_exists($sFuncFile) && basename($sFuncFile) == basename(realpath($sFuncFile)) && is_readable($sFuncFile)){
+                $oSle->hasInfo("加载核心函数文件{$sFuncFile}", E_USER_NOTICE);
+                require_once $sFuncFile;
+            }else{
+                $oSle->hasInfo("文件不存在或该文件不可读{$sFuncFile}，请检查！",E_USER_ERROR);
+            }
+        }else{
+            if (file_exists($sFuncFile) && is_readable($sFuncFile)){
+                $oSle->hasInfo("加载核心函数文件{$sFuncFile}", E_USER_NOTICE);
+                require_once $sFuncFile;
+            }else{
+                $oSle->hasInfo("文件不存在或该文件不可读{$sFuncFile}，请检查！",E_USER_ERROR);
+            }
+        }
+        
+        
+        print_r(self::$moHandle->maInfo);die;
+        
+        
+        
         //设置include路径
         setIncludePath();
         spl_autoload_register('\autoLoad');
@@ -266,6 +293,9 @@ class Sle{
 
     
 }
+
+//系统开始运行
+Sle::run();
 
 
 

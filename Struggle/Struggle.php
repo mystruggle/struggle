@@ -204,7 +204,8 @@ class Sle{
     private static $maAttr = array();
     private $moDebug = null;
     private $moRoute = null;
-    public  $maInfo  = array();
+    private $maInfo  = array();
+    private $maLastError = array();
     const   SLE_ALL  = 1;
     const   SLE_SYS  = 2;
     const   SLE_APP  = 3;
@@ -239,7 +240,10 @@ class Sle{
     public function hasInfo($sInfo,$iType,$iLevel = sle::SLE_SYS, $iRunTime = 0){
         $oSle = self::getInstance();
         empty($iRunTime) && $iRunTime = microtime(true);
-        $oSle->maInfo[] = array($sInfo ,$iType, $iLevel, $iRunTime);
+        $aInfo = array($sInfo ,$iType, $iLevel, $iRunTime);
+        $oSle->maInfo[] = $aInfo;
+        if ($iType == E_USER_ERROR)
+            $oSle->maLastError = $aInfo;
     }
 
     
@@ -276,7 +280,43 @@ class Sle{
             }
         }
         
-        //
+        //加载配置文件
+        $sConfFile = CONF_PATH.'Config.php';
+        $aConfig = array();
+        if (file_exists($sConfFile) && basename($sConfFile) == basename(realpath($sConfFile))){
+            if (is_readable($sConfFile)){
+                $oSle->hasInfo("加载配置文件{$sConfFile}",E_USER_NOTICE);
+                $aConfig = include $sConfFile;
+            }else{
+                $oSle->hasInfo("文件不可读{$sConfFile}",E_USER_ERROR);
+            }
+            
+            
+        }else {
+            $oSle->hasInfo("文件不存在{$sConfFile},区分大小写",E_USER_ERROR);
+        }
+        
+        $sAppConfFile = APP_CONF.'Config.php';
+        if (file_exists($sAppConfFile) && basename($sAppConfFile) == basename(realpath($sAppConfFile)) ){
+            if (is_readable($sAppConfFile)){
+                $oSle->hasInfo("加载配置文件{$sAppConfFile}",E_USER_NOTICE);
+                $aConfig = array_merge($aConfig,include $sAppConfFile);
+            }else{
+                $oSle->hasInfo("文件不可读{$sAppConfFile}",E_USER_ERROR);
+            }
+        }else{
+            $sAppConfDir = dirname($sAppConfFile);
+            if (is_writeable($sAppConfDir)){
+                $hdFile = fopen($sAppConfFile, 'wb+');
+                fwrite($hdFile, "<?php\r\n//项目配置文件\r\nreturn array(\r\n);");
+                fclose($hdFile);
+                $oSle->hasInfo("自动创建用户项目配置文件{$sAppConfFile}",E_USER_NOTICE);
+            }else{
+                $oSle->hasInfo("当前目录不可写{$sAppConfDir}，请检查权限",E_USER_ERROR);
+            }
+        }
+        
+        
         print_r(self::$moHandle->maInfo);die;
         
         

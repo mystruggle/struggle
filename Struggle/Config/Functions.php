@@ -27,9 +27,9 @@ function require_cache($sName){
 /**
  * 建立目录
  * @param string       $sDirPath   目录路径
- * @param integer      $iModel     建立该目录的模式，默认755
+ * @param integer      $iModel     建立该目录的模式，默认0755
  */
-function buildDir($sDirPath, $iModel = 755){
+function buildDir($sDirPath, $iModel = 0755){
     if (is_dir($sDirPath)){
         return true;
     }else {
@@ -39,6 +39,28 @@ function buildDir($sDirPath, $iModel = 755){
     }
     return false;
 }
+
+
+
+/**
+ * 读入配置函数
+ * @param string $sName  配置名称
+ * @param mix    $mVal    配置值
+ */
+function C($sName, $mVal = null){
+    static $aConfig=array();
+    if (is_string($sName)){
+        if (!strpos($sName, '.')){
+            $sName = strtolower($sName);
+            if (is_null($mVal)) //不能用empty,否则不能把值设为空
+                return isset($aConfig[$sName])?$aConfig[$sName]:null;
+            $aConfig[$sName] = $mVal;
+        }
+    }
+}
+
+
+
 
 /**
  * 导入文件,格式sp.name.name1.。。。
@@ -114,24 +136,25 @@ function getLibDir($sDir){
     return $aRlt;
 }
 
-
 /**
- * 设置自动包含路径
+ * 名称命名转换
+ * @param string       $sName   需要转换的名称
+ * @param integer      $iStyle  要转换的方法，0为下划线命名法、1为帕斯卡命名法、2为骆驼命名法、3为匈牙利命名法
+ * @return Boolean     true成功false失败
  */
-function setIncludePath(){
-    $sPath = '';
-    $sPath = '.';
-    $sLibPath = realpath(LIB_PATH);
-    $aAppendPath = getLibDir($sLibPath);
-    $sPath = $sPath.PATH_SEPARATOR.rtrim($sLibPath,'/').'/'.PATH_SEPARATOR.implode(DIRECTORY_SEPARATOR.PATH_SEPARATOR, $aAppendPath);
-    set_include_path($sPath);
+function cname($sName,$iStyle = 0){
+    $sRlt='';
+    if (is_numeric($iStyle) && $iStyle == 0){
+        $sName=preg_replace('/([A-Z])/', create_function('&$k', 'echo $k;'), $sName);
+    }
+    return $sName;
 }
 
 /**
  * 自动加载处理函数
  */
 function autoLoad($sName){
-    static $aIncludeFile=array();
+    static $aIncludeFile=array();include '';
     $sKey = md5($sName);
     if (!isset($aIncludeFile[$sKey])){
     	$sName = str_replace(array('\\','/'), DIRECTORY_SEPARATOR, $sName);
@@ -139,7 +162,6 @@ function autoLoad($sName){
         $sFilePath = dirname($sName);
         $sFile = $sFileName.'.php';
         include $sFile;
-        struggle\trace("自动加载文件 {$sFile}", E_USER_NOTICE);
     }
 }
 

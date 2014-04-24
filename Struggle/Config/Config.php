@@ -30,6 +30,8 @@ return array(
     'DEBUG_RECORD_METHOD'    =>'log',
     //路由
     'ROUTE_MODE'             =>'normal',//normal 正常模式、pathinfo pathinfo模式、rewrite 伪静态模式 、compat兼容模式/?s=/name/vlaue
+    //自动包含跟目录设置
+    'AUTOLOAD_DIR'           =>LIB_PATH.','.APP_LIB,
 );
 
 

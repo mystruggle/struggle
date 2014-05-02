@@ -145,10 +145,12 @@ function getLibDir($sDir){
 function cname($sName,$iStyle = 0){
     $sRlt='';
     if (is_numeric($iStyle) && $iStyle == 0){
-        $sName=preg_replace('/([A-Z])/', create_function('&$k', 'echo $k;'), $sName);
+        $sName=trim(preg_replace_callback('/([A-Z])/', create_function('$a', 'return \'_\'.strtolower($a[1]);'), $sName),'_');
     }
     return $sName;
 }
+
+
 
 /**
  * 自动加载处理函数

@@ -53,12 +53,55 @@ function C($sName, $mVal = null){
         if (!strpos($sName, '.')){
             $sName = strtolower($sName);
             if (is_null($mVal)) //不能用empty,否则不能把值设为空
-                return isset($aConfig[$sName])?$aConfig[$sName]:null;
+                return $aConfig[$sName];
             $aConfig[$sName] = $mVal;
+        }else{
+            $aName = explode('.', $sName);
+            $sArrName = '$aConfig';
+            $sArr = '';
+            for ($i=0;$i<count($aName);$i++){
+                $aName[$i] = strtolower($aName[$i]);
+                $sArr .="['{$aName[$i]}']";
+            }
+            if (is_null($mVal)){
+                return eval('return '.$sArrName.$sArr.';');
+            }else{
+                eval($sArrName.$sArr.'='.(is_string($mVal)?"'{$mVal}'":$mVal).';');
+            }
         }
     }
 }
 
+
+/**
+ * 言语配置函数
+ * @param string $sName  配置名称
+ * @param mix    $mVal    配置值
+ */
+function L($sName, $mVal = null){
+    static $aLang=array();
+    if (is_string($sName)){
+        if (!strpos($sName, '.')){
+            $sName = strtolower($sName);
+            if (is_null($mVal)) //不能用empty,否则不能把值设为空
+                return $aLang[$sName];
+            $aLang[$sName] = $mVal;
+        }else{
+            $aName = explode('.', $sName);
+            $sArrName = '$aConfig';
+            $sArr = '';
+            for ($i=0;$i<count($aName);$i++){
+                $aName[$i] = strtolower($aName[$i]);
+                $sArr .="['{$aName[$i]}']";
+            }
+            if (is_null($mVal)){
+                return eval('return '.$sArrName.$sArr.';');
+            }else{
+                eval($sArrName.$sArr.'='.(is_string($mVal)?"'{$mVal}'":$mVal).';');
+            }
+        }
+    }
+}
 
 
 
@@ -138,16 +181,40 @@ function getLibDir($sDir){
 
 /**
  * 名称命名转换
- * @param string       $sName   需要转换的名称
- * @param integer      $iStyle  要转换的方法，0为下划线命名法、1为帕斯卡命名法、2为骆驼命名法、3为匈牙利命名法
- * @return Boolean     true成功false失败
+ * @param  string       $sName    需要转换的名称
+ * @param  integer      $iTarget  转换的命名法，0为下划线命名法(默认)、1为帕斯卡命名法、2为骆驼命名法、3为匈牙利命名法
+ * @param  integer      $iSource  被转换的命名法，0为下划线命名法、1为帕斯卡命名法(默认)、2为骆驼命名法、3为匈牙利命名法
+ * @return string       成功返回转换后的字符，失败原文返回
  */
-function cname($sName,$iStyle = 0){
-    $sRlt='';
-    if (is_numeric($iStyle) && $iStyle == 0){
-        $sName=trim(preg_replace_callback('/([A-Z])/', create_function('$a', 'return \'_\'.strtolower($a[1]);'), $sName),'_');
+function cname($sName,$iTarget = 0, $iSource = 1){
+    if (is_numeric($iTarget) && is_numeric($iSource)){
+        if ($iTarget == 0  && $iSource == 1){
+            $sName=trim(preg_replace_callback('/([A-Z])/', create_function('$a', 'return \'_\'.strtolower($a[1]);'), $sName),'_');
+        }
+        if ($iTarget == 1 && $iSource == 0){
+            $sName = ucfirst(preg_replace_callback('/_([a-z])/',create_function('$a', 'return strtoupper($a[1]);'), $sName));
+        }
     }
+    
     return $sName;
+}
+
+/**
+ * PASCAL命名转换C命名
+ * @param string $sName   需要转换的字符串
+ * @return string              成功返回转换后的字符，失败原文返回
+ */
+function ptoc($sName){
+    return cname($sName);
+}
+
+/**
+ * C命名转换PASCAL命名
+ * @param  string     $sName   需要转换的字符串
+ * @return string              成功返回转换后的字符，失败原文返回
+ */
+function ctop($sName){
+    return cname($sName, 1, 0);
 }
 
 
@@ -156,14 +223,13 @@ function cname($sName,$iStyle = 0){
  * 自动加载处理函数
  */
 function autoLoad($sName){
-    static $aIncludeFile=array();include '';
+    static $aIncludeFile=array();
     $sKey = md5($sName);
     if (!isset($aIncludeFile[$sKey])){
     	$sName = str_replace(array('\\','/'), DIRECTORY_SEPARATOR, $sName);
-        $sFileName = basename($sName);
-        $sFilePath = dirname($sName);
-        $sFile = $sFileName.'.php';
-        include $sFile;
+        $sFileName = basename($sName).'.php';
+        \struggle\Sle::getInstance()->hasInfo("自动加载文件{$sFileName}",E_USER_NOTICE);
+        include $sFileName;
     }
 }
 

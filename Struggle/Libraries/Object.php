@@ -8,6 +8,6 @@ class Object{
     }
     
     public function doLog($sMessage,$iNum){
-        \struggle\Sle::getInstance()->moBug->log($sMessage,$iNum);
+        \struggle\Sle::getInstance()->moDebug->log($sMessage,$iNum);
     }
 }

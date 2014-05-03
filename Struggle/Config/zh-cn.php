@@ -1,9 +1,9 @@
 <?php
 /**
- * 系统字符转换
+ * 语言文件
  */
 return array(
-    'file_not_exist'    => '文件不存在',
-    'param_invalid'     =>'无效参数',
-    'res_invalid'       =>'无效的资源',
+    'FILE_NOT_EXITS'    => '文件不存在',
+    'PARAM_INVALID'     =>'无效参数',
+    'RES_INVALID'       =>'无效的资源',
 );

@@ -27,7 +27,6 @@ defined('LIB_PATH')       or define('LIB_PATH',CORE_PATH.'Libraries/');
 defined('CONF_PATH')      or define('CONF_PATH',CORE_PATH.'Config/');
 defined('PUBLIC_PATH')    or define('PUBLIC_PATH',CORE_PATH.'Public/');
 
-
 define('IS_WIN',PHP_OS == 'WINNT'?true:false);
 defined('APP_DEBUG') or define('APP_DEBUG', false);
 
@@ -325,11 +324,40 @@ class Sle{
             }
         }
         
+        
+        //加载语言配置文件
+        $sLangFile = CONF_PATH.'zh-cn.php';
+        $aLang = array();
+        if (file_exists($sLangFile) && basename($sLangFile) == basename(realpath($sLangFile)) && is_readable($sLangFile)){
+            $oSle->hasInfo("语言配置文件{$sLangFile}处理",E_USER_NOTICE);
+            $aLang = include_once $sLangFile;
+        }else{
+            $oSle->hasInfo("语言文件不存在{$sLangFile},文件名区分大小写",E_USER_ERROR);
+        }
+        if (!$oSle->maLastError){
+            $sAppLangName = \C('LANG_NAME');
+            $sAppLangFile = APP_CONF.$sAppLangName.'.php';
+            if (file_exists($sAppLangFile) && basename($sAppLangFile) == basename(realpath($sAppLangFile)) && is_readable($sAppLangFile)){
+                $oSle->hasInfo("用户语言配置文件{$sAppLangFile}处理",E_USER_NOTICE);
+                $aLang = array_merge($aLang,include_once $sAppLangFile);
+            }else{
+                $oSle->hasInfo("语言文件不存在{$sAppLangFile},文件名区分大小写",E_USER_WARNING);
+            }
+        }
+        
+        if (!empty($aLang) && !$oSle->maLastError){
+            foreach ($aLang as $key=>$val){
+                \L($key, $val);
+            }
+        }
+        
+        
+        
         //加载核心文件
         $aCoreFile = array(
             LIB_PATH.'Object.php',
            // LIB_PATH.'Debug.php',
-            LIB_PATH.'Exception.php',
+           LIB_PATH.'Exception.php',
            // LIB_PATH.'Log.php',
             LIB_PATH.'Core/Route.php',
             LIB_PATH.'Core/Controll.php',
@@ -378,7 +406,7 @@ class Sle{
             }
         }
         if (!$oSle->maLastError){
-            $sPath .= get_include_path();
+            //$sPath .= get_include_path();
             if (set_include_path($sPath)){
                 $oSle->hasInfo("设置{$sPath}自动包含目录",E_USER_NOTICE);
             }else{
@@ -387,25 +415,46 @@ class Sle{
         }else{
             $oSle->hasInfo("由于程序错误，设置{$sPath}自动包含目录失败",E_USER_ERROR);
         }
-        die(cname('AbcDef'));
+        
+        
         //自定义自动包含句柄
         if (!$oSle->maLastError){
-            if (spl_autoload_register('\autoLoad')){
-                //
+            $sFuncName = '\autoLoad';
+            if (spl_autoload_register($sFuncName)){
+                $oSle->hasInfo("自定义自动包含处理函数{$sFuncName}",E_USER_NOTICE);
+            }else{
+                $oSle->hasInfo("自定义自动包含处理函数{$sFuncName}失败",E_USER_ERROR);
             }
         }
-        new Debug();
-        print_r(self::$moHandle->maInfo);die('end');
-        register_shutdown_function(array(new libraries\Exception,'shutdownHandle'));
-        set_exception_handler(array(new libraries\Exception,'exceptionHandle'));
-        set_error_handler(array(new libraries\Exception,'errorHandle'),E_ALL | E_STRICT);
+        //自定义句柄
+        $sClassName = '\struggle\libraries\Exception';
+        $oException = new $sClassName();
+        //自定义脚本停止执行前执行的函数
+        $sFuncName = 'shutdownHandle';
+        $oSle->hasInfo("自定义shutdown处理句柄{$sClassName}::{$sFuncName}",E_USER_NOTICE);
+        register_shutdown_function(array($oException,$sFuncName));
         
+        //自定义异常处理句柄
+        $sFuncName = 'exceptionHandle';
+        $oSle->hasInfo("自定义异常处理句柄{$sClassName}::{$sFuncName}",E_USER_NOTICE);
+        set_exception_handler(array($oException,$sFuncName));
+        
+        //自定义错误处理句柄
+        $sFuncName = 'errorHandle';
+        $oSle->hasInfo("自定义错误处理句柄{$sClassName}::{$sFuncName}",E_USER_NOTICE);
+        set_error_handler(array($oException,$sFuncName),E_ALL | E_STRICT);
+        
+        //初始化debug类
+        if (APP_DEBUG && !$oSle->maLastError){
+            $oSle->moDebug = new libraries\Debug();
+        }
+       
         //生成路由
         self::$moHandle->moRoute = new libraries\Route($_SERVER['REQUEST_URI']);
         self::$moHandle->moRoute->exec();
         
         //显示页面调试信息
-        self::$moHandle->moBug->show();
+        //self::$moHandle->moBug->show();
         //$oMonit=new libraries\Core\Dispatcher();
 
     }
@@ -420,7 +469,6 @@ class Sle{
 
 //系统开始运行
 Sle::run();
-
 
 
 

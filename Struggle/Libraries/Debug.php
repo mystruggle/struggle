@@ -1,8 +1,9 @@
 <?php 
 namespace struggle\libraries;
 
-class Debug{
+class Debug extends Object{
     private $maBugInfo = array();
+    private $hdRecord  = null;
     const ERROR      = 1;
     const WARINING   = 2;
     const NOTICE     = 3;
@@ -35,7 +36,7 @@ class Debug{
      * @param unknown_type $iRunTime
      * @param unknown_type $bFromDebug
      */
-    public function log($sLogInfo, $iLevel, $iRunTime=0, $bFromDebug=true){
+    public function record($sLogInfo, $iLevel, $iRunTime=0, $bFromDebug=true){
         if (APP_DEBUG){
             $fCurStampTime = microtime(true);
             $iRunTime = $iRunTime?round($iRunTime - BEGIN_TIME, 5):round($fCurStampTime-BEGIN_TIME,5);

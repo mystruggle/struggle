@@ -205,6 +205,7 @@ class Sle{
     private static $moHandle = null;//isset判断null返回false
     private static $maAttr = array();
     private $moDebug = null;
+    private $moLog   = null;
     private $moRoute = null;
     private $maInfo  = array();
     private $maLastError = array();
@@ -444,18 +445,19 @@ class Sle{
         $oSle->hasInfo("自定义错误处理句柄{$sClassName}::{$sFuncName}",E_USER_NOTICE);
         set_error_handler(array($oException,$sFuncName),E_ALL | E_STRICT);
         
-        //初始化debug类
-        if (APP_DEBUG && !$oSle->maLastError){
+        //实例化类
+        if (!$oSle->maLastError){
+            $oSle->moLog   = new libraries\Log();
             $oSle->moDebug = new libraries\Debug();
+           
+            //生成路由
+            self::$moHandle->moRoute = new libraries\Route($_SERVER['REQUEST_URI']);
+            self::$moHandle->moRoute->exec();
+            
+            //显示页面调试信息
+            //self::$moHandle->moBug->show();
+            //$oMonit=new libraries\Core\Dispatcher();
         }
-       
-        //生成路由
-        self::$moHandle->moRoute = new libraries\Route($_SERVER['REQUEST_URI']);
-        self::$moHandle->moRoute->exec();
-        
-        //显示页面调试信息
-        //self::$moHandle->moBug->show();
-        //$oMonit=new libraries\Core\Dispatcher();
 
     }
     

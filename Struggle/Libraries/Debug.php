@@ -8,6 +8,10 @@ class Debug extends Object{
     const WARINING   = 2;
     const NOTICE     = 3;
     
+    public function __construct(){
+        //
+    }
+    
     public function show(){
         $sHtml="<div style='width:960px;border:1px solid #cccccc;font-size:12px;position:relative;margin:0px;padding:10px;'>"
                ."<div style='text-align:right;'><a style='text-decoration:none;color:blue;' href='javascript:void(0);' onclick='this.parentNode.parentNode.style.display=\"none\";'>X</a></div><div style='margin:0px;padding:0px;'><ul style='margin:0px;padding:0px;list-style-type:none;'>";
@@ -36,7 +40,7 @@ class Debug extends Object{
      * @param unknown_type $iRunTime
      * @param unknown_type $bFromDebug
      */
-    public function record($sLogInfo, $iLevel, $iRunTime=0, $bFromDebug=true){
+    public function trace($sLogInfo, $iLevel, $iRunTime=0, $bFromDebug=true){
         if (APP_DEBUG){
             $fCurStampTime = microtime(true);
             $iRunTime = $iRunTime?round($iRunTime - BEGIN_TIME, 5):round($fCurStampTime-BEGIN_TIME,5);

@@ -204,9 +204,9 @@ function getErrLevel($iCode){
 class Sle{
     private static $moHandle = null;//isset判断null返回false
     private static $maAttr = array();
-    private $moDebug = null;
-    private $moLog   = null;
-    private $moRoute = null;
+    private static $moDebug = null;
+    private static $moLog   = null;
+    private static $moRoute = null;
     private $maInfo  = array();
     private $maLastError = array();
     const   SLE_ALL  = 1;
@@ -231,6 +231,27 @@ class Sle{
     public function __get($sName){
         if (in_array($sName,self::$maAttr))
             return self::$moHandle->$sName;
+    }
+    
+    public function route(){
+        if(is_null(self::$moRoute)){
+            self::$moRoute = new libraries\Route($_SERVER['REQUEST_URI']);
+        }
+        return self::$moRoute;
+    }
+
+    public function debug(){
+        if(is_null(self::$moDebug)){
+            self::$moDebug = new libraries\Debug();
+        }
+        return self::$moDebug;
+    }
+    
+    public function log(){
+        if(is_null(self::$moLog)){
+            self::$moLog = new libraries\Log();
+        }
+        return self::$moLog;
     }
     
     /**
@@ -447,12 +468,9 @@ class Sle{
         
         //实例化类
         if (!$oSle->maLastError){
-            $oSle->moLog   = new libraries\Log();
-            $oSle->moDebug = new libraries\Debug();
            
-            //生成路由
-            self::$moHandle->moRoute = new libraries\Route($_SERVER['REQUEST_URI']);
-            self::$moHandle->moRoute->exec();
+            //执行路由
+            $oSle->route()->exec();
             
             //显示页面调试信息
             //self::$moHandle->moBug->show();

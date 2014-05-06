@@ -224,10 +224,11 @@ function ctop($sName){
  */
 function autoLoad($sName){
     static $aIncludeFile=array();
+    $sName = str_replace(array('\\','/'), DIRECTORY_SEPARATOR, $sName);
+    $sName = basename($sName);
     $sKey = md5($sName);
     if (!isset($aIncludeFile[$sKey])){
-    	$sName = str_replace(array('\\','/'), DIRECTORY_SEPARATOR, $sName);
-        $sFileName = basename($sName).'.php';
+        $sFileName = $sName.'.php';
         \struggle\Sle::getInstance()->hasInfo("自动加载文件{$sFileName}",E_USER_NOTICE);
         include $sFileName;
     }

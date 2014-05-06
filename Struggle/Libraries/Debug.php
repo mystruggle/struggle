@@ -4,12 +4,38 @@ namespace struggle\libraries;
 class Debug extends Object{
     private $maBugInfo = array();
     private $hdRecord  = null;
+    public  $recordType     = 'file';
+    public  $recordFileName = '';
+    public  $recordFilePath = '';
+    public  $recordFileExt  = '';
+    Public  $recordFileMode = '';
+    Public  $recordFileSize = 2000;  //kb
+    Public  $recordFileNum  = '';    //超出文件大小重命名文件数量
     const ERROR      = 1;
     const WARINING   = 2;
     const NOTICE     = 3;
     
     public function __construct(){
-        //
+        static $oReocrd = null;
+        $this->recordType     = \C('DEBUG_RECORD_TYPE');
+        $this->recordFileName = \C('DEBUG_RECORD_FILE_NAME');
+        $this->recordFilePath = \C('DEBUG_RECORD_FILE_PATH');
+        $this->recordFileExt  = \C('DEBUG_RECORD_FILE_EXT');
+        $this->recordFileMode = \C('DEBUG_RECORD_FILE_MODE');
+        $this->recordFileSize = \C('DEBUG_RECORD_FILE_SIZE');
+        $this->recordFileNum  = \C('DEBUG_RECORD_FILE_NUM');
+        $this->recordType     || $this->recordType     = 'file';
+        $this->recordFileName || $this->recordFileName = 'application';
+        $this->recordFilePath || $this->recordFilePath = APP_RUNTIME;
+        $this->recordFileExt  || $this->recordFileExt  = 'log';
+        $this->recordFileMode || $this->recordFileMode = 'ab';
+        $this->recordFileSize || $this->recordFileSize = 2000;
+        $this->recordFileNum  || $this->recordFileNum  = 3;
+        if (is_null($oReocrd)){
+            $sClassName = ctop($this->recordType);
+            $oReocrd = new $sClassName();
+        }
+        $this->hdRecord = $oReocrd;
     }
     
     public function show(){

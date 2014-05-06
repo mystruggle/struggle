@@ -5,7 +5,7 @@ class Exception extends Object{
     
     public function errorHandle($errno, $errstr, $errfile, $errline, $errcontext){
         $sErrInfo = "{$errstr}\t{$errfile}\t第{$errline}行";
-        \struggle\trace($sErrInfo, $errno);        
+        //\struggle\trace($sErrInfo, $errno);        
     }
     
     

@@ -26,12 +26,17 @@ return array(
     //语言
     'LANG_NAME'              =>'zh_cn',
     //调试                                                            
-    'DEBUG_CLASS'            =>'\struggle\libraries\Debug',
-    'DEBUG_RECORD_METHOD'    =>'log',
+    'DEBUG_RECORD_TYPE'      =>'file',
+    'DEBUG_RECORD_FILE_NAME' =>'application',
+    'DEBUG_RECORD_FILE_PATH' =>APP_RUNTIME,
+    'DEBUG_RECORD_FILE_EXT'  =>'log',
+    'DEBUG_RECORD_FILE_MODE' =>'ab',
+    'DEBUG_RECORD_FILE_SIZE' =>2000,  //kb
+    'DEBUG_RECORD_FILE_NUM'  =>3,
     //路由
     'ROUTE_MODE'             =>'normal',//normal 正常模式、pathinfo pathinfo模式、rewrite 伪静态模式 、compat兼容模式/?s=/name/vlaue
     //自动包含跟目录设置
-    'AUTOLOAD_DIR'           =>APP_LIB.','.LIB_PATH,
+    'AUTOLOAD_DIR'           =>APP_LIB.','.LIB_PATH.','.LIB_PATH.'Cache/Driver/',
     //语言设置
     'LANG_NAME'              =>'zh-cn',
 );

@@ -5,32 +5,21 @@ namespace struggle\libraries\cache\driver;
    其他文件的路径、文件名随时都有可能改变，所以不需要写入，只需在构造函数添加
    一个配置数组形参即可
 */
-class File extends \struggle\libraries\cache\Cache{
-    private $itsBasePath    = '';
-    private $itsSavePath    = '';
-    private $itsHandle      = null;
-    private $itsFileName    = 'application';
-    private $itsFileExt     = 'txt';
-    private $itsFileMode    = 'ab';
-    private $itsFileMaxSize = 0;  //kb
-    private $itsFileMaxNum  = 3;     //最多生成日志文件个数
+class File extends Object{
+    public  $file    = '';
+    public  $path    = '';
+    public  $mode    = 'ab';
+    public  $size    = 2000;  //kb
+    public  $renum   = 3;     //超过文件设置的大小时重命名的数量
     
     public function __construct($aOpt = array()){
-        $this->itsBasePath = APP_CACHE;
-        isset($aOpt['savePath'])     && $this->itsSavePath = $aOpt['savePath'];
-        isset($aOpt['fileName'])     && $this->itsFileName = $aOpt['fileName'];
-        isset($aOpt['fileExt'])      && $this->itsFileExt  = $aOpt['fileExt'];
-        isset($aOpt['fileMode'])     && $this->itsFileMode = $aOpt['fileMode'];
-        isset($aOpt['fileMaxSize'])  && $this->itsFileMaxSize = $aOpt['fileMaxSize'];
-
-        $sFile = "{$this->itsBasePath}{$this->itsSavePath}{$this->itsFileName}.{$this->itsFileExt}";
-        $sDir  = $this->itsBasePath.$this->itsSavePath;
-        if (!is_dir($sDir)){
-            @mkdir($sDir, 0777, true);
-        }
-        $this->itsHandle = @fopen($sFile, $this->itsFileMode);
-        
-        
+        if (!empty($aOpt)){
+            isset($aOpt['file'])  && $aOpt['file'] && $this->file = $aOpt['file'];
+            isset($aOpt['path'])  && $aOpt['path'] && $this->path = $aOpt['path'];
+            isset($aOpt['mode'])  && $aOpt['mode'] && $this->mode = $aOpt['mode'];
+            isset($aOpt['size'])  && $aOpt['size'] && $this->size = $aOpt['size']; 
+            isset($aOpt['renum']) && $aOpt['renum'] && $this->renum = $aOpt['renum']; 
+        }       
     }
     
     public function write($sContent){
@@ -66,6 +55,10 @@ class File extends \struggle\libraries\cache\Cache{
         if(isset($this->$sName)){
             $this->$sName = $mVal;
         }
+    }
+    
+    public function read(){
+        //
     }
     
     

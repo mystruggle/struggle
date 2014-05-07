@@ -376,29 +376,21 @@ class Sle{
         
         
         //加载核心文件
-        $aCoreFile = array(
-            LIB_PATH.'Object.php',
-           // LIB_PATH.'Debug.php',
-           LIB_PATH.'Exception.php',
-           // LIB_PATH.'Log.php',
-            LIB_PATH.'Core/Route.php',
-            LIB_PATH.'Core/Controll.php',
-            LIB_PATH.'Core/View.php',
-        );
-        foreach ($aCoreFile as $sFile){
-            if (IS_WIN){
-                if (basename($sFile) == basename(realpath($sFile)) && file_exists($sFile) && is_readable($sFile)){
-                    $oSle->hasInfo("加载核心文件{$sFile}",E_USER_NOTICE);
-                    require_once $sFile;
-                }else {
-                    $oSle->hasInfo("文件不存在或不可读{$sFile},请检查文件",E_USER_ERROR);
-                }
-            }else{
-                if (file_exists($sFile) && is_readable($sFile)){
-                    $oSle->hasInfo("加载核心文件{$sFile}",E_USER_NOTICE);
-                    require_once $sFile;
-                }else {
-                    $oSle->hasInfo("文件不存在或不可读{$sFile},请检查文件",E_USER_ERROR);
+        if (!$oSle->maLastError){
+            $aCoreFile = array(
+                LIB_PATH.'Object.php',
+                // LIB_PATH.'Debug.php',
+                LIB_PATH.'Exception.php',
+                // LIB_PATH.'Log.php',
+                LIB_PATH.'Core/Route.php',
+                LIB_PATH.'Core/Controll.php',
+                LIB_PATH.'Core/View.php',
+            );
+            foreach ($aCoreFile as $sFile){
+                if (require_cache($sFile)){
+                    $oSle->hasInfo("加载核心文件{$sFile}", E_USER_NOTICE);
+                }else{
+                    $oSle->hasInfo("文件不存在或不可读{$sFile},请检查文件", E_USER_ERROR);
                 }
             }
         }
@@ -448,6 +440,7 @@ class Sle{
                 $oSle->hasInfo("自定义自动包含处理函数{$sFuncName}失败",E_USER_ERROR);
             }
         }
+        
         //自定义句柄
         $sClassName = '\struggle\libraries\Exception';
         $oException = new $sClassName();
@@ -471,7 +464,7 @@ class Sle{
            
             //执行路由
             $oSle->route()->exec();
-            
+            //print_r($oSle->maInfo);
             //显示页面调试信息
             //self::$moHandle->moBug->show();
             //$oMonit=new libraries\Core\Dispatcher();

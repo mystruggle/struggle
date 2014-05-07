@@ -5,17 +5,18 @@ namespace struggle\libraries\cache\driver;
    其他文件的路径、文件名随时都有可能改变，所以不需要写入，只需在构造函数添加
    一个配置数组形参即可
 */
-class File extends Object{
+class File extends \struggle\libraries\Object{
     public  $file    = '';
-    public  $path    = '';
+    //public  $path    = '';
     public  $mode    = 'ab';
     public  $size    = 2000;  //kb
     public  $renum   = 3;     //超过文件设置的大小时重命名的数量
+    private $moHandle = null;
     
     public function __construct($aOpt = array()){
         if (!empty($aOpt)){
             isset($aOpt['file'])  && $aOpt['file'] && $this->file = $aOpt['file'];
-            isset($aOpt['path'])  && $aOpt['path'] && $this->path = $aOpt['path'];
+            //isset($aOpt['path'])  && $aOpt['path'] && $this->path = $aOpt['path'];
             isset($aOpt['mode'])  && $aOpt['mode'] && $this->mode = $aOpt['mode'];
             isset($aOpt['size'])  && $aOpt['size'] && $this->size = $aOpt['size']; 
             isset($aOpt['renum']) && $aOpt['renum'] && $this->renum = $aOpt['renum']; 
@@ -23,6 +24,9 @@ class File extends Object{
     }
     
     public function write($sContent){
+        if (is_null($this->moHandle)){
+            $this->open();
+        }
         $sContent = "[".date('Y-m-d H:i:s')."]{$sContent}".PHP_EOL;
         if ($this->itsFileMaxSize)
             $this->chkFileSize();
@@ -50,10 +54,10 @@ class File extends Object{
             flock($this->itsHandle, LOCK_UN);
         }
     }
-
-    public function __set($sName,$mVal){
-        if(isset($this->$sName)){
-            $this->$sName = $mVal;
+    
+    private function open(){
+        if(!$this->moHandle = fopen($this->file, $this->mode)){
+            $this->moHandle = null;
         }
     }
     
@@ -63,7 +67,7 @@ class File extends Object{
     
     
     public function __destruct(){
-        @fclose($this->itsHandle);
+        @fclose($this->moHandle);
     }
 
 

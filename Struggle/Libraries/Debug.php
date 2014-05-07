@@ -32,10 +32,13 @@ class Debug extends Object{
         $this->recordFileSize || $this->recordFileSize = 2000;
         $this->recordFileNum  || $this->recordFileNum  = 3;
         if (is_null($oReocrd)){
-            $sClassName = ctop($this->recordType);
-            $oReocrd = new $sClassName();
+            $sClassName = '\struggle\libraries\cache\driver\\'.ctop($this->recordType);
+            $sRecordFile = rtrim($this->recordFilePath,'/').'/'.$this->recordFileName.'.'.$this->recordFileExt;
+            $aOpt = array('file'=>$sRecordFile,$this->recordFileMode,$this->recordFileSize,$this->recordFileNum);
+            $oReocrd = new $sClassName($aOpt);
         }
         $this->hdRecord = $oReocrd;
+        $this->hdRecord->write();
     }
     
     public function show(){

@@ -3,22 +3,27 @@
  * 全局函数
  */
 
+
+/**
+ * 包含文件，区分大小写
+ * @param string $sName  文件名，区分大写
+ */
 function require_cache($sName){
     static $aFiles=array();
     $sKey=md5($sName);
     if (!isset($aFiles[$sKey])){
-        if (!file_exists($sName) || !is_readable($sName)){
-            trace("该文件不存在或不可读,{$sName}", E_USER_ERROR);
-        }
-        if (IS_WIN && basename(realpath($sName)) == basename($sName)){
-            include $sName;
-            $aFiles[$sKey] = true;
-        }else {
-            $aFiles[$sKey] = false;
-            if (!IS_WIN){
-                include $sName;
+        if (file_exists($sName) && is_readable($sName)){
+            if (IS_WIN && basename(realpath($sName)) == basename($sName)){
+                include_once $sName;
                 $aFiles[$sKey] = true;
+            }elseif (!IS_WIN){
+                include_once $sName;
+                $aFiles[$sKey] = true;
+            }else{
+                $aFiles[$sKey] = false;
             }
+        }else{
+            $aFiles[$sKey] = false;
         }
     }
     return $aFiles[$sKey];
@@ -224,13 +229,30 @@ function ctop($sName){
  */
 function autoLoad($sName){
     static $aIncludeFile=array();
+    static $aPath = array();
     $sName = str_replace(array('\\','/'), DIRECTORY_SEPARATOR, $sName);
     $sName = basename($sName);
-    $sKey = md5($sName);
+    $sFileName = $sName.'.php';
+    if (!$aPath){
+        $sPath = get_include_path();
+        $aPath = explode(PATH_SEPARATOR, $sPath);
+    }
+    foreach ($aPath as $path){
+        $path = rtrim($path,'/').'/';
+        if (file_exists($path."{$sFileName}")){
+            $sFileName = $path.$sFileName;
+            break;
+        }
+    }
+    
+    $sKey = md5($sFileName);
     if (!isset($aIncludeFile[$sKey])){
-        $sFileName = $sName.'.php';
-        \struggle\Sle::getInstance()->hasInfo("自动加载文件{$sFileName}",E_USER_NOTICE);
-        include $sFileName;
+        if ($aIncludeFile[$sKey] = require_cache($sFileName)){
+            \struggle\Sle::getInstance()->hasInfo("自动加载文件{$sFileName}", E_USER_NOTICE);
+        }else{
+            \struggle\Sle::getInstance()->hasInfo("自动加载文件{$sFileName}失败", E_USER_ERROR);
+            $aIncludeFile[$sKey] = false;
+        }
     }
 }
 

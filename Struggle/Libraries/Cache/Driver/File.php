@@ -24,41 +24,52 @@ class File extends \struggle\libraries\Object{
     }
     
     public function write($sContent){
-        if (is_null($this->moHandle)){
-            $this->open();
+        $bRlt = false;
+        if (is_null($this->moHandle) && !$this->open()){
+            return $bRlt;
         }
+        if (!$this->chkFileSize())
+            return $bRlt;
         $sContent = "[".date('Y-m-d H:i:s')."]{$sContent}".PHP_EOL;
-        if ($this->itsFileMaxSize)
-            $this->chkFileSize();
-        @flock($this->itsHandle, LOCK_EX);
-        @fwrite($this->itsHandle, $sContent);
-        @flock($this->itsHandle, LOCK_UN);
+        @flock($this->moHandle, LOCK_EX);
+        @fwrite($this->moHandle, $sContent);
+        @flock($this->moHandle, LOCK_UN);
     }
     
     private function chkFileSize(){
-        $sFile = "{$this->itsBasePath}{$this->itsSavePath}{$this->itsFileName}.{$this->itsFileExt}";
-        if ((filesize($sFile) / 1024) > $this->itsFileMaxSize){
-            $max = $this->itsFileMaxNum;
-            flock($this->itsHandle, LOCK_EX);
+        $bRlt = true;
+        if ((filesize($this->file) / 1024) > $this->size){
+            $bRlt = false;
+            $max = $this->renum;
+            flock($this->moHandle, LOCK_EX);
             for($i=$max;$i>0;$i--){
-                $sReName = $sFile.".{$i}";
+                $sReName = $this->file.".{$i}";
                 if (is_file($sReName)){
                     if ($i == $max)
                         @unlink($sReName);
                     else 
-                        @rename($sReName, $sFile.'.'.($i+1));
+                        @rename($sReName, $this->file.'.'.($i+1));
                 }
             }
-            if (is_file($sFile))
-                @rename($sFile, $sFile.'.1');   //会覆盖同名文件
-            flock($this->itsHandle, LOCK_UN);
+            if (is_file($this->file))
+                @rename($this->file, $this->file.'.1');   //会覆盖同名文件
+            flock($this->moHandle, LOCK_UN);
+            if (!is_file($this->file))
+                $bRlt = true;
         }
+        return $bRlt;
     }
     
     private function open(){
-        if(!$this->moHandle = fopen($this->file, $this->mode)){
-            $this->moHandle = null;
+        $bRlt = false;
+        if (is_writable(dirname($this->file))){
+            if (is_null($this->moHandle) && ($this->moHandle = fopen($this->file, $this->mode))){
+                $bRlt = true;
+            }elseif (!is_null($this->moHandle)){
+                $bRlt = true;
+            }
         }
+        return $bRlt;
     }
     
     public function read(){

@@ -204,9 +204,9 @@ function getErrLevel($iCode){
 class Sle{
     private static $moHandle = null;//isset判断null返回false
     private static $maAttr = array();
-    private static $moDebug = null;
-    private static $moLog   = null;
-    private static $moRoute = null;
+    private static $debug = null;
+    private static $log   = null;
+    private static $route = null;
     private $maInfo  = array();
     private $maLastError = array();
     const   SLE_ALL  = 1;
@@ -229,29 +229,35 @@ class Sle{
     }
     
     public function __get($sName){
-        if (in_array($sName,self::$maAttr))
-            return self::$moHandle->$sName;
+        if (in_array($sName,self::$maAttr)){
+            if (is_null(self::$moHandle->$sName) && method_exists($this, $sName)){
+                return $this->$sName();
+            }elseif (!is_null(self::$moHandle->$sName)){
+                return self::$moHandle->$sName;
+            }
+        }
+        return null;
     }
     
-    public function route(){
-        if(is_null(self::$moRoute)){
-            self::$moRoute = new libraries\Route($_SERVER['REQUEST_URI']);
+    private function route(){
+        if(is_null(self::$route)){
+            self::$route = new libraries\Route($_SERVER['REQUEST_URI']);
         }
-        return self::$moRoute;
+        return self::$route;
     }
 
-    public function debug(){
-        if(is_null(self::$moDebug)){
-            self::$moDebug = new libraries\Debug();
+    private function debug(){
+        if(is_null(self::$debug)){
+            self::$debug = new libraries\Debug();
         }
-        return self::$moDebug;
+        return self::$debug;
     }
     
-    public function log(){
-        if(is_null(self::$moLog)){
-            self::$moLog = new libraries\Log();
+    private function log(){
+        if(is_null(self::$log)){
+            self::$log = new libraries\Log();
         }
-        return self::$moLog;
+        return self::$log;
     }
     
     /**
@@ -463,7 +469,7 @@ class Sle{
         if (!$oSle->maLastError){
            
             //执行路由
-            $oSle->route()->exec();
+            $oSle->route->exec();
             //print_r($oSle->maInfo);
             //显示页面调试信息
             //self::$moHandle->moBug->show();

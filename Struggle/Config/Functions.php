@@ -10,9 +10,22 @@
  */
 function require_cache($sName){
     static $aFiles=array();
+    $isAutoload = false;
+    $sAutoChar  = '@auto';
+    $sAutoFileName = '';
+    if (strpos($sName, $sAutoChar)!==false){
+        $sName = str_replace($sAutoChar, '', $sName);
+        $isAutoload = true;
+    }
     $sKey=md5($sName);
     if (!isset($aFiles[$sKey])){
-        if (file_exists($sName) && is_readable($sName)){
+        if ($isAutoload){
+            $sName = str_replace(array('\\','/'), DIRECTORY_SEPARATOR, $sName);
+            $sName = basename($sName);
+            $sFile = $sName.'.php';
+            require_once $sFile;
+            $aFiles[$sKey] = true;
+        }elseif (file_exists($sName) && is_readable($sName)){
             if (IS_WIN && basename(realpath($sName)) == basename($sName)){
                 include_once $sName;
                 $aFiles[$sKey] = true;
@@ -228,31 +241,10 @@ function ctop($sName){
  * 自动加载处理函数
  */
 function autoLoad($sName){
-    static $aIncludeFile=array();
-    static $aPath = array();
-    $sName = str_replace(array('\\','/'), DIRECTORY_SEPARATOR, $sName);
-    $sName = basename($sName);
-    $sFileName = $sName.'.php';
-    if (!$aPath){
-        $sPath = get_include_path();
-        $aPath = explode(PATH_SEPARATOR, $sPath);
-    }
-    foreach ($aPath as $path){
-        $path = rtrim($path,'/').'/';
-        if (file_exists($path."{$sFileName}")){
-            $sFileName = $path.$sFileName;
-            break;
-        }
-    }
-    
-    $sKey = md5($sFileName);
-    if (!isset($aIncludeFile[$sKey])){
-        if ($aIncludeFile[$sKey] = require_cache($sFileName)){
-            \struggle\Sle::getInstance()->hasInfo("自动加载文件{$sFileName}", E_USER_NOTICE);
-        }else{
-            \struggle\Sle::getInstance()->hasInfo("自动加载文件{$sFileName}失败", E_USER_ERROR);
-            $aIncludeFile[$sKey] = false;
-        }
+    if (require_cache("{$sName}@auto")){
+        \struggle\Sle::getInstance()->hasInfo("自动加载类{$sName}", E_USER_NOTICE);
+    }else {
+        \struggle\Sle::getInstance()->hasInfo("自动加载类{$sName}失败", E_USER_ERROR);
     }
 }
 

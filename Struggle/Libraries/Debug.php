@@ -38,7 +38,7 @@ class Debug extends Object{
             $oReocrd = new $sClassName($aOpt);
         }
         $this->hdRecord = $oReocrd;
-        $this->hdRecord->write();
+        $this->hdRecord->write('测试');
     }
     
     public function show(){

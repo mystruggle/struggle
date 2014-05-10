@@ -241,9 +241,8 @@ function ctop($sName){
  * 自动加载处理函数
  */
 function autoLoad($sName){
-    if (require_cache("{$sName}@auto")){
-        \struggle\Sle::getInstance()->hasInfo("自动加载类{$sName}", E_USER_NOTICE);
-    }else {
+    \struggle\Sle::getInstance()->hasInfo("自动加载类{$sName}", E_USER_NOTICE);
+    if (!require_cache("{$sName}@auto")){
         \struggle\Sle::getInstance()->hasInfo("自动加载类{$sName}失败", E_USER_ERROR);
     }
 }

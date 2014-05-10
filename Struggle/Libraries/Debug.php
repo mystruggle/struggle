@@ -34,11 +34,11 @@ class Debug extends Object{
         if (is_null($oReocrd)){
             $sClassName = '\struggle\libraries\cache\driver\\'.ctop($this->recordType);
             $sRecordFile = rtrim($this->recordFilePath,'/').'/'.$this->recordFileName.'.'.$this->recordFileExt;
-            $aOpt = array('file'=>$sRecordFile,$this->recordFileMode,$this->recordFileSize,$this->recordFileNum);
+            $aOpt = array('file'=>$sRecordFile,'mode'=>$this->recordFileMode,'size'=>$this->recordFileSize,'renum'=>$this->recordFileNum);
+            \struggle\Sle::getInstance()->hasInfo("初始化类{$sClassName},初始化参数".print_r($aOpt,true),E_USER_NOTICE,\struggle\Sle::SLE_SYS);
             $oReocrd = new $sClassName($aOpt);
         }
         $this->hdRecord = $oReocrd;
-        $this->hdRecord->write('测试');
     }
     
     public function show(){

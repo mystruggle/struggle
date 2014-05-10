@@ -28,7 +28,13 @@ defined('CONF_PATH')      or define('CONF_PATH',CORE_PATH.'Config/');
 defined('PUBLIC_PATH')    or define('PUBLIC_PATH',CORE_PATH.'Public/');
 
 define('IS_WIN',PHP_OS == 'WINNT'?true:false);
-defined('APP_DEBUG') or define('APP_DEBUG', false);
+/*
+ * APP_DEBUG有三种值，
+ *   rescue  打开debug,debug信息打印到浏览器(用于由于错误打断无法写日志的情况)
+ *   true    打开debug,debug信息由Debug类接管
+ *   false   关闭debug
+ */
+defined('APP_DEBUG') or define('APP_DEBUG', false); 
 
 
 
@@ -172,6 +178,7 @@ function getErrLevel($iCode){
     static $aRlt=array();
     if (empty($aRlt)){
         $aRlt=array(
+        //第一个元素自定义错误等级1错误、2警告、3通知或其他;第二字符标示;第三该常量对应的值
             E_ERROR         => array(1,'E_ERROR',1),
             E_WARNING       => array(2,'E_WARNING',2),                //'运行时警告，非致命错误'
             E_PARSE         => array(1,'E_PARSE',4),                 //'编译时解析错误',
@@ -241,6 +248,7 @@ class Sle{
     
     private function route(){
         if(is_null(self::$route)){
+            $this->hasInfo("初始化类".__FUNCTION__, E_USER_NOTICE, Sle::SLE_SYS);
             self::$route = new libraries\Route($_SERVER['REQUEST_URI']);
         }
         return self::$route;
@@ -248,6 +256,7 @@ class Sle{
 
     private function debug(){
         if(is_null(self::$debug)){
+            $this->hasInfo("初始化类".__FUNCTION__, E_USER_NOTICE, Sle::SLE_SYS);
             self::$debug = new libraries\Debug();
         }
         return self::$debug;
@@ -255,6 +264,7 @@ class Sle{
     
     private function log(){
         if(is_null(self::$log)){
+            $this->hasInfo("初始化类".__FUNCTION__, E_USER_NOTICE, Sle::SLE_SYS);
             self::$log = new libraries\Log();
         }
         return self::$log;
@@ -263,17 +273,35 @@ class Sle{
     /**
      * 记录程序执行信息
      * @param string       $sInfo    信息内容
-     * @param integer      $iType    信息类型，沿用php内置错误类型，如E_USER_ERROR
-     * @param integer      $iLevel   信息等级，默认SLE_SYS
+     * @param integer      $iType    错误类型，沿用php内置错误类型，如E_USER_ERROR
+     * @param integer      $iFrom    信息类型，默认SLE_SYS,说明是系统日志还是用户日志
      * @param integer      $iRunTime 程序执行当前时间戳
      */
-    public function hasInfo($sInfo,$iType,$iLevel = sle::SLE_SYS, $iRunTime = 0){
+    public function hasInfo($sInfo,$iType,$iFrom = Sle::SLE_SYS, $iRunTime = 0){
         $oSle = self::getInstance();
         empty($iRunTime) && $iRunTime = microtime(true);
-        $aInfo = array($sInfo ,$iType, $iLevel, $iRunTime);
+        $aInfo = array($sInfo ,$iType, $iFrom, $iRunTime);
         $oSle->maInfo[] = $aInfo;
         if ($iType == E_USER_ERROR)
             $oSle->maLastError = $aInfo;
+        if (strtolower(APP_DEBUG) == 'rescue'){
+            $aErr = getErrLevel($iType);
+            $shtml = "";
+            if (is_object($sInfo)){
+                $sInfo = var_export($sInfo,true);
+            }elseif (is_array($sInfo)){
+                $sInfo = print_r($sInfo,true);
+            }
+            if ($aErr[0] == 1){
+                $shtml = "<p color='red'>{$sInfo}</p>";
+            }elseif ($aErr[0] == 2){
+                $shtml = "<p color='blue'>{$sInfo}</p>";
+            }else {
+                $shtml = "<p style='color:#009900;font-size:13px;'>=> {$sInfo}</p>";
+            }
+            count($this->maInfo) == 1 && $shtml = "<div style='border:1px solid #cccccc;padding:5px;width:auto;'>{$shtml}";
+            echo "{$shtml}";
+        }
     }
 
     

@@ -446,6 +446,8 @@ class Sle{
                 }
             }
         }
+
+        //分开写，以判断是否进行自动包含
         if (!$oSle->maLastError){
             //$sPath .= get_include_path();
             if (set_include_path($sPath)){
@@ -454,7 +456,7 @@ class Sle{
                 $oSle->hasInfo("设置{$sPath}自动包含目录失败",E_USER_ERROR, Sle::SLE_SYS);
             }
         }else{
-            $oSle->hasInfo("由于程序错误，设置{$sPath}自动包含目录失败",E_USER_ERROR, Sle::SLE_SYS);
+            $oSle->hasInfo("由于程序错误，设置自动包含目录失败",E_USER_ERROR, Sle::SLE_SYS);
         }
         
         
@@ -468,24 +470,28 @@ class Sle{
             }
         }
         
-        //自定义句柄
-        $sClassName = '\struggle\libraries\Exception';
-        $oException = new $sClassName();
-        //自定义脚本停止执行前执行的函数
-        $sFuncName = 'shutdownHandle';
-        $oSle->hasInfo("自定义shutdown处理句柄{$sClassName}::{$sFuncName}",E_USER_NOTICE, Sle::SLE_SYS);
-        register_shutdown_function(array($oException,$sFuncName));
-        
-        //自定义异常处理句柄
-        $sFuncName = 'exceptionHandle';
-        $oSle->hasInfo("自定义异常处理句柄{$sClassName}::{$sFuncName}",E_USER_NOTICE, Sle::SLE_SYS);
-        set_exception_handler(array($oException,$sFuncName));
-        
-        //自定义错误处理句柄
-        $sFuncName = 'errorHandle';
-        $oSle->hasInfo("自定义错误处理句柄{$sClassName}::{$sFuncName}",E_USER_NOTICE, Sle::SLE_SYS);
-        set_error_handler(array($oException,$sFuncName),E_ALL | E_STRICT);
-        
+        //分开写，以判断是否进行自动包含
+        if(!$oSle->maLastError){
+            //自定义句柄
+            $sClassName = '\struggle\libraries\Exception';
+            $oException = new $sClassName();
+            //自定义脚本停止执行前执行的函数
+            $sFuncName = 'shutdownHandle';
+            $oSle->hasInfo("自定义shutdown处理句柄{$sClassName}::{$sFuncName}",E_USER_NOTICE, Sle::SLE_SYS);
+            register_shutdown_function(array($oException,$sFuncName));
+            
+            //自定义异常处理句柄
+            $sFuncName = 'exceptionHandle';
+            $oSle->hasInfo("自定义异常处理句柄{$sClassName}::{$sFuncName}",E_USER_NOTICE, Sle::SLE_SYS);
+            set_exception_handler(array($oException,$sFuncName));
+            
+            //自定义错误处理句柄
+            $sFuncName = 'errorHandle';
+            $oSle->hasInfo("自定义错误处理句柄{$sClassName}::{$sFuncName}",E_USER_NOTICE, Sle::SLE_SYS);
+            set_error_handler(array($oException,$sFuncName),E_ALL | E_STRICT);
+        }
+
+
         //实例化类
         if (!$oSle->maLastError){
            

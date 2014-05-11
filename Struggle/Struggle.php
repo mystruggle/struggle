@@ -58,17 +58,10 @@ importConf();
 importCoreFile();
 
 //开始运行
-Sle::run();*/
+Sle::run();
 
 
-
-
-
-
-
-
-
-
+*/
 
 
 

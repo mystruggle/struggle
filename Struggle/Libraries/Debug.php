@@ -35,7 +35,7 @@ class Debug extends Object{
             $sClassName = '\struggle\libraries\cache\driver\\'.ctop($this->recordType);
             $sRecordFile = rtrim($this->recordFilePath,'/').'/'.$this->recordFileName.'.'.$this->recordFileExt;
             $aOpt = array('file'=>$sRecordFile,'mode'=>$this->recordFileMode,'size'=>$this->recordFileSize,'renum'=>$this->recordFileNum);
-            \struggle\Sle::getInstance()->hasInfo("初始化类{$sClassName},初始化参数".print_r($aOpt,true),E_USER_NOTICE,\struggle\Sle::SLE_SYS);
+            \struggle\Sle::getInstance()->hasInfo("初始化类{$sClassName},初始化参数".print_r($aOpt,true),E_USER_NOTICE,\struggle\Sle::SLE_SYS,\microtime(true));
             $oReocrd = new $sClassName($aOpt);
         }
         $this->hdRecord = $oReocrd;
@@ -69,13 +69,11 @@ class Debug extends Object{
      * @param unknown_type $iRunTime
      * @param unknown_type $bFromDebug
      */
-    public function trace($sLogInfo, $iLevel, $iRunTime=0, $bFromDebug=true){
+    public function trace($sLogInfo, $iLevel, $iForm=\struggle\Sle::SLE_APP, $iRunTime=0 ){
         if (APP_DEBUG){
             $fCurStampTime = microtime(true);
             $iRunTime = $iRunTime?round($iRunTime - BEGIN_TIME, 5):round($fCurStampTime-BEGIN_TIME,5);
-            $this->maBugInfo[]=array($sLogInfo,$iLevel,$iRunTime);
-            if ($bFromDebug)
-                \struggle\sysNote($sLogInfo,$iLevel, $fCurStampTime);
+            \struggle\Sle::getInstance()->hasInfo($sLogInfo,$iLevel, $iFrom, $fCurStampTime);
         }
     }
     

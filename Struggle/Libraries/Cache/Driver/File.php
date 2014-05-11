@@ -78,7 +78,8 @@ class File extends \struggle\libraries\Object{
     
     
     public function __destruct(){
-        @fclose($this->moHandle);
+        if (!is_null($this->moHandle))
+            @fclose($this->moHandle);
     }
 
 

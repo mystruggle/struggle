@@ -5,7 +5,7 @@ class Exception extends Object{
     
     public function errorHandle($errno, $errstr, $errfile, $errline, $errcontext){
         $sErrInfo = "{$errstr}\t{$errfile}\t第{$errline}行";
-        //\struggle\trace($sErrInfo, $errno);        
+        $this->registInfo($sErrInfo, $errno);        
     }
     
     
@@ -17,7 +17,7 @@ class Exception extends Object{
          */
         if($aError = error_get_last()){
             $sErrInfo = "fatal error:{$aError['message']}{$aError['file']} 第{$aError['line']}行";
-            \struggle\trace($sErrInfo, $aError['type']);
+            $this->registInfo($sErrInfo, $aError['type']);
         }
     }
     
@@ -25,8 +25,17 @@ class Exception extends Object{
     public static function exceptionHandle($e){
         $iCode = $e->getCode()?$e->getCode():E_USER_ERROR;
         $sMsg="exception message: {$e->getMessage()}  {$e->getFile()} 第{$e->getLine()}行";
-        \struggle\trace($sMsg, $iCode);
+        $this->registInfo($sMsg, $iCode);
     } 
+    
+    private function registInfo($sRegInfo,$sRegType){
+        if (APP_DEBUG){
+            $iFrom = \struggle\Sle::SLE_APP;
+            $iTime = microtime(true);
+            $oSle = \struggle\Sle::getInstance();
+            $oSle->hasInfo($sRegInfo,$sRegType,$iFrom,$iTime);
+        }
+    }
     
     
     

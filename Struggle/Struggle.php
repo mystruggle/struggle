@@ -496,7 +496,7 @@ class Sle{
         if (!$oSle->maLastError){
            
             //执行路由
-            new kkk ;
+            throw new \Exception('异常ceshi', E_ERROR);
             $oSle->route->exec();
             trigger_error('我的第一个测试2',E_USER_ERROR);
             //print_r($oSle->maInfo);
@@ -505,6 +505,11 @@ class Sle{
             //$oMonit=new libraries\Core\Dispatcher();
         }
 
+    }
+    
+    
+    private function flush(){
+        $aInfo = Sle::getInstance()->maInfo;
     }
     
     

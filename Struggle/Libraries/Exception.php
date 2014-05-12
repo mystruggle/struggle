@@ -10,7 +10,7 @@ class Exception extends Object{
     
     
     
-    public static function shutdownHandle(){
+    public function shutdownHandle(){
         /**
          * 调用register_shutdown_function 中的回调函数后，当前工作目录的相对路径起始根目录变成'/'
          * 如，调用前为/app/www/htdocs/，调用后为'/'
@@ -22,13 +22,13 @@ class Exception extends Object{
     }
     
     
-    public static function exceptionHandle($e){
+    public function exceptionHandle($e){
         $iCode = $e->getCode()?$e->getCode():E_USER_ERROR;
         $sMsg="exception message: {$e->getMessage()}  {$e->getFile()} 第{$e->getLine()}行";
         $this->registInfo($sMsg, $iCode);
     } 
     
-    private function registInfo($sRegInfo,$sRegType){
+    public function registInfo($sRegInfo,$sRegType){
         if (APP_DEBUG){
             $iFrom = \struggle\Sle::SLE_APP;
             $iTime = microtime(true);

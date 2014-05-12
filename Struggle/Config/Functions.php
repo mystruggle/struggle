@@ -23,7 +23,7 @@ function require_cache($sName){
             $sName = str_replace(array('\\','/'), DIRECTORY_SEPARATOR, $sName);
             $sName = basename($sName);
             $sFile = $sName.'.php';
-            require_once $sFile;
+            @require_once $sFile;
             $aFiles[$sKey] = true;
         }elseif (file_exists($sName) && is_readable($sName)){
             if (IS_WIN && basename(realpath($sName)) == basename($sName)){

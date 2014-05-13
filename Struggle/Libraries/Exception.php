@@ -33,7 +33,11 @@ class Exception extends Object{
             $iFrom = \struggle\Sle::SLE_APP;
             $iTime = microtime(true);
             $oSle = \struggle\Sle::getInstance();
-            $oSle->hasInfo($sRegInfo,$sRegType,$iFrom,$iTime);
+            $aRegInfo = array($sRegInfo,$sRegType,$iFrom,$iTime);
+            $oSle->hasInfo($aRegInfo[0],$aRegInfo[1],$aRegInfo[2],$aRegInfo[3]);
+            if ($this->bInitDebug){
+                $oSle->debug->trace($aRegInfo[0],$aRegInfo[1],$aRegInfo[2],$aRegInfo[3]);
+            }
         }
     }
     

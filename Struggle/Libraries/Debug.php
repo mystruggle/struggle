@@ -39,6 +39,12 @@ class Debug extends Object{
             $oReocrd = new $sClassName($aOpt);
         }
         $this->hdRecord = $oReocrd;
+        if (!$this->bInitDebug){
+            foreach (\struggle\Sle::getInstance()->getTraceInfo() as $aInfo){
+                $this->save($aInfo[0], $aInfo[1], $aInfo[2], $aInfo[3]);
+                $this->bInitDebug = true;
+            }
+        }
     }
     
     public function show(){
@@ -71,19 +77,21 @@ class Debug extends Object{
      */
     public function trace($sLogInfo, $iLevel, $iForm=\struggle\Sle::SLE_APP, $iRunTime=0 ){
         if (APP_DEBUG){
-            $fCurStampTime = microtime(true);
-            $iRunTime = $iRunTime?round($iRunTime - BEGIN_TIME, 5):round($fCurStampTime-BEGIN_TIME,5);
-            \struggle\Sle::getInstance()->hasInfo($sLogInfo,$iLevel, $iFrom, $fCurStampTime);
+            empty($iRunTime) && $iRunTime = microtime(true);
+            $iRunTime = $iRunTime?round($iRunTime - BEGIN_TIME, 5):round($iRunTime-BEGIN_TIME,5);
+            $aInfo = array($sLogInfo,$iLevel, $iFrom, $iRunTime);
+            \struggle\Sle::getInstance()->hasInfo($aInfo[0],$aInfo[1],$aInfo[2],$aInfo[3]);
+            $this->save($aInfo[0],$aInfo[1],$aInfo[2],$aInfo[3]);
         }
     }
     
-    public function test(){
-        print_r($this->maBugInfo);
+    private function save($mInfo,$iCode,$iType,$iExecTime){
+        $sTxt = date('Y-m-d H:i:s')."/".($iExecTime-BEGIN_TIME)."s";
+        $aInfoType = \struggle\getErrLevel($iCode);
+        $sTxt .="[{$aInfoType[1]} {$aInfoType[2]}]{$mInfo}".PHP_EOL;
+        if(!$this->hdRecord->write($sTxt))
+            throw new Exception('写入日志失败'.__FILE__.'第'.__LINE__.'行', E_USER_ERROR);    
     }
     
     
-    
-    
-    private function getErrStr(){
-    }
 }

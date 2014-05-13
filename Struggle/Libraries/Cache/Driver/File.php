@@ -30,10 +30,13 @@ class File extends \struggle\libraries\Object{
         }
         if (!$this->chkFileSize())
             return $bRlt;
-        $sContent = "[".date('Y-m-d H:i:s')."]{$sContent}".PHP_EOL;
+        //$sContent = "[".date('Y-m-d H:i:s')."]{$sContent}".PHP_EOL;
         @flock($this->moHandle, LOCK_EX);
-        @fwrite($this->moHandle, $sContent);
+        $mStat = @fwrite($this->moHandle, $sContent);
         @flock($this->moHandle, LOCK_UN);
+        if ($mStat === false)
+            return false;
+        return true;
     }
     
     private function chkFileSize(){

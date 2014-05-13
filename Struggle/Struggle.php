@@ -296,6 +296,10 @@ class Sle{
             }
         }
     }
+    
+    public function getTraceInfo(){
+        return Sle::getInstance()->maInfo;
+    }
 
     
     public static function run(){
@@ -496,7 +500,7 @@ class Sle{
         if (!$oSle->maLastError){
            
             //执行路由
-            throw new \Exception('异常ceshi', E_ERROR);
+            //throw new \Exception('异常ceshi', E_ERROR);
             $oSle->route->exec();
             trigger_error('我的第一个测试2',E_USER_ERROR);
             //print_r($oSle->maInfo);
@@ -507,14 +511,7 @@ class Sle{
 
     }
     
-    
-    private function flush(){
-        $aInfo = Sle::getInstance()->maInfo;
-    }
-    
-    
-
-    
+        
  
 
     

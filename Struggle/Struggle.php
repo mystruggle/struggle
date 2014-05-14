@@ -206,6 +206,7 @@ class Sle{
     private static $maAttr = array();
     private $maInfo  = array();
     private $maLastError = array();
+    private $bInitDebug  = false;
     const   SLE_ALL  = 1;
     const   SLE_SYS  = 2;
     const   SLE_APP  = 3;
@@ -247,6 +248,8 @@ class Sle{
         if(is_null($oDebug)){
             Sle::getInstance()->hasInfo("初始化类".__FUNCTION__, E_USER_NOTICE, Sle::SLE_SYS);
             Sle::getInstance()->debug = $oDebug = new libraries\Debug();
+            
+            $this->bInitDebug = true;
         }
         return Sle::getInstance()->debug;
     }
@@ -275,6 +278,10 @@ class Sle{
             $oSle->maInfo[] = $aInfo;
             if ($iType == E_USER_ERROR)
                 $oSle->maLastError = $aInfo;
+            if ($oSle->bInitDebug){
+                $oSle->
+            }
+            //救援模式
             if (strtolower(APP_DEBUG) == 'rescue'){
                 $aErr = getErrLevel($iType);
                 $shtml = "";
@@ -303,21 +310,29 @@ class Sle{
 
     
     public static function run(){
+        static $aHad = array();
         //系统初始化
         $oSle = Sle::getInstance();
         //加载核心函数文件
         $sFuncFile = CONF_PATH.'Functions.php';
+        $sKey = md5($sFuncFile);
         if (IS_WIN){
             if (file_exists($sFuncFile) && basename($sFuncFile) == basename(realpath($sFuncFile)) && is_readable($sFuncFile)){
-                $oSle->hasInfo("加载核心函数文件{$sFuncFile}", E_USER_NOTICE, Sle::SLE_SYS);
-                require_once $sFuncFile;
+                if (!isset($aHad[$sKey])){
+                    $oSle->hasInfo("加载核心函数文件{$sFuncFile}", E_USER_NOTICE, Sle::SLE_SYS);
+                    require $sFuncFile;
+                    $aHad[$sKey] = true;
+                }
             }else{
                 $oSle->hasInfo("文件不存在或该文件不可读{$sFuncFile}，请检查！",E_USER_ERROR, Sle::SLE_SYS);
             }
         }else{
             if (file_exists($sFuncFile) && is_readable($sFuncFile)){
-                $oSle->hasInfo("加载核心函数文件{$sFuncFile}", E_USER_NOTICE, Sle::SLE_SYS);
-                require_once $sFuncFile;
+                if (!isset($aHad[$sKey])){
+                    $oSle->hasInfo("加载核心函数文件{$sFuncFile}", E_USER_NOTICE, Sle::SLE_SYS);
+                    require_once $sFuncFile;
+                    $aHad[$sKey] = true;
+                }
             }else{
                 $oSle->hasInfo("文件不存在或该文件不可读{$sFuncFile}，请检查！",E_USER_ERROR, Sle::SLE_SYS);
             }
@@ -337,11 +352,15 @@ class Sle{
         
         //加载配置文件
         $sConfFile = CONF_PATH.'Config.php';
+        $sKey = md5($sConfFile);
         $aConfig = array();
         if (file_exists($sConfFile) && basename($sConfFile) == basename(realpath($sConfFile))){
             if (is_readable($sConfFile)){
-                $oSle->hasInfo("加载核心配置文件{$sConfFile}",E_USER_NOTICE, Sle::SLE_SYS);
-                $aConfig = include $sConfFile;
+                if (!isset($aHad[$sKey])){
+                    $oSle->hasInfo("加载核心配置文件{$sConfFile}",E_USER_NOTICE, Sle::SLE_SYS);
+                    $aConfig = include $sConfFile;
+                    $aHad[$sKey] = true;
+                }
             }else{
                 $oSle->hasInfo("文件不可读{$sConfFile}",E_USER_ERROR, Sle::SLE_SYS);
             }
@@ -352,10 +371,14 @@ class Sle{
         }
         
         $sAppConfFile = APP_CONF.'Config.php';
+        $sKey = md5($sAppConfFile);
         if (file_exists($sAppConfFile) && basename($sAppConfFile) == basename(realpath($sAppConfFile)) ){
             if (is_readable($sAppConfFile)){
-                $oSle->hasInfo("加载项目配置文件{$sAppConfFile}",E_USER_NOTICE, Sle::SLE_SYS);
-                $aConfig = array_merge($aConfig,include $sAppConfFile);
+                if (!isset($aHad[$sKey])){
+                    $oSle->hasInfo("加载项目配置文件{$sAppConfFile}",E_USER_NOTICE, Sle::SLE_SYS);
+                    $aConfig = array_merge($aConfig,include $sAppConfFile);
+                    $aHad[$sKey] = true;
+                }
             }else{
                 $oSle->hasInfo("文件不可读{$sAppConfFile}",E_USER_ERROR, Sle::SLE_SYS);
             }
@@ -370,7 +393,7 @@ class Sle{
                 $oSle->hasInfo("当前目录不可写{$sAppConfDir}，请检查权限",E_USER_ERROR, Sle::SLE_SYS);
             }
         }
-        if (!$oSle->maLastError && is_array($aConfig) && $aConfig){
+        if (!$oSle->maLastError && is_array($aConfig) && $aConfig && !isset($aHad[$sKey])){
             $oSle->hasInfo("所有配置参数值".print_r($aConfig,true),E_USER_NOTICE, Sle::SLE_SYS);
             foreach ($aConfig as $sKey=>$mVal){
                 C($sKey,$mVal);
@@ -380,25 +403,33 @@ class Sle{
         
         //加载语言配置文件
         $sLangFile = CONF_PATH.'zh-cn.php';
+        $sKey = md5($sLangFile);
         $aLang = array();
         if (file_exists($sLangFile) && basename($sLangFile) == basename(realpath($sLangFile)) && is_readable($sLangFile)){
-            $oSle->hasInfo("语言配置文件{$sLangFile}处理",E_USER_NOTICE, Sle::SLE_SYS);
-            $aLang = include_once $sLangFile;
+            if ($aHad[$sKey]){
+                $oSle->hasInfo("语言配置文件{$sLangFile}处理",E_USER_NOTICE, Sle::SLE_SYS);
+                $aLang = include_once $sLangFile;
+                $aHad[$sKey] = true;
+            }
         }else{
             $oSle->hasInfo("语言文件不存在{$sLangFile},文件名区分大小写",E_USER_ERROR, Sle::SLE_SYS);
         }
         if (!$oSle->maLastError){
             $sAppLangName = \C('LANG_NAME');
             $sAppLangFile = APP_CONF.$sAppLangName.'.php';
+            $sKey2 = md5($sLangFile);
             if (file_exists($sAppLangFile) && basename($sAppLangFile) == basename(realpath($sAppLangFile)) && is_readable($sAppLangFile)){
-                $oSle->hasInfo("用户语言配置文件{$sAppLangFile}处理",E_USER_NOTICE, Sle::SLE_SYS);
-                $aLang = array_merge($aLang,include_once $sAppLangFile);
+                if (isset($aHad[$sKey2]){
+                    $oSle->hasInfo("用户语言配置文件{$sAppLangFile}处理",E_USER_NOTICE, Sle::SLE_SYS);
+                    $aLang = array_merge($aLang,include_once $sAppLangFile);
+                    $aHad[$sKey2] = true;
+                }
             }else{
                 $oSle->hasInfo("语言文件不存在{$sAppLangFile},文件名区分大小写",E_USER_WARNING, Sle::SLE_SYS);
             }
         }
         
-        if (!empty($aLang) && !$oSle->maLastError){
+        if (!empty($aLang) && !$oSle->maLastError && !isset($aHad[$sKey])){
             foreach ($aLang as $key=>$val){
                 \L($key, $val);
             }

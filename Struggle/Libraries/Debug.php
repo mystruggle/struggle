@@ -39,12 +39,6 @@ class Debug extends Object{
             $oReocrd = new $sClassName($aOpt);
         }
         $this->hdRecord = $oReocrd;
-        if (!$this->bInitDebug){
-            foreach (\struggle\Sle::getInstance()->getTraceInfo() as $aInfo){
-                $this->save($aInfo[0], $aInfo[1], $aInfo[2], $aInfo[3]);
-                $this->bInitDebug = true;
-            }
-        }
     }
     
     public function show(){
@@ -75,7 +69,7 @@ class Debug extends Object{
      * @param unknown_type $iRunTime
      * @param unknown_type $bFromDebug
      */
-    public function trace($sLogInfo, $iLevel, $iForm=\struggle\Sle::SLE_APP, $iRunTime=0 ){
+    public function trace($sLogInfo, $iLevel, $iFrom=\struggle\Sle::SLE_APP, $iRunTime=0 ){
         if (APP_DEBUG){
             empty($iRunTime) && $iRunTime = microtime(true);
             $iRunTime = $iRunTime?round($iRunTime - BEGIN_TIME, 5):round($iRunTime-BEGIN_TIME,5);

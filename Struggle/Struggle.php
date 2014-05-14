@@ -279,7 +279,7 @@ class Sle{
             if ($iType == E_USER_ERROR)
                 $oSle->maLastError = $aInfo;
             if ($oSle->bInitDebug){
-                $oSle->
+                //$oSle->
             }
             //救援模式
             if (strtolower(APP_DEBUG) == 'rescue'){
@@ -304,167 +304,150 @@ class Sle{
         }
     }
     
-    public function getTraceInfo(){
-        return Sle::getInstance()->maInfo;
-    }
 
     
     public static function run(){
-        static $aHad = array();
-        //系统初始化
-        $oSle = Sle::getInstance();
-        //加载核心函数文件
-        $sFuncFile = CONF_PATH.'Functions.php';
-        $sKey = md5($sFuncFile);
-        if (IS_WIN){
-            if (file_exists($sFuncFile) && basename($sFuncFile) == basename(realpath($sFuncFile)) && is_readable($sFuncFile)){
-                if (!isset($aHad[$sKey])){
-                    $oSle->hasInfo("加载核心函数文件{$sFuncFile}", E_USER_NOTICE, Sle::SLE_SYS);
-                    require $sFuncFile;
-                    $aHad[$sKey] = true;
-                }
-            }else{
-                $oSle->hasInfo("文件不存在或该文件不可读{$sFuncFile}，请检查！",E_USER_ERROR, Sle::SLE_SYS);
-            }
-        }else{
-            if (file_exists($sFuncFile) && is_readable($sFuncFile)){
-                if (!isset($aHad[$sKey])){
+        if(is_null(self::$moHandle)){
+            //系统初始化
+            $oSle = Sle::getInstance();
+
+            //加载核心函数文件
+            $sFuncFile = CONF_PATH.'Functions.php';
+            if (IS_WIN){
+                if (file_exists($sFuncFile) && basename($sFuncFile) == basename(realpath($sFuncFile)) && is_readable($sFuncFile)){
                     $oSle->hasInfo("加载核心函数文件{$sFuncFile}", E_USER_NOTICE, Sle::SLE_SYS);
                     require_once $sFuncFile;
-                    $aHad[$sKey] = true;
+                }else{
+                    $oSle->hasInfo("文件不存在或该文件不可读{$sFuncFile}，请检查！",E_USER_ERROR, Sle::SLE_SYS);
                 }
             }else{
-                $oSle->hasInfo("文件不存在或该文件不可读{$sFuncFile}，请检查！",E_USER_ERROR, Sle::SLE_SYS);
-            }
-        }
-        
-        //建立目录
-        $aBuildAppDir = array(APP_ROOT, APP_CACHE, APP_RUNTIME, APP_BACKEND, APP_CONF, APP_LIB, APP_THEME, APP_THEME.'Default/');
-        foreach ($aBuildAppDir as $sDir){
-            if (!is_dir($sDir)){
-                if (buildDir($sDir)){
-                    $oSle->hasInfo("建立目录{$sDir}", E_USER_NOTICE, Sle::SLE_SYS);
+                if (file_exists($sFuncFile) && is_readable($sFuncFile)){
+                    $oSle->hasInfo("加载核心函数文件{$sFuncFile}", E_USER_NOTICE, Sle::SLE_SYS);
+                    require_once $sFuncFile;
                 }else{
-                    $oSle->hasInfo("建立目录{$sDir}不成功",E_USER_ERROR, Sle::SLE_SYS);
+                    $oSle->hasInfo("文件不存在或该文件不可读{$sFuncFile}，请检查！",E_USER_ERROR, Sle::SLE_SYS);
                 }
             }
-        }
-        
-        //加载配置文件
-        $sConfFile = CONF_PATH.'Config.php';
-        $sKey = md5($sConfFile);
-        $aConfig = array();
-        if (file_exists($sConfFile) && basename($sConfFile) == basename(realpath($sConfFile))){
-            if (is_readable($sConfFile)){
-                if (!isset($aHad[$sKey])){
+            
+            //建立目录
+            $aBuildAppDir = array(APP_ROOT, APP_CACHE, APP_RUNTIME, APP_BACKEND, APP_CONF, APP_LIB, APP_THEME, APP_THEME.'Default/');
+            foreach ($aBuildAppDir as $sDir){
+                if (!is_dir($sDir)){
+                    if (buildDir($sDir)){
+                        $oSle->hasInfo("建立目录{$sDir}", E_USER_NOTICE, Sle::SLE_SYS);
+                    }else{
+                        $oSle->hasInfo("建立目录{$sDir}不成功",E_USER_ERROR, Sle::SLE_SYS);
+                    }
+                }
+            }
+            
+            //加载配置文件
+            $sConfFile = CONF_PATH.'Config.php';
+            $aConfig = array();
+            if (file_exists($sConfFile) && basename($sConfFile) == basename(realpath($sConfFile))){
+                if (is_readable($sConfFile)){
                     $oSle->hasInfo("加载核心配置文件{$sConfFile}",E_USER_NOTICE, Sle::SLE_SYS);
                     $aConfig = include $sConfFile;
-                    $aHad[$sKey] = true;
+                }else{
+                    $oSle->hasInfo("文件不可读{$sConfFile}",E_USER_ERROR, Sle::SLE_SYS);
+                }
+                
+                
+            }else {
+                $oSle->hasInfo("文件不存在{$sConfFile},区分大小写",E_USER_ERROR, Sle::SLE_SYS);
+            }
+            
+            $sAppConfFile = APP_CONF.'Config.php';
+            if (file_exists($sAppConfFile) && basename($sAppConfFile) == basename(realpath($sAppConfFile)) ){
+                if (is_readable($sAppConfFile)){
+                        $oSle->hasInfo("加载项目配置文件{$sAppConfFile}",E_USER_NOTICE, Sle::SLE_SYS);
+                        $aConfig = array_merge($aConfig,include $sAppConfFile);
+                }else{
+                    $oSle->hasInfo("文件不可读{$sAppConfFile}",E_USER_ERROR, Sle::SLE_SYS);
                 }
             }else{
-                $oSle->hasInfo("文件不可读{$sConfFile}",E_USER_ERROR, Sle::SLE_SYS);
+                $sAppConfDir = dirname($sAppConfFile);
+                if (is_writeable($sAppConfDir)){
+                    $hdFile = fopen($sAppConfFile, 'wb+');
+                    fwrite($hdFile, "<?php\r\n//项目配置文件\r\nreturn array(\r\n);");
+                    fclose($hdFile);
+                    $oSle->hasInfo("自动创建用户项目配置文件{$sAppConfFile}",E_USER_NOTICE, Sle::SLE_SYS);
+                }else{
+                    $oSle->hasInfo("当前目录不可写{$sAppConfDir}，请检查权限",E_USER_ERROR, Sle::SLE_SYS);
+                }
+            }
+            if (!$oSle->maLastError && is_array($aConfig) && $aConfig){
+                $oSle->hasInfo("所有配置参数值".print_r($aConfig,true),E_USER_NOTICE, Sle::SLE_SYS);
+                foreach ($aConfig as $sKey=>$mVal){
+                    C($sKey,$mVal);
+                }
             }
             
             
-        }else {
-            $oSle->hasInfo("文件不存在{$sConfFile},区分大小写",E_USER_ERROR, Sle::SLE_SYS);
-        }
-        
-        $sAppConfFile = APP_CONF.'Config.php';
-        $sKey = md5($sAppConfFile);
-        if (file_exists($sAppConfFile) && basename($sAppConfFile) == basename(realpath($sAppConfFile)) ){
-            if (is_readable($sAppConfFile)){
-                if (!isset($aHad[$sKey])){
-                    $oSle->hasInfo("加载项目配置文件{$sAppConfFile}",E_USER_NOTICE, Sle::SLE_SYS);
-                    $aConfig = array_merge($aConfig,include $sAppConfFile);
-                    $aHad[$sKey] = true;
-                }
+            //加载语言配置文件
+            $sLangFile = CONF_PATH.'zh-cn.php';
+            $aLang = array();
+            if (file_exists($sLangFile) && basename($sLangFile) == basename(realpath($sLangFile)) && is_readable($sLangFile)){
+                    $oSle->hasInfo("语言配置文件{$sLangFile}处理",E_USER_NOTICE, Sle::SLE_SYS);
+                    $aLang = include_once $sLangFile;
             }else{
-                $oSle->hasInfo("文件不可读{$sAppConfFile}",E_USER_ERROR, Sle::SLE_SYS);
+                $oSle->hasInfo("语言文件不存在{$sLangFile},文件名区分大小写",E_USER_ERROR, Sle::SLE_SYS);
             }
-        }else{
-            $sAppConfDir = dirname($sAppConfFile);
-            if (is_writeable($sAppConfDir)){
-                $hdFile = fopen($sAppConfFile, 'wb+');
-                fwrite($hdFile, "<?php\r\n//项目配置文件\r\nreturn array(\r\n);");
-                fclose($hdFile);
-                $oSle->hasInfo("自动创建用户项目配置文件{$sAppConfFile}",E_USER_NOTICE, Sle::SLE_SYS);
-            }else{
-                $oSle->hasInfo("当前目录不可写{$sAppConfDir}，请检查权限",E_USER_ERROR, Sle::SLE_SYS);
-            }
-        }
-        if (!$oSle->maLastError && is_array($aConfig) && $aConfig && !isset($aHad[$sKey])){
-            $oSle->hasInfo("所有配置参数值".print_r($aConfig,true),E_USER_NOTICE, Sle::SLE_SYS);
-            foreach ($aConfig as $sKey=>$mVal){
-                C($sKey,$mVal);
-            }
-        }
-        
-        
-        //加载语言配置文件
-        $sLangFile = CONF_PATH.'zh-cn.php';
-        $sKey = md5($sLangFile);
-        $aLang = array();
-        if (file_exists($sLangFile) && basename($sLangFile) == basename(realpath($sLangFile)) && is_readable($sLangFile)){
-            if ($aHad[$sKey]){
-                $oSle->hasInfo("语言配置文件{$sLangFile}处理",E_USER_NOTICE, Sle::SLE_SYS);
-                $aLang = include_once $sLangFile;
-                $aHad[$sKey] = true;
-            }
-        }else{
-            $oSle->hasInfo("语言文件不存在{$sLangFile},文件名区分大小写",E_USER_ERROR, Sle::SLE_SYS);
-        }
-        if (!$oSle->maLastError){
-            $sAppLangName = \C('LANG_NAME');
-            $sAppLangFile = APP_CONF.$sAppLangName.'.php';
-            $sKey2 = md5($sLangFile);
-            if (file_exists($sAppLangFile) && basename($sAppLangFile) == basename(realpath($sAppLangFile)) && is_readable($sAppLangFile)){
-                if (isset($aHad[$sKey2]){
+            if (!$oSle->maLastError){
+                $sAppLangName = \C('LANG_NAME');
+                $sAppLangFile = APP_CONF.$sAppLangName.'.php';
+                if (file_exists($sAppLangFile) && basename($sAppLangFile) == basename(realpath($sAppLangFile)) && is_readable($sAppLangFile)){
                     $oSle->hasInfo("用户语言配置文件{$sAppLangFile}处理",E_USER_NOTICE, Sle::SLE_SYS);
                     $aLang = array_merge($aLang,include_once $sAppLangFile);
-                    $aHad[$sKey2] = true;
-                }
-            }else{
-                $oSle->hasInfo("语言文件不存在{$sAppLangFile},文件名区分大小写",E_USER_WARNING, Sle::SLE_SYS);
-            }
-        }
-        
-        if (!empty($aLang) && !$oSle->maLastError && !isset($aHad[$sKey])){
-            foreach ($aLang as $key=>$val){
-                \L($key, $val);
-            }
-        }
-        
-        
-        
-        //加载核心文件
-        if (!$oSle->maLastError){
-            $aCoreFile = array(
-                LIB_PATH.'Object.php',
-                // LIB_PATH.'Debug.php',
-                LIB_PATH.'Exception.php',
-                // LIB_PATH.'Log.php',
-                LIB_PATH.'Core/Route.php',
-                LIB_PATH.'Core/Controll.php',
-                LIB_PATH.'Core/View.php',
-            );
-            foreach ($aCoreFile as $sFile){
-                if (require_cache($sFile)){
-                    $oSle->hasInfo("加载核心文件{$sFile}", E_USER_NOTICE, Sle::SLE_SYS);
                 }else{
-                    $oSle->hasInfo("文件不存在或不可读{$sFile},请检查文件", E_USER_ERROR, Sle::SLE_SYS);
+                    $oSle->hasInfo("语言文件不存在{$sAppLangFile},文件名区分大小写",E_USER_WARNING, Sle::SLE_SYS);
                 }
             }
-        }
-        
-        
-        //设置自动包含路径
-        if (!$oSle->maLastError){
-            $sDir = C('AUTOLOAD_DIR');
-            $sPath = '';
-            if (strpos($sDir, ',') !== false){
-                $aDir = explode(',', $sDir);
-                foreach ($aDir as $sDir){
+            
+            if (!empty($aLang) && !$oSle->maLastError && !isset($aHad[$sKey])){
+                foreach ($aLang as $key=>$val){
+                    \L($key, $val);
+                }
+            }
+            
+            
+            
+            //加载核心文件
+            if (!$oSle->maLastError){
+                $aCoreFile = array(
+                    LIB_PATH.'Object.php',
+                    // LIB_PATH.'Debug.php',
+                    LIB_PATH.'Exception.php',
+                    // LIB_PATH.'Log.php',
+                    LIB_PATH.'Core/Route.php',
+                    LIB_PATH.'Core/Controll.php',
+                    LIB_PATH.'Core/View.php',
+                );
+                foreach ($aCoreFile as $sFile){
+                    if (require_cache($sFile)){
+                        $oSle->hasInfo("加载核心文件{$sFile}", E_USER_NOTICE, Sle::SLE_SYS);
+                    }else{
+                        $oSle->hasInfo("文件不存在或不可读{$sFile},请检查文件", E_USER_ERROR, Sle::SLE_SYS);
+                    }
+                }
+            }
+            
+            
+            //设置自动包含路径
+            if (!$oSle->maLastError){
+                $sDir = C('AUTOLOAD_DIR');
+                $sPath = '';
+                if (strpos($sDir, ',') !== false){
+                    $aDir = explode(',', $sDir);
+                    foreach ($aDir as $sDir){
+                        $sDir = APP_ROOT.$sDir;
+                        if (is_dir($sDir)){
+                            $sPath .= $sDir.PATH_SEPARATOR;
+                        }else{
+                            $oSle->hasInfo("{$sDir}不是目录，请检查",E_USER_ERROR, Sle::SLE_SYS);
+                        }
+                    }
+                }else{
                     $sDir = APP_ROOT.$sDir;
                     if (is_dir($sDir)){
                         $sPath .= $sDir.PATH_SEPARATOR;
@@ -472,63 +455,55 @@ class Sle{
                         $oSle->hasInfo("{$sDir}不是目录，请检查",E_USER_ERROR, Sle::SLE_SYS);
                     }
                 }
-            }else{
-                $sDir = APP_ROOT.$sDir;
-                if (is_dir($sDir)){
-                    $sPath .= $sDir.PATH_SEPARATOR;
+            }
+
+            //分开写，以判断是否进行自动包含
+            if (!$oSle->maLastError){
+                //$sPath .= get_include_path();
+                if (set_include_path($sPath)){
+                    $oSle->hasInfo("设置{$sPath}自动包含目录",E_USER_NOTICE, Sle::SLE_SYS);
                 }else{
-                    $oSle->hasInfo("{$sDir}不是目录，请检查",E_USER_ERROR, Sle::SLE_SYS);
+                    $oSle->hasInfo("设置{$sPath}自动包含目录失败",E_USER_ERROR, Sle::SLE_SYS);
+                }
+            }else{
+                $oSle->hasInfo("由于程序错误，设置自动包含目录失败",E_USER_ERROR, Sle::SLE_SYS);
+            }
+            
+            
+            //自定义自动包含句柄
+            if (!$oSle->maLastError){
+                $sFuncName = '\autoLoad';
+                if (spl_autoload_register($sFuncName)){
+                    $oSle->hasInfo("自定义自动包含处理函数{$sFuncName}",E_USER_NOTICE, Sle::SLE_SYS);
+                }else{
+                    $oSle->hasInfo("自定义自动包含处理函数{$sFuncName}失败",E_USER_ERROR, Sle::SLE_SYS);
                 }
             }
-        }
-
-        //分开写，以判断是否进行自动包含
-        if (!$oSle->maLastError){
-            //$sPath .= get_include_path();
-            if (set_include_path($sPath)){
-                $oSle->hasInfo("设置{$sPath}自动包含目录",E_USER_NOTICE, Sle::SLE_SYS);
-            }else{
-                $oSle->hasInfo("设置{$sPath}自动包含目录失败",E_USER_ERROR, Sle::SLE_SYS);
-            }
-        }else{
-            $oSle->hasInfo("由于程序错误，设置自动包含目录失败",E_USER_ERROR, Sle::SLE_SYS);
-        }
-        
-        
-        //自定义自动包含句柄
-        if (!$oSle->maLastError){
-            $sFuncName = '\autoLoad';
-            if (spl_autoload_register($sFuncName)){
-                $oSle->hasInfo("自定义自动包含处理函数{$sFuncName}",E_USER_NOTICE, Sle::SLE_SYS);
-            }else{
-                $oSle->hasInfo("自定义自动包含处理函数{$sFuncName}失败",E_USER_ERROR, Sle::SLE_SYS);
-            }
-        }
-        
-        //分开写，以判断是否进行自动包含
-        if(!$oSle->maLastError){
-            //自定义句柄
-            $sClassName = '\struggle\libraries\Exception';
-            $oException = new $sClassName();
-            //自定义脚本停止执行前执行的函数
-            $sFuncName = 'shutdownHandle';
-            $oSle->hasInfo("自定义shutdown处理句柄{$sClassName}::{$sFuncName}",E_USER_NOTICE, Sle::SLE_SYS);
-            register_shutdown_function(array($oException,$sFuncName));
             
-            //自定义异常处理句柄
-            $sFuncName = 'exceptionHandle';
-            $oSle->hasInfo("自定义异常处理句柄{$sClassName}::{$sFuncName}",E_USER_NOTICE, Sle::SLE_SYS);
-            set_exception_handler(array($oException,$sFuncName));
-            
-            //自定义错误处理句柄
-            $sFuncName = 'errorHandle';
-            $oSle->hasInfo("自定义错误处理句柄{$sClassName}::{$sFuncName}",E_USER_NOTICE, Sle::SLE_SYS);
-            set_error_handler(array($oException,$sFuncName),E_ALL | E_STRICT);
+            //分开写，以判断是否进行自动包含
+            if(!$oSle->maLastError){
+                //自定义句柄
+                $sClassName = '\struggle\libraries\Exception';
+                $oException = new $sClassName();
+                //自定义脚本停止执行前执行的函数
+                $sFuncName = 'shutdownHandle';
+                $oSle->hasInfo("自定义shutdown处理句柄{$sClassName}::{$sFuncName}",E_USER_NOTICE, Sle::SLE_SYS);
+                register_shutdown_function(array($oException,$sFuncName));
+                
+                //自定义异常处理句柄
+                $sFuncName = 'exceptionHandle';
+                $oSle->hasInfo("自定义异常处理句柄{$sClassName}::{$sFuncName}",E_USER_NOTICE, Sle::SLE_SYS);
+                set_exception_handler(array($oException,$sFuncName));
+                
+                //自定义错误处理句柄
+                $sFuncName = 'errorHandle';
+                $oSle->hasInfo("自定义错误处理句柄{$sClassName}::{$sFuncName}",E_USER_NOTICE, Sle::SLE_SYS);
+                set_error_handler(array($oException,$sFuncName),E_ALL | E_STRICT);
+            }
+
         }
-
-
         //实例化类
-        if (!$oSle->maLastError){
+        if (!self::$moHandle->maLastError){
            
             //执行路由
             //throw new \Exception('异常ceshi', E_ERROR);
@@ -549,6 +524,7 @@ class Sle{
 }
 
 //系统开始运行
+Sle::run();
 Sle::run();
 
 

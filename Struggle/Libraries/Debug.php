@@ -74,7 +74,7 @@ class Debug extends Object{
             empty($iRunTime) && $iRunTime = microtime(true);
             $iRunTime = $iRunTime?round($iRunTime - BEGIN_TIME, 5):round($iRunTime-BEGIN_TIME,5);
             $aInfo = array($sLogInfo,$iLevel, $iFrom, $iRunTime);
-            \struggle\Sle::getInstance()->hasInfo($aInfo[0],$aInfo[1],$aInfo[2],$aInfo[3]);
+            //\struggle\Sle::getInstance()->hasInfo($aInfo[0],$aInfo[1],$aInfo[2],$aInfo[3]);
             $this->save($aInfo[0],$aInfo[1],$aInfo[2],$aInfo[3]);
         }
     }

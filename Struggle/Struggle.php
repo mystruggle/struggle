@@ -207,6 +207,7 @@ class Sle{
     private $maInfo  = array();
     private $maLastError = array();
     private $bInitDebug  = false;
+    const   SLE_NONE = 0;
     const   SLE_ALL  = 1;
     const   SLE_SYS  = 2;
     const   SLE_APP  = 3;
@@ -227,7 +228,9 @@ class Sle{
     
     public function __get($sName){
         if (in_array($sName,self::$maAttr)){
-            if (method_exists($this, $sName)){
+            if (isset($this->$sName) && $this->$sName){
+                return $this->$sName;
+            }elseif(method_exists($this, $sName)){
                 return $this->$sName();
             }
         }
@@ -237,30 +240,36 @@ class Sle{
     private function route(){
         static $oRoute = null;
         if(is_null($oRoute)){
-            Sle::getInstance()->hasInfo("初始化类".__FUNCTION__, E_USER_NOTICE, Sle::SLE_SYS);
-            Sle::getInstance()->route = $oRoute = new libraries\Route($_SERVER['REQUEST_URI']);
+            $this->hasInfo("初始化类".__FUNCTION__, E_USER_NOTICE, Sle::SLE_SYS);
+            $this->route = $oRoute = new libraries\Route($_SERVER['REQUEST_URI']);
         }
-        return Sle::getInstance()->route;
+        return $this->route;
     }
 
     private function debug(){
         static $oDebug = null;
         if(is_null($oDebug)){
-            Sle::getInstance()->hasInfo("初始化类".__FUNCTION__, E_USER_NOTICE, Sle::SLE_SYS);
-            Sle::getInstance()->debug = $oDebug = new libraries\Debug();
-            
-            $this->bInitDebug = true;
+            $this->hasInfo("初始化类".__FUNCTION__, E_USER_NOTICE, Sle::SLE_SYS);
+            $this->debug = $oDebug = new libraries\Debug();
+            if (!$this->bInitDebug){
+                $aTraceInfo = $this->maInfo;
+                $this->maInfo = array();
+                foreach ($aTraceInfo as $info){//echo '1<br>';
+                    $oDebug->trace($info[0],$info[1],$info[2],$info[3]);
+                }//echo '2<br>';
+                $this->bInitDebug = true;
+            }
         }
-        return Sle::getInstance()->debug;
+        return $this->debug;
     }
     
     private function log(){
         static $oLog = null;
         if(is_null($oLog)){
-            Sle::getInstance()->hasInfo("初始化类".__FUNCTION__, E_USER_NOTICE, Sle::SLE_SYS);
-            Sle::getInstance()->log = $oLog = new libraries\Log();
+            $this->hasInfo("初始化类".__FUNCTION__, E_USER_NOTICE, Sle::SLE_SYS);
+            $this->log = $oLog = new libraries\Log();
         }
-        return Sle::getInstance()->log;
+        return $this->log;
     }
     
     /**
@@ -270,16 +279,15 @@ class Sle{
      * @param integer      $iFrom    信息类型，默认SLE_SYS,说明是系统日志还是用户日志
      * @param integer      $iRunTime 程序执行当前时间戳
      */
-    public function hasInfo($sInfo,$iType,$iFrom = Sle::SLE_APP, $iRunTime = 0){
+    public function hasInfo($sInfo,$iType,$iFrom = Sle::SLE_APP, $iRunTime = 0){//static $ii=0;
         if (APP_DEBUG){
-            $oSle = self::getInstance();
             empty($iRunTime) && $iRunTime = microtime(true);
             $aInfo = array($sInfo ,$iType, $iFrom, $iRunTime);
-            $oSle->maInfo[] = $aInfo;
+            $this->maInfo[] = $aInfo;
             if ($iType == E_USER_ERROR)
-                $oSle->maLastError = $aInfo;
-            if ($oSle->bInitDebug){
-                //$oSle->
+                $this->maLastError = $aInfo;
+            if ($this->bInitDebug){//debug_print_backtrace();echo "<br><br>+----------------------------------------------------+<br><br>";$ii == 3&& die();$ii++;
+                $this->debug->trace($sInfo,$iType,$iFrom,$iRunTime);
             }
             //救援模式
             if (strtolower(APP_DEBUG) == 'rescue'){
@@ -507,7 +515,7 @@ class Sle{
            
             //执行路由
             //throw new \Exception('异常ceshi', E_ERROR);
-            $oSle->route->exec();
+            $oSle->route->exec();echo '1<br>';
             trigger_error('我的第一个测试2',E_USER_ERROR);
             //print_r($oSle->maInfo);
             //显示页面调试信息
@@ -524,7 +532,6 @@ class Sle{
 }
 
 //系统开始运行
-Sle::run();
 Sle::run();
 
 

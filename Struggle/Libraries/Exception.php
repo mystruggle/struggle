@@ -35,9 +35,6 @@ class Exception extends Object{
             $oSle = \struggle\Sle::getInstance();
             $aRegInfo = array($sRegInfo,$sRegType,$iFrom,$iTime);
             $oSle->hasInfo($aRegInfo[0],$aRegInfo[1],$aRegInfo[2],$aRegInfo[3]);
-            if (parent::$bInitDebug){
-                $oSle->debug->trace($aRegInfo[0],$aRegInfo[1],$aRegInfo[2],$aRegInfo[3]);
-            }
         }
     }
     

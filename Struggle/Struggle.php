@@ -206,7 +206,9 @@ class Sle{
     private static $maAttr = array();
     private $maInfo  = array();
     private $maLastError = array();
-    private $bInitDebug  = false;
+    private $mDebug     = '';
+    private $mLog       = '';
+    private $mRoute     = '';
     const   SLE_NONE = 0;
     const   SLE_ALL  = 1;
     const   SLE_SYS  = 2;
@@ -216,60 +218,59 @@ class Sle{
     public static function getInstance(){
         if (is_null(self::$moHandle)){
             self::$moHandle = new \struggle\Sle();
-            self::$maAttr = array('log','debug','route');
         }
         return self::$moHandle;
     }
     
+    /*
     public function __set($sName,$mVal){
         if (in_array($sName,self::$maAttr))
             self::$moHandle->$sName = $mVal;
     }
+    */
     
     public function __get($sName){
-        if (in_array($sName,self::$maAttr)){
-            if (isset($this->$sName) && $this->$sName){
-                return $this->$sName;
-            }elseif(method_exists($this, $sName)){
+        $sAttrName = "m{$sName}";
+        if (isset($this->$sAttrName)){
+            if ($this->$sAttrName){
+                return $this->$sAttrName;
+            }elseif (method_exists($this, $sName)){
                 return $this->$sName();
             }
+        }else{
+            $this->hasInfo("访问一个不存在的属性{$sName}", E_USER_ERROR, Sle::SLE_SYS);
         }
-        return null;
+        return false;
     }
     
-    private function route(){
+    private function Route(){
         static $oRoute = null;
         if(is_null($oRoute)){
             $this->hasInfo("初始化类".__FUNCTION__, E_USER_NOTICE, Sle::SLE_SYS);
-            $this->route = $oRoute = new libraries\Route($_SERVER['REQUEST_URI']);
+            $this->Route = $oRoute = new libraries\Route($_SERVER['REQUEST_URI']);
         }
-        return $this->route;
+        return $this->Route;
     }
 
-    private function debug(){
+    private function Debug(){
         static $oDebug = null;
         if(is_null($oDebug)){
             $this->hasInfo("初始化类".__FUNCTION__, E_USER_NOTICE, Sle::SLE_SYS);
-            $this->debug = $oDebug = new libraries\Debug();
-            if (!$this->bInitDebug){
-                $aTraceInfo = $this->maInfo;
-                $this->maInfo = array();
-                foreach ($aTraceInfo as $info){//echo '1<br>';
-                    $oDebug->trace($info[0],$info[1],$info[2],$info[3]);
-                }//echo '2<br>';
-                $this->bInitDebug = true;
+            $this->Debug = $oDebug = new libraries\Debug();
+            foreach ($this->maInfo as $info){
+                $oDebug->save($info[0],$info[1],$info[2],$info[3]);
             }
         }
-        return $this->debug;
+        return $this->Debug;
     }
     
-    private function log(){
+    private function Log(){
         static $oLog = null;
         if(is_null($oLog)){
             $this->hasInfo("初始化类".__FUNCTION__, E_USER_NOTICE, Sle::SLE_SYS);
-            $this->log = $oLog = new libraries\Log();
+            $this->Log = $oLog = new libraries\Log();
         }
-        return $this->log;
+        return $this->Log;
     }
     
     /**
@@ -279,16 +280,13 @@ class Sle{
      * @param integer      $iFrom    信息类型，默认SLE_SYS,说明是系统日志还是用户日志
      * @param integer      $iRunTime 程序执行当前时间戳
      */
-    public function hasInfo($sInfo,$iType,$iFrom = Sle::SLE_APP, $iRunTime = 0){//static $ii=0;
+    public function hasInfo($sInfo,$iType,$iFrom = Sle::SLE_APP, $iRunTime = 0){
         if (APP_DEBUG){
             empty($iRunTime) && $iRunTime = microtime(true);
             $aInfo = array($sInfo ,$iType, $iFrom, $iRunTime);
             $this->maInfo[] = $aInfo;
             if ($iType == E_USER_ERROR)
                 $this->maLastError = $aInfo;
-            if ($this->bInitDebug){//debug_print_backtrace();echo "<br><br>+----------------------------------------------------+<br><br>";$ii == 3&& die();$ii++;
-                $this->debug->trace($sInfo,$iType,$iFrom,$iRunTime);
-            }
             //救援模式
             if (strtolower(APP_DEBUG) == 'rescue'){
                 $aErr = getErrLevel($iType);
@@ -412,7 +410,7 @@ class Sle{
                 }
             }
             
-            if (!empty($aLang) && !$oSle->maLastError && !isset($aHad[$sKey])){
+            if (!empty($aLang) && !$oSle->maLastError){
                 foreach ($aLang as $key=>$val){
                     \L($key, $val);
                 }
@@ -514,9 +512,11 @@ class Sle{
         if (!self::$moHandle->maLastError){
            
             //执行路由
-            //throw new \Exception('异常ceshi', E_ERROR);
-            $oSle->route->exec();echo '1<br>';
-            trigger_error('我的第一个测试2',E_USER_ERROR);
+            $oSle->Route->exec();
+            self::$moHandle->Debug->trace('我的第一个测试2',E_USER_ERROR);
+            \L('e.f','我的吗啊');
+            echo \L('e.f');
+            self::$moHandle->Debug->show();
             //print_r($oSle->maInfo);
             //显示页面调试信息
             //self::$moHandle->moBug->show();
@@ -572,69 +572,7 @@ function trace($sTraceInfo,$iCode){
 
 
 
-/**
- * 系统日志记录函数
- * @param string $sMsg   错误信息
- * @param int    $iErrno 错误代码
- * @param float  $iNoteTime 系统执行到该代码所花费的时间戳，小数点后为微秒
- */
-function sysNote($sMsg,$iErrno, $iNoteTime){
-    $sLogBasePath='';
-    $sLogPath='';
-    $sLogName='';
-    $sLogExt='';
-    $sLogMaxSize='';
-    $iMaxNum  = 5;//最大重命名个数
-    if (function_exists('struggle\C')){
-        C('LOG_PATH') && $sLogPath = C('LOG_PATH');
-        C('LOG_NAME') && $sLogName = C('LOG_NAME');
-        C('LOG_EXT') && $sLogExt = C('LOG_EXT');
-        C('LOG_MAX_SIZE') && $sLogMaxSize = C('LOG_MAX_SIZE');
-        C('LOG_BASE_PATH') && $sLogBasePath = C('LOG_BASE_PATH');
-        
-    }
-    //dump($sLogExt ,$sLogMaxSize ,$sLogName ,$sLogPath ,$sLogBasePath);  TODO 调试
-    //echo "<br>||||||||||||<br>";
-    if (!$sLogExt || !$sLogMaxSize || !$sLogName || !$sLogPath || !$sLogBasePath){
-        $sLogBasePath = APP_CACHE;
-        $sLogPath = 'Runtime/';
-        $sLogName = 'sys';
-        $sLogExt  = 'log';
-        $sLogMaxSize  = 2000;  //kb
-    }
-    $sLogFilePath=$sLogBasePath.$sLogPath;
-    if (!is_dir($sLogFilePath)){
-        if (!mkdir($sLogFilePath, 755,true)){
-            die("目录({$sLogFilePath})创建失败，请检查权限");
-        }
-    }
-    $sLogFile=$sLogFilePath.$sLogName.'.'.$sLogExt;
-    if (is_file($sLogFile) && (filesize($sLogFile))/1024 >= $sLogMaxSize){
-        for($i=$iMaxNum; $i>0 ;$i--){
-            $sCurReFile=$sLogFile.".{$i}";
-            if (is_file($sCurReFile)){
-                if ($i == $iMaxNum){
-                    @unlink($sCurReFile);
-                }else {
-                    if(!rename($sCurReFile, $sLogFile.'.'.($i+1)))
-                        die("无法重命名文件,{$sCurReFile}");
-                }
-            }
-        }
-        if(is_file($sLogFile) && !rename($sLogFile, $sLogFile.'.1'))
-            die("无法重命名文件,{$sLogFile}");        
-    }
-    if (!($hdFile=fopen($sLogFile,'ab+')))
-        die("文件({$sLogFile})无法创建，请检查权限");
-    $aErrInfo = getErrLevel($iErrno);
-    $sMsg =date('Y-m-d H:i:s',$iNoteTime)."/".($iNoteTime-BEGIN_TIME)." [SYSTEM {$aErrInfo[1]} {$iErrno}] {$sMsg}".PHP_EOL;
 
-    flock($hdFile, LOCK_EX);
-    fwrite($hdFile, $sMsg);
-    flock($hdFile, LOCK_UN);
-    //static与fclose不能同时使用
-    fclose($hdFile);
-}
 
 
 

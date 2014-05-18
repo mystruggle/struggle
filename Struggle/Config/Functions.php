@@ -106,18 +106,80 @@ function L($sName, $mVal = null){
             $aLang[$sName] = $mVal;
         }else{
             $aName = explode('.', $sName);
-            $sArrName = '$aConfig';
-            $sArr = '';
-            for ($i=0;$i<count($aName);$i++){
-                $aName[$i] = strtolower($aName[$i]);
-                $sArr .="['{$aName[$i]}']";
+            $temp = '';
+            $bExist = false;
+            for ($i=0;$i < count($aName);$i++){
+                if ($i == 0){
+                    if (isset($aLang[$aName[$i]]))
+                        $temp = $aLang[$aName[$i]];
+                    else 
+                        break;
+                }else{
+                    if (isset($temp[$aName[$i]]))
+                        $temp = $temp[$aName[$i]];
+                    else
+                        break;                    
+                }
+                if ($i+1 == count($aName))
+                    $bExist = true;
             }
-            if (is_null($mVal)){
-                return eval('return '.$sArrName.$sArr.';');
-            }else{
-                eval($sArrName.$sArr.'='.(is_string($mVal)?"'{$mVal}'":$mVal).';');
+            if ($bExist){
+                return $temp;
+            }else {
+                $sArrKey = '';
+                $sCloseTag = '';
+                foreach ($aName as $key){
+                    $sArrKey .= '{"'.$key.'":';
+                    $sCloseTag .= '}';
+                }
+                $temp = "{$sArrKey}\"{$mVal}\"{$sCloseTag}";
+                $temp = json_decode($temp,true);
+                $aLang[key($temp)] = current($temp);
             }
         }
+    }
+}
+
+/**
+ * 字符串点格式转换成数组元素
+ * @param string $sName      数组键名,  如key1.key2...
+ * @param mixed  $mVal       键名对应的值
+ * @param array  & $aAppend  插入的目标数组
+ * @return  mixed  保存时返回null,huo
+ */
+function strToArrElement($sName, $mVal, &$aAppend){
+    if (strpos($sName, '.') === false || !is_array($aAppend))
+        return null;
+    $aName = explode('.', $sName);
+    $temp = '';
+    $bExist = false;
+    for ($i=0;$i < count($aName);$i++){
+        if ($i == 0){
+            if (isset($aAppend[$aName[$i]]))
+               $temp = $aAppend[$aName[$i]];
+            else 
+                break;
+        }else{
+            if (isset($temp[$aName[$i]]))
+                $temp = $temp[$aName[$i]];
+            else
+                break;                    
+        }
+        if ($i+1 == count($aName))
+            $bExist = true;
+    }
+    if ($bExist && is_null($var)){
+        $sArrKey = '';
+        $sCloseTag = '';
+        foreach ($aName as $key){
+            $sArrKey .= '{"'.$key.'":';
+            $sCloseTag .= '}';
+        }
+        $temp = "{$sArrKey}\"{$mVal}\"{$sCloseTag}";
+        $temp = json_decode($temp,true);
+        $aAppend[key($temp)] = current($temp);
+    }else {
+        return $temp;
     }
 }
 

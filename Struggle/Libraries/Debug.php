@@ -42,20 +42,21 @@ class Debug extends Object{
     }
     
     public function show(){
-        $sHtml="<div style='width:960px;border:1px solid #cccccc;font-size:12px;position:relative;margin:0px;padding:10px;'>"
+        $sHtml="<div style='font-family:sans-serif,verdana,arial,\"新宋体\";width:auto;border:1px solid #cccccc;font-size:13px;position:relative;margin:0px;padding:10px;'>"
                ."<div style='text-align:right;'><a style='text-decoration:none;color:blue;' href='javascript:void(0);' onclick='this.parentNode.parentNode.style.display=\"none\";'>X</a></div><div style='margin:0px;padding:0px;'><ul style='margin:0px;padding:0px;list-style-type:none;'>";
         $sTxt='';
-        foreach ($this->maBugInfo as $aInfo){
-            $aLevelInfo = \struggle\getErrLevel($aInfo[1]);
+        foreach (\struggle\Sle::getInstance()->aInfo as $info){
+            $aLevelInfo = \struggle\getErrLevel($info[1]);$ts= $info[3] - BEGIN_TIME;
+            $info[3] = sprintf('%1.5f',round(($info[3] - BEGIN_TIME),5));
             switch ($aLevelInfo[0]){
             	case self::ERROR:
-            		$sTxt .="<li><font color='red'>[{$aLevelInfo[1]}] {$aInfo[2]}s {$aInfo[0]}</font></li>";
+            		$sTxt .="<li style='line-height:100%;'><font color='red'>[{$aLevelInfo[1]}] {$info[3]}s {$info[0]}</font></li>";
             		break;
             	case self::WARINING:
-            		$sTxt .= "<li><font color='blue'>[{$aLevelInfo[1]}] {$aInfo[2]}s {$aInfo[0]}</font></li>";
+            		$sTxt .= "<li style='line-height:100%;'><font color='blue'>[{$aLevelInfo[1]}] {$info[3]}s {$info[0]}</font></li>";
             		break;
             	default:
-            		$sTxt .="<li><font color='#999999'>[{$aLevelInfo[1]}] {$aInfo[2]}s {$aInfo[0]}</font></li>";
+            		$sTxt .="<li style='line-height:120%;'><font color='#999999'>[{$aLevelInfo[1]}] {$info[3]}s {$info[0]}</font></li>";
             		break;
             }
         }
@@ -72,14 +73,13 @@ class Debug extends Object{
     public function trace($sLogInfo, $iLevel, $iFrom=\struggle\Sle::SLE_APP, $iRunTime=0 ){
         if (APP_DEBUG){
             empty($iRunTime) && $iRunTime = microtime(true);
-            $iRunTime = $iRunTime?round($iRunTime - BEGIN_TIME, 5):round($iRunTime-BEGIN_TIME,5);
             $aInfo = array($sLogInfo,$iLevel, $iFrom, $iRunTime);
-            //\struggle\Sle::getInstance()->hasInfo($aInfo[0],$aInfo[1],$aInfo[2],$aInfo[3]);
+            \struggle\Sle::getInstance()->hasInfo($aInfo[0],$aInfo[1],$aInfo[2],$aInfo[3]);
             $this->save($aInfo[0],$aInfo[1],$aInfo[2],$aInfo[3]);
         }
     }
     
-    private function save($mInfo,$iCode,$iType,$iExecTime){
+    public function save($mInfo,$iCode,$iType,$iExecTime){
         $sTxt = date('Y-m-d H:i:s')."/".($iExecTime-BEGIN_TIME)."s";
         $aInfoType = \struggle\getErrLevel($iCode);
         $sTxt .="[{$aInfoType[1]} {$aInfoType[2]}]{$mInfo}".PHP_EOL;

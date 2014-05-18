@@ -74,18 +74,9 @@ function C($sName, $mVal = null){
                 return $aConfig[$sName];
             $aConfig[$sName] = $mVal;
         }else{
-            $aName = explode('.', $sName);
-            $sArrName = '$aConfig';
-            $sArr = '';
-            for ($i=0;$i<count($aName);$i++){
-                $aName[$i] = strtolower($aName[$i]);
-                $sArr .="['{$aName[$i]}']";
-            }
-            if (is_null($mVal)){
-                return eval('return '.$sArrName.$sArr.';');
-            }else{
-                eval($sArrName.$sArr.'='.(is_string($mVal)?"'{$mVal}'":$mVal).';');
-            }
+            $mTmpRlt = strToArrElement($sName, $mVal, $aConfig);
+            if (is_null($mVal))
+                return $mTmpRlt;
         }
     }
 }
@@ -105,37 +96,9 @@ function L($sName, $mVal = null){
                 return $aLang[$sName];
             $aLang[$sName] = $mVal;
         }else{
-            $aName = explode('.', $sName);
-            $temp = '';
-            $bExist = false;
-            for ($i=0;$i < count($aName);$i++){
-                if ($i == 0){
-                    if (isset($aLang[$aName[$i]]))
-                        $temp = $aLang[$aName[$i]];
-                    else 
-                        break;
-                }else{
-                    if (isset($temp[$aName[$i]]))
-                        $temp = $temp[$aName[$i]];
-                    else
-                        break;                    
-                }
-                if ($i+1 == count($aName))
-                    $bExist = true;
-            }
-            if ($bExist){
-                return $temp;
-            }else {
-                $sArrKey = '';
-                $sCloseTag = '';
-                foreach ($aName as $key){
-                    $sArrKey .= '{"'.$key.'":';
-                    $sCloseTag .= '}';
-                }
-                $temp = "{$sArrKey}\"{$mVal}\"{$sCloseTag}";
-                $temp = json_decode($temp,true);
-                $aLang[key($temp)] = current($temp);
-            }
+            $mTmpRlt = strToArrElement($sName, $mVal, $aLang);
+            if (is_null($mVal))
+                return $mTmpRlt;
         }
     }
 }
@@ -144,12 +107,14 @@ function L($sName, $mVal = null){
  * 字符串点格式转换成数组元素
  * @param string $sName      数组键名,  如key1.key2...
  * @param mixed  $mVal       键名对应的值
- * @param array  & $aAppend  插入的目标数组
- * @return  mixed  保存时返回null,huo
+ * @param Array  $aAppend  & 插入的目标数组(引用类型)
+ * @return  mixed  $mVal为null时成功返回对应的值，失败返回null;$mVal不为null时，成功返回true失败返回false
  */
 function strToArrElement($sName, $mVal, &$aAppend){
+    $mRlt = false;
+    is_null($mVal) && $mRlt = null;
     if (strpos($sName, '.') === false || !is_array($aAppend))
-        return null;
+        return $mRlt;
     $aName = explode('.', $sName);
     $temp = '';
     $bExist = false;
@@ -168,7 +133,12 @@ function strToArrElement($sName, $mVal, &$aAppend){
         if ($i+1 == count($aName))
             $bExist = true;
     }
-    if ($bExist && is_null($var)){
+    
+    if (is_null($mVal)){
+        if ($bExist)
+            return $temp;
+        $mRlt = null;
+    }else{
         $sArrKey = '';
         $sCloseTag = '';
         foreach ($aName as $key){
@@ -178,9 +148,9 @@ function strToArrElement($sName, $mVal, &$aAppend){
         $temp = "{$sArrKey}\"{$mVal}\"{$sCloseTag}";
         $temp = json_decode($temp,true);
         $aAppend[key($temp)] = current($temp);
-    }else {
-        return $temp;
+        $mRlt = true;
     }
+    return $mRlt;
 }
 
 

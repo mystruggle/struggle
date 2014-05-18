@@ -513,9 +513,6 @@ class Sle{
            
             //执行路由
             $oSle->Route->exec();
-            self::$moHandle->Debug->trace('我的第一个测试2',E_USER_ERROR);
-            \L('e.f','我的吗啊');
-            echo \L('e.f');
             self::$moHandle->Debug->show();
             //print_r($oSle->maInfo);
             //显示页面调试信息

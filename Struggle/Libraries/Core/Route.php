@@ -5,9 +5,9 @@ class Route extends Object{
     private $msMode = '';
 	
     public function __construct($sUrl){
-        //$this->msMode = \C('ROUTE_MODE');
+        $this->msMode = \C('ROUTE_MODE');
         $this->url    = $sUrl;
-        \struggle\Sle::getInstance()->Debug;
+        \struggle\Sle::getInstance()->Debug->trace("路由模式{$this->msMode}",E_USER_NOTICE);
         //$this->doLog($sUrl, E_USER_NOTICE);
         //$this->doLog("路由模式 {$this->msMode}", E_USER_NOTICE);
     }

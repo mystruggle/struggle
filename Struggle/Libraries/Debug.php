@@ -46,22 +46,26 @@ class Debug extends Object{
                ."<div style='text-align:right;'><a style='text-decoration:none;color:blue;' href='javascript:void(0);' onclick='this.parentNode.parentNode.style.display=\"none\";'>X</a></div><div style='margin:0px;padding:0px;'><ul style='margin:0px;padding:0px;list-style-type:none;'>";
         $sTxt='';
         foreach (\struggle\Sle::getInstance()->aInfo as $info){
-            $aLevelInfo = \struggle\getErrLevel($info[1]);$ts= $info[3] - BEGIN_TIME;
-            $info[3] = sprintf('%1.5f',round(($info[3] - BEGIN_TIME),5));
-            switch ($aLevelInfo[0]){
-            	case self::ERROR:
-            		$sTxt .="<li style='line-height:100%;'><font color='red'>[{$aLevelInfo[1]}] {$info[3]}s {$info[0]}</font></li>";
-            		break;
-            	case self::WARINING:
-            		$sTxt .= "<li style='line-height:100%;'><font color='blue'>[{$aLevelInfo[1]}] {$info[3]}s {$info[0]}</font></li>";
-            		break;
-            	default:
-            		$sTxt .="<li style='line-height:120%;'><font color='#999999'>[{$aLevelInfo[1]}] {$info[3]}s {$info[0]}</font></li>";
-            		break;
+            if ($this->decideDebug($info[1], $info[2])){
+                $aLevelInfo = \struggle\getErrLevel($info[1]);
+                $info[3] = sprintf('%1.5f',round(($info[3] - BEGIN_TIME),5));
+                switch ($aLevelInfo[0]){
+                	case self::ERROR:
+                		$sTxt .="<li style='line-height:100%;'><font color='red'>[{$aLevelInfo[1]}] {$info[3]}s {$info[0]}</font></li>";
+                		break;
+                	case self::WARINING:
+                		$sTxt .= "<li style='line-height:100%;'><font color='blue'>[{$aLevelInfo[1]}] {$info[3]}s {$info[0]}</font></li>";
+                		break;
+                	default:
+                		$sTxt .="<li style='line-height:120%;'><font color='#999999'>[{$aLevelInfo[1]}] {$info[3]}s {$info[0]}</font></li>";
+                		break;
+                }
             }
         }
-        $sHtml .=$sTxt."</ul></div></div>";
-        echo $sHtml;
+        if ($sTxt){
+            $sHtml .=$sTxt."</ul></div></div>";
+            echo $sHtml;
+        }
     }
     /**
      * 记录日志
@@ -71,7 +75,7 @@ class Debug extends Object{
      * @param unknown_type $bFromDebug
      */
     public function trace($sLogInfo, $iLevel, $iFrom=\struggle\Sle::SLE_APP, $iRunTime=0 ){
-        if (APP_DEBUG){
+        if ($this->decideDebug($iLevel,$iFrom)){
             empty($iRunTime) && $iRunTime = microtime(true);
             $aInfo = array($sLogInfo,$iLevel, $iFrom, $iRunTime);
             \struggle\Sle::getInstance()->hasInfo($aInfo[0],$aInfo[1],$aInfo[2],$aInfo[3]);
@@ -80,11 +84,55 @@ class Debug extends Object{
     }
     
     public function save($mInfo,$iCode,$iType,$iExecTime){
-        $sTxt = date('Y-m-d H:i:s')."/".($iExecTime-BEGIN_TIME)."s";
-        $aInfoType = \struggle\getErrLevel($iCode);
-        $sTxt .="[{$aInfoType[1]} {$aInfoType[2]}]{$mInfo}".PHP_EOL;
-        if(!$this->hdRecord->write($sTxt))
-            throw new Exception('写入日志失败'.__FILE__.'第'.__LINE__.'行', E_USER_ERROR);    
+        if ($this->decideDebug($iCode, $iType)){
+            $sTxt = date('Y-m-d H:i:s')."/".($iExecTime-BEGIN_TIME)."s";
+            $aInfoType = \struggle\getErrLevel($iCode);
+            $sTxt .="[{$aInfoType[1]} {$aInfoType[2]}]{$mInfo}".PHP_EOL;
+            if(!$this->hdRecord->write($sTxt))
+                throw new Exception('写入日志失败'.__FILE__.'第'.__LINE__.'行', E_USER_ERROR);
+        }    
+    }
+    
+    private function decideDebug($iCode,$iFrom){
+        $bRlt = false;
+        if (APP_DEBUG){
+            $sBugLevel = \C('DEBUG_LEVEL');
+            $aInfoType = \struggle\getErrLevel($iCode);
+            switch ($sBugLevel){
+                case 'all':
+                    $bRlt = true;
+                    break;
+                case 'sys':
+                    $iFrom == \struggle\Sle::SLE_SYS && $bRlt = true;
+                    break;
+                case 'app':
+                    $iFrom == \struggle\Sle::SLE_APP && $bRlt = true;
+                    break;
+                case 'sys_err':
+                    if ($iFrom == \struggle\Sle::SLE_SYS && $aInfoType[0] == '1'){
+                        $bRlt = true;
+                    }
+                    break;
+                case 'sys_other':
+                    if ($iFrom == \struggle\Sle::SLE_SYS && $aInfoType[0] != '1'){
+                        $bRlt = true;
+                    }
+                    break;
+                case 'app_err':
+                    if ($iFrom == \struggle\Sle::SLE_APP && $aInfoType[0] == '1'){
+                        $bRlt = true;
+                    }
+                    break;
+                case 'app_other':
+                    if ($iFrom == \struggle\Sle::SLE_APP && $aInfoType[0] != '1'){
+                        $bRlt = true;
+                    }
+                    break;
+                default:
+                    $bRlt = true;
+            }
+        }
+        return $bRlt;
     }
     
     

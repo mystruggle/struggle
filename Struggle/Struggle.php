@@ -513,7 +513,9 @@ class Sle{
            
             //执行路由
             $oSle->Route->exec();
-            self::$moHandle->Debug->show();
+            $oSle->Debug->trace("fdadf",E_USER_ERROR,self::SLE_SYS);
+            if (APP_DEBUG && APP_DEBUG !== 'rescue')
+                self::$moHandle->Debug->show();
             //print_r($oSle->maInfo);
             //显示页面调试信息
             //self::$moHandle->moBug->show();

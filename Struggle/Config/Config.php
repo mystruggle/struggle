@@ -33,9 +33,11 @@ return array(
     'DEBUG_RECORD_FILE_MODE' =>'ab',
     'DEBUG_RECORD_FILE_SIZE' =>2000,  //kb
     'DEBUG_RECORD_FILE_NUM'  =>3,
-    'DEBUG_LEVEL'            =>'all',//sys、app、all
+    /* all显示和记录来自系统平台和应用的所有信息;sys只显示和记录来自系统平台信息;sys_err只显示和记录来自系统平台错误信息;sys_other只显示和记录来自系统平台除错误的其他信息;app只显示和记录来自应用信息;app_err只显示和记录来自应用错误信息;app_other只显示和记录来自应用除错误的其他信息     */
+    'DEBUG_LEVEL'            =>'sys_err',
     //路由
     'ROUTE_MODE'             =>'normal',//normal 正常模式、pathinfo pathinfo模式、rewrite 伪静态模式 、compat兼容模式/?s=/name/vlaue
+    'ROUTE_REQUEST_FILTER_REGEXP' =>'',
     //自动包含跟目录设置
     'AUTOLOAD_DIR'           =>APP_LIB.','.LIB_PATH.','.LIB_PATH.'Cache/Driver/',
     //语言设置

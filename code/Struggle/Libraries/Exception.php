@@ -14,8 +14,8 @@ class Exception extends Object{
         /**
          * 调用register_shutdown_function 中的回调函数后，当前工作目录的相对路径起始根目录变成'/'
          * 如，调用前为/app/www/htdocs/，调用后为'/'
-         */
-        if($aError = error_get_last()){
+         */ 
+        if($aError = error_get_last()){echo $aError['type'];
             $sErrInfo = "fatal error:{$aError['message']}{$aError['file']} 第{$aError['line']}行";
             $this->registInfo($sErrInfo, $aError['type']);
         }

@@ -1,356 +1,7 @@
-2014-05-20 23:42:56/0.00069808959960938s[E_USER_NOTICE 1024]加载核心函数文件Struggle/Config/Functions.php
-2014-05-20 23:42:56/0.0031380653381348s[E_USER_NOTICE 1024]建立目录Caches/
-2014-05-20 23:42:56/0.0033800601959229s[E_USER_NOTICE 1024]建立目录Caches/Runtime/
-2014-05-20 23:42:56/0.0035750865936279s[E_USER_NOTICE 1024]建立目录Admin/
-2014-05-20 23:42:56/0.0037980079650879s[E_USER_NOTICE 1024]建立目录Config/
-2014-05-20 23:42:56/0.0042979717254639s[E_USER_NOTICE 1024]建立目录AddOnes/
-2014-05-20 23:42:56/0.0048489570617676s[E_USER_NOTICE 1024]建立目录Themes/
-2014-05-20 23:42:56/0.0052411556243896s[E_USER_NOTICE 1024]建立目录Themes/Default/
-2014-05-20 23:42:56/0.005338191986084s[E_USER_NOTICE 1024]加载核心配置文件Struggle/Config/Config.php
-2014-05-20 23:42:56/0.0058801174163818s[E_USER_NOTICE 1024]自动创建用户项目配置文件Config/Config.php
-2014-05-20 23:42:56/0.0060601234436035s[E_USER_NOTICE 1024]所有配置参数值Array
-(
-    [DISPATCHER_DEFAULT_MODULE] => index
-    [DISPATCHER_DEFAULT_ACTION] => index
-    [CACHE_ENGINE] => file
-    [CACHE_DIR] => 
-    [LOG_TYPE] => file
-    [LOG_BASE_PATH] => Caches/
-    [LOG_PATH] => Runtime/
-    [LOG_NAME] => application
-    [LOG_EXT] => log
-    [LOG_MAX_SIZE] => 2000
-    [VIEW_THEME_PATH] => 
-    [VIEW_THEME] => default
-    [VIEW_SUFFIX] => htm
-    [LANG_NAME] => zh-cn
-    [DEBUG_RECORD_TYPE] => file
-    [DEBUG_RECORD_FILE_NAME] => application
-    [DEBUG_RECORD_FILE_PATH] => Caches/Runtime/
-    [DEBUG_RECORD_FILE_EXT] => log
-    [DEBUG_RECORD_FILE_MODE] => ab
-    [DEBUG_RECORD_FILE_SIZE] => 2000
-    [DEBUG_RECORD_FILE_NUM] => 3
-    [DEBUG_LEVEL] => all
-    [ROUTE_MODE] => normal
-    [AUTOLOAD_DIR] => AddOnes/,Struggle/Libraries/,Struggle/Libraries/Cache/Driver/
-)
-
-2014-05-20 23:42:56/0.0068271160125732s[E_USER_NOTICE 1024]语言配置文件Struggle/Config/zh-cn.php处理
-2014-05-20 23:42:56/0.0070850849151611s[E_USER_WARNING 512]语言文件不存在Config/zh-cn.php,文件名区分大小写
-2014-05-20 23:42:56/0.0078561305999756s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Object.php
-2014-05-20 23:42:56/0.008397102355957s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Exception.php
-2014-05-20 23:42:56/0.008681058883667s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Route.php
-2014-05-20 23:42:56/0.0088469982147217s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Controll.php
-2014-05-20 23:42:56/0.0099079608917236s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/View.php
-2014-05-20 23:42:56/0.010061025619507s[E_USER_NOTICE 1024]设置/opt/lampp/htdocs/appu/app/struggle/code/AddOnes/:/opt/lampp/htdocs/appu/app/struggle/code/Struggle/Libraries/:/opt/lampp/htdocs/appu/app/struggle/code/Struggle/Libraries/Cache/Driver/:自动包含目录
-2014-05-20 23:42:56/0.010095119476318s[E_USER_NOTICE 1024]自定义自动包含处理函数\autoLoad
-2014-05-20 23:42:56/0.010115146636963s[E_USER_NOTICE 1024]自定义shutdown处理句柄\struggle\libraries\Exception::shutdownHandle
-2014-05-20 23:42:56/0.010138988494873s[E_USER_NOTICE 1024]自定义异常处理句柄\struggle\libraries\Exception::exceptionHandle
-2014-05-20 23:42:56/0.010164022445679s[E_USER_NOTICE 1024]自定义错误处理句柄\struggle\libraries\Exception::errorHandle
-2014-05-20 23:42:56/0.010223150253296s[E_USER_NOTICE 1024]初始化类Route
-2014-05-20 23:42:56/0.010328054428101s[E_USER_NOTICE 1024]初始化类Debug
-2014-05-20 23:42:56/0.010363101959229s[E_USER_NOTICE 1024]自动加载类struggle\libraries\Debug
-2014-05-20 23:42:56/0.012108087539673s[E_USER_NOTICE 1024]初始化类\struggle\libraries\cache\driver\File,初始化参数Array
-(
-    [file] => Caches/Runtime/application.log
-    [mode] => ab
-    [size] => 2000
-    [renum] => 3
-)
-
-2014-05-20 23:42:56/0.012142181396484s[E_USER_NOTICE 1024]自动加载类struggle\libraries\cache\driver\File
-2014-05-20 23:42:56/0.010300159454346s[E_USER_NOTICE 1024]路由模式normal
-2014-05-20 23:42:56/0.016021966934204s[E_USER_ERROR 256]fdadf
-2014-05-21 21:24:44/0.0050728321075439s[E_USER_NOTICE 1024]加载核心函数文件Struggle/Config/Functions.php
-2014-05-21 21:24:44/0.010368824005127s[E_USER_NOTICE 1024]加载核心配置文件Struggle/Config/Config.php
-2014-05-21 21:24:44/0.014385938644409s[E_USER_NOTICE 1024]加载项目配置文件Config/Config.php
-2014-05-21 21:24:44/0.016443967819214s[E_USER_NOTICE 1024]所有配置参数值Array
-(
-    [DISPATCHER_DEFAULT_MODULE] => index
-    [DISPATCHER_DEFAULT_ACTION] => index
-    [CACHE_ENGINE] => file
-    [CACHE_DIR] => 
-    [LOG_TYPE] => file
-    [LOG_BASE_PATH] => Caches/
-    [LOG_PATH] => Runtime/
-    [LOG_NAME] => application
-    [LOG_EXT] => log
-    [LOG_MAX_SIZE] => 2000
-    [VIEW_THEME_PATH] => 
-    [VIEW_THEME] => default
-    [VIEW_SUFFIX] => htm
-    [LANG_NAME] => zh-cn
-    [DEBUG_RECORD_TYPE] => file
-    [DEBUG_RECORD_FILE_NAME] => application
-    [DEBUG_RECORD_FILE_PATH] => Caches/Runtime/
-    [DEBUG_RECORD_FILE_EXT] => log
-    [DEBUG_RECORD_FILE_MODE] => ab
-    [DEBUG_RECORD_FILE_SIZE] => 2000
-    [DEBUG_RECORD_FILE_NUM] => 3
-    [DEBUG_LEVEL] => all
-    [ROUTE_MODE] => normal
-    [AUTOLOAD_DIR] => AddOnes/,Struggle/Libraries/,Struggle/Libraries/Cache/Driver/
-)
-
-2014-05-21 21:24:44/0.017067909240723s[E_USER_NOTICE 1024]语言配置文件Struggle/Config/zh-cn.php处理
-2014-05-21 21:24:44/0.019548892974854s[E_USER_WARNING 512]语言文件不存在Config/zh-cn.php,文件名区分大小写
-2014-05-21 21:24:44/0.033065795898438s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Object.php
-2014-05-21 21:24:44/0.035335779190063s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Exception.php
-2014-05-21 21:24:44/0.035841941833496s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Route.php
-2014-05-21 21:24:44/0.037365913391113s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Controll.php
-2014-05-21 21:24:44/0.040599822998047s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/View.php
-2014-05-21 21:24:44/0.040785789489746s[E_USER_NOTICE 1024]设置/opt/lampp/htdocs/appu/app/struggle/code/AddOnes/:/opt/lampp/htdocs/appu/app/struggle/code/Struggle/Libraries/:/opt/lampp/htdocs/appu/app/struggle/code/Struggle/Libraries/Cache/Driver/:自动包含目录
-2014-05-21 21:24:44/0.040817975997925s[E_USER_NOTICE 1024]自定义自动包含处理函数\autoLoad
-2014-05-21 21:24:44/0.040838956832886s[E_USER_NOTICE 1024]自定义shutdown处理句柄\struggle\libraries\Exception::shutdownHandle
-2014-05-21 21:24:44/0.040861845016479s[E_USER_NOTICE 1024]自定义异常处理句柄\struggle\libraries\Exception::exceptionHandle
-2014-05-21 21:24:44/0.040883779525757s[E_USER_NOTICE 1024]自定义错误处理句柄\struggle\libraries\Exception::errorHandle
-2014-05-21 21:24:44/0.040940999984741s[E_USER_NOTICE 1024]初始化类Route
-2014-05-21 21:24:44/0.041011810302734s[E_USER_NOTICE 1024]初始化类Debug
-2014-05-21 21:24:44/0.041044950485229s[E_USER_NOTICE 1024]自动加载类struggle\libraries\Debug
-2014-05-21 21:24:44/0.044381856918335s[E_USER_NOTICE 1024]初始化类\struggle\libraries\cache\driver\File,初始化参数Array
-(
-    [file] => Caches/Runtime/application.log
-    [mode] => ab
-    [size] => 2000
-    [renum] => 3
-)
-
-2014-05-21 21:24:44/0.044417858123779s[E_USER_NOTICE 1024]自动加载类struggle\libraries\cache\driver\File
-2014-05-21 21:24:44/0.040983915328979s[E_USER_NOTICE 1024]路由模式normal
-2014-05-21 21:24:44/0.052343845367432s[E_USER_ERROR 256]fdadf
-2014-05-21 22:49:28/0.00082302093505859s[E_USER_NOTICE 1024]加载核心函数文件Struggle/Config/Functions.php
-2014-05-21 22:49:28/0.00541090965271s[E_USER_NOTICE 1024]加载核心配置文件Struggle/Config/Config.php
-2014-05-21 22:49:28/0.0064070224761963s[E_USER_NOTICE 1024]加载项目配置文件Config/Config.php
-2014-05-21 22:49:28/0.0067679882049561s[E_USER_NOTICE 1024]所有配置参数值Array
-(
-    [DISPATCHER_DEFAULT_MODULE] => index
-    [DISPATCHER_DEFAULT_ACTION] => index
-    [CACHE_ENGINE] => file
-    [CACHE_DIR] => 
-    [LOG_TYPE] => file
-    [LOG_BASE_PATH] => Caches/
-    [LOG_PATH] => Runtime/
-    [LOG_NAME] => application
-    [LOG_EXT] => log
-    [LOG_MAX_SIZE] => 2000
-    [VIEW_THEME_PATH] => 
-    [VIEW_THEME] => default
-    [VIEW_SUFFIX] => htm
-    [LANG_NAME] => zh-cn
-    [DEBUG_RECORD_TYPE] => file
-    [DEBUG_RECORD_FILE_NAME] => application
-    [DEBUG_RECORD_FILE_PATH] => Caches/Runtime/
-    [DEBUG_RECORD_FILE_EXT] => log
-    [DEBUG_RECORD_FILE_MODE] => ab
-    [DEBUG_RECORD_FILE_SIZE] => 2000
-    [DEBUG_RECORD_FILE_NUM] => 3
-    [DEBUG_LEVEL] => all
-    [ROUTE_MODE] => normal
-    [AUTOLOAD_DIR] => AddOnes/,Struggle/Libraries/,Struggle/Libraries/Cache/Driver/
-)
-
-2014-05-21 22:49:28/0.0080149173736572s[E_USER_NOTICE 1024]语言配置文件Struggle/Config/zh-cn.php处理
-2014-05-21 22:49:28/0.0081818103790283s[E_USER_WARNING 512]语言文件不存在Config/zh-cn.php,文件名区分大小写
-2014-05-21 22:49:28/0.008544921875s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Object.php
-2014-05-21 22:49:28/0.0088698863983154s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Exception.php
-2014-05-21 22:49:28/0.010694026947021s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Route.php
-2014-05-21 22:49:28/0.01111888885498s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Controll.php
-2014-05-21 22:49:28/0.011921882629395s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/View.php
-2014-05-21 22:49:28/0.012113809585571s[E_USER_NOTICE 1024]设置/opt/lampp/htdocs/appu/app/struggle/code/AddOnes/:/opt/lampp/htdocs/appu/app/struggle/code/Struggle/Libraries/:/opt/lampp/htdocs/appu/app/struggle/code/Struggle/Libraries/Cache/Driver/:自动包含目录
-2014-05-21 22:49:28/0.012181043624878s[E_USER_NOTICE 1024]自定义自动包含处理函数\autoLoad
-2014-05-21 22:49:28/0.012203931808472s[E_USER_NOTICE 1024]自定义shutdown处理句柄\struggle\libraries\Exception::shutdownHandle
-2014-05-21 22:49:28/0.012228012084961s[E_USER_NOTICE 1024]自定义异常处理句柄\struggle\libraries\Exception::exceptionHandle
-2014-05-21 22:49:28/0.012251853942871s[E_USER_NOTICE 1024]自定义错误处理句柄\struggle\libraries\Exception::errorHandle
-2014-05-21 22:49:28/0.012310981750488s[E_USER_NOTICE 1024]初始化类Route
-2014-05-21 22:49:28/0.012380838394165s[E_USER_NOTICE 1024]初始化类Debug
-2014-05-21 22:49:28/0.01241397857666s[E_USER_NOTICE 1024]自动加载类struggle\libraries\Debug
-2014-05-21 22:49:28/0.01420783996582s[E_USER_NOTICE 1024]初始化类\struggle\libraries\cache\driver\File,初始化参数Array
-(
-    [file] => Caches/Runtime/application.log
-    [mode] => ab
-    [size] => 2000
-    [renum] => 3
-)
-
-2014-05-21 22:49:28/0.014245986938477s[E_USER_NOTICE 1024]自动加载类struggle\libraries\cache\driver\File
-2014-05-21 22:49:28/0.012353897094727s[E_USER_NOTICE 1024]路由模式normal
-2014-05-21 22:49:28/0.017683982849121s[E_USER_ERROR 256]fdadf
-2014-05-21 22:49:46/0.00079703330993652s[E_USER_NOTICE 1024]加载核心函数文件Struggle/Config/Functions.php
-2014-05-21 22:49:46/0.0027580261230469s[E_USER_NOTICE 1024]加载核心配置文件Struggle/Config/Config.php
-2014-05-21 22:49:46/0.0031111240386963s[E_USER_NOTICE 1024]加载项目配置文件Config/Config.php
-2014-05-21 22:49:46/0.0033431053161621s[E_USER_NOTICE 1024]所有配置参数值Array
-(
-    [DISPATCHER_DEFAULT_MODULE] => index
-    [DISPATCHER_DEFAULT_ACTION] => index
-    [CACHE_ENGINE] => file
-    [CACHE_DIR] => 
-    [LOG_TYPE] => file
-    [LOG_BASE_PATH] => Caches/
-    [LOG_PATH] => Runtime/
-    [LOG_NAME] => application
-    [LOG_EXT] => log
-    [LOG_MAX_SIZE] => 2000
-    [VIEW_THEME_PATH] => 
-    [VIEW_THEME] => default
-    [VIEW_SUFFIX] => htm
-    [LANG_NAME] => zh-cn
-    [DEBUG_RECORD_TYPE] => file
-    [DEBUG_RECORD_FILE_NAME] => application
-    [DEBUG_RECORD_FILE_PATH] => Caches/Runtime/
-    [DEBUG_RECORD_FILE_EXT] => log
-    [DEBUG_RECORD_FILE_MODE] => ab
-    [DEBUG_RECORD_FILE_SIZE] => 2000
-    [DEBUG_RECORD_FILE_NUM] => 3
-    [DEBUG_LEVEL] => all
-    [ROUTE_MODE] => normal
-    [AUTOLOAD_DIR] => AddOnes/,Struggle/Libraries/,Struggle/Libraries/Cache/Driver/
-)
-
-2014-05-21 22:49:46/0.0037469863891602s[E_USER_NOTICE 1024]语言配置文件Struggle/Config/zh-cn.php处理
-2014-05-21 22:49:46/0.0038909912109375s[E_USER_WARNING 512]语言文件不存在Config/zh-cn.php,文件名区分大小写
-2014-05-21 22:49:46/0.0043230056762695s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Object.php
-2014-05-21 22:49:46/0.0053079128265381s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Exception.php
-2014-05-21 22:49:46/0.0085771083831787s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Route.php
-2014-05-21 22:49:46/0.0088529586791992s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Controll.php
-2014-05-21 22:49:46/0.010844945907593s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/View.php
-2014-05-21 22:49:46/0.011054992675781s[E_USER_NOTICE 1024]设置/opt/lampp/htdocs/appu/app/struggle/code/AddOnes/:/opt/lampp/htdocs/appu/app/struggle/code/Struggle/Libraries/:/opt/lampp/htdocs/appu/app/struggle/code/Struggle/Libraries/Cache/Driver/:自动包含目录
-2014-05-21 22:49:46/0.011239051818848s[E_USER_NOTICE 1024]自定义自动包含处理函数\autoLoad
-2014-05-21 22:49:46/0.011264085769653s[E_USER_NOTICE 1024]自定义shutdown处理句柄\struggle\libraries\Exception::shutdownHandle
-2014-05-21 22:49:46/0.011289119720459s[E_USER_NOTICE 1024]自定义异常处理句柄\struggle\libraries\Exception::exceptionHandle
-2014-05-21 22:49:46/0.011356115341187s[E_USER_NOTICE 1024]自定义错误处理句柄\struggle\libraries\Exception::errorHandle
-2014-05-21 22:49:46/0.011435985565186s[E_USER_NOTICE 1024]初始化类Route
-2014-05-21 22:49:46/0.011507987976074s[E_USER_NOTICE 1024]初始化类Debug
-2014-05-21 22:49:46/0.011541128158569s[E_USER_NOTICE 1024]自动加载类struggle\libraries\Debug
-2014-05-21 22:49:46/0.013140916824341s[E_USER_NOTICE 1024]初始化类\struggle\libraries\cache\driver\File,初始化参数Array
-(
-    [file] => Caches/Runtime/application.log
-    [mode] => ab
-    [size] => 2000
-    [renum] => 3
-)
-
-2014-05-21 22:49:46/0.013174057006836s[E_USER_NOTICE 1024]自动加载类struggle\libraries\cache\driver\File
-2014-05-21 22:49:46/0.011481046676636s[E_USER_NOTICE 1024]路由模式normal
-2014-05-21 22:49:46/0.015891075134277s[E_USER_ERROR 256]fdadf
-2014-05-21 22:49:47/0.00027108192443848s[E_USER_NOTICE 1024]加载核心函数文件Struggle/Config/Functions.php
-2014-05-21 22:49:47/0.0018110275268555s[E_USER_NOTICE 1024]加载核心配置文件Struggle/Config/Config.php
-2014-05-21 22:49:47/0.0021810531616211s[E_USER_NOTICE 1024]加载项目配置文件Config/Config.php
-2014-05-21 22:49:47/0.002385139465332s[E_USER_NOTICE 1024]所有配置参数值Array
-(
-    [DISPATCHER_DEFAULT_MODULE] => index
-    [DISPATCHER_DEFAULT_ACTION] => index
-    [CACHE_ENGINE] => file
-    [CACHE_DIR] => 
-    [LOG_TYPE] => file
-    [LOG_BASE_PATH] => Caches/
-    [LOG_PATH] => Runtime/
-    [LOG_NAME] => application
-    [LOG_EXT] => log
-    [LOG_MAX_SIZE] => 2000
-    [VIEW_THEME_PATH] => 
-    [VIEW_THEME] => default
-    [VIEW_SUFFIX] => htm
-    [LANG_NAME] => zh-cn
-    [DEBUG_RECORD_TYPE] => file
-    [DEBUG_RECORD_FILE_NAME] => application
-    [DEBUG_RECORD_FILE_PATH] => Caches/Runtime/
-    [DEBUG_RECORD_FILE_EXT] => log
-    [DEBUG_RECORD_FILE_MODE] => ab
-    [DEBUG_RECORD_FILE_SIZE] => 2000
-    [DEBUG_RECORD_FILE_NUM] => 3
-    [DEBUG_LEVEL] => all
-    [ROUTE_MODE] => normal
-    [AUTOLOAD_DIR] => AddOnes/,Struggle/Libraries/,Struggle/Libraries/Cache/Driver/
-)
-
-2014-05-21 22:49:47/0.0029580593109131s[E_USER_NOTICE 1024]语言配置文件Struggle/Config/zh-cn.php处理
-2014-05-21 22:49:47/0.003180980682373s[E_USER_WARNING 512]语言文件不存在Config/zh-cn.php,文件名区分大小写
-2014-05-21 22:49:47/0.0035409927368164s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Object.php
-2014-05-21 22:49:47/0.0039830207824707s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Exception.php
-2014-05-21 22:49:47/0.0043661594390869s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Route.php
-2014-05-21 22:49:47/0.0045859813690186s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Controll.php
-2014-05-21 22:49:47/0.0054399967193604s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/View.php
-2014-05-21 22:49:47/0.0055811405181885s[E_USER_NOTICE 1024]设置/opt/lampp/htdocs/appu/app/struggle/code/AddOnes/:/opt/lampp/htdocs/appu/app/struggle/code/Struggle/Libraries/:/opt/lampp/htdocs/appu/app/struggle/code/Struggle/Libraries/Cache/Driver/:自动包含目录
-2014-05-21 22:49:47/0.0056171417236328s[E_USER_NOTICE 1024]自定义自动包含处理函数\autoLoad
-2014-05-21 22:49:47/0.0056459903717041s[E_USER_NOTICE 1024]自定义shutdown处理句柄\struggle\libraries\Exception::shutdownHandle
-2014-05-21 22:49:47/0.0056769847869873s[E_USER_NOTICE 1024]自定义异常处理句柄\struggle\libraries\Exception::exceptionHandle
-2014-05-21 22:49:47/0.0057079792022705s[E_USER_NOTICE 1024]自定义错误处理句柄\struggle\libraries\Exception::errorHandle
-2014-05-21 22:49:47/0.0057699680328369s[E_USER_NOTICE 1024]初始化类Route
-2014-05-21 22:49:47/0.0058720111846924s[E_USER_NOTICE 1024]初始化类Debug
-2014-05-21 22:49:47/0.0059130191802979s[E_USER_NOTICE 1024]自动加载类struggle\libraries\Debug
-2014-05-21 22:49:47/0.0075111389160156s[E_USER_NOTICE 1024]初始化类\struggle\libraries\cache\driver\File,初始化参数Array
-(
-    [file] => Caches/Runtime/application.log
-    [mode] => ab
-    [size] => 2000
-    [renum] => 3
-)
-
-2014-05-21 22:49:47/0.0075609683990479s[E_USER_NOTICE 1024]自动加载类struggle\libraries\cache\driver\File
-2014-05-21 22:49:47/0.0058281421661377s[E_USER_NOTICE 1024]路由模式normal
-2014-05-21 22:49:47/0.01288104057312s[E_USER_ERROR 256]fdadf
-2014-05-21 22:50:53/0.00083589553833008s[E_USER_NOTICE 1024]加载核心函数文件Struggle/Config/Functions.php
-2014-05-21 22:50:53/0.002593994140625s[E_USER_NOTICE 1024]加载核心配置文件Struggle/Config/Config.php
-2014-05-21 22:50:53/0.0028858184814453s[E_USER_NOTICE 1024]加载项目配置文件Config/Config.php
-2014-05-21 22:50:53/0.0031008720397949s[E_USER_NOTICE 1024]所有配置参数值Array
-(
-    [DISPATCHER_DEFAULT_MODULE] => index
-    [DISPATCHER_DEFAULT_ACTION] => index
-    [CACHE_ENGINE] => file
-    [CACHE_DIR] => 
-    [LOG_TYPE] => file
-    [LOG_BASE_PATH] => Caches/
-    [LOG_PATH] => Runtime/
-    [LOG_NAME] => application
-    [LOG_EXT] => log
-    [LOG_MAX_SIZE] => 2000
-    [VIEW_THEME_PATH] => 
-    [VIEW_THEME] => default
-    [VIEW_SUFFIX] => htm
-    [LANG_NAME] => zh-cn
-    [DEBUG_RECORD_TYPE] => file
-    [DEBUG_RECORD_FILE_NAME] => application
-    [DEBUG_RECORD_FILE_PATH] => Caches/Runtime/
-    [DEBUG_RECORD_FILE_EXT] => log
-    [DEBUG_RECORD_FILE_MODE] => ab
-    [DEBUG_RECORD_FILE_SIZE] => 2000
-    [DEBUG_RECORD_FILE_NUM] => 3
-    [DEBUG_LEVEL] => all
-    [ROUTE_MODE] => normal
-    [AUTOLOAD_DIR] => AddOnes/,Struggle/Libraries/,Struggle/Libraries/Cache/Driver/
-)
-
-2014-05-21 22:50:53/0.0037100315093994s[E_USER_NOTICE 1024]语言配置文件Struggle/Config/zh-cn.php处理
-2014-05-21 22:50:53/0.0039408206939697s[E_USER_WARNING 512]语言文件不存在Config/zh-cn.php,文件名区分大小写
-2014-05-21 22:50:53/0.0042898654937744s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Object.php
-2014-05-21 22:50:53/0.0045828819274902s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Exception.php
-2014-05-21 22:50:53/0.0069839954376221s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Route.php
-2014-05-21 22:50:53/0.0072669982910156s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Controll.php
-2014-05-21 22:50:53/0.0084450244903564s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/View.php
-2014-05-21 22:50:53/0.0086729526519775s[E_USER_NOTICE 1024]设置/opt/lampp/htdocs/appu/app/struggle/code/AddOnes/:/opt/lampp/htdocs/appu/app/struggle/code/Struggle/Libraries/:/opt/lampp/htdocs/appu/app/struggle/code/Struggle/Libraries/Cache/Driver/:自动包含目录
-2014-05-21 22:50:53/0.0087459087371826s[E_USER_NOTICE 1024]自定义自动包含处理函数\autoLoad
-2014-05-21 22:50:53/0.0087699890136719s[E_USER_NOTICE 1024]自定义shutdown处理句柄\struggle\libraries\Exception::shutdownHandle
-2014-05-21 22:50:53/0.0087950229644775s[E_USER_NOTICE 1024]自定义异常处理句柄\struggle\libraries\Exception::exceptionHandle
-2014-05-21 22:50:53/0.0088179111480713s[E_USER_NOTICE 1024]自定义错误处理句柄\struggle\libraries\Exception::errorHandle
-2014-05-21 22:50:53/0.0088748931884766s[E_USER_NOTICE 1024]初始化类Route
-2014-05-21 22:50:53/0.0089478492736816s[E_USER_NOTICE 1024]初始化类Debug
-2014-05-21 22:50:53/0.0089819431304932s[E_USER_NOTICE 1024]自动加载类struggle\libraries\Debug
-2014-05-21 22:50:53/0.011422872543335s[E_USER_NOTICE 1024]初始化类\struggle\libraries\cache\driver\File,初始化参数Array
-(
-    [file] => Caches/Runtime/application.log
-    [mode] => ab
-    [size] => 2000
-    [renum] => 3
-)
-
-2014-05-21 22:50:53/0.011464834213257s[E_USER_NOTICE 1024]自动加载类struggle\libraries\cache\driver\File
-2014-05-21 22:50:53/0.0089209079742432s[E_USER_NOTICE 1024]路由模式normal
-2014-05-21 22:50:53/0.014945983886719s[E_USER_ERROR 256]fdadf
-2014-05-21 23:23:14/0.0010151863098145s[E_USER_NOTICE 1024]加载核心函数文件Struggle/Config/Functions.php
-2014-05-21 23:23:14/0.0028932094573975s[E_USER_NOTICE 1024]加载核心配置文件Struggle/Config/Config.php
-2014-05-21 23:23:14/0.0031440258026123s[E_USER_NOTICE 1024]加载项目配置文件Config/Config.php
-2014-05-21 23:23:14/0.003425121307373s[E_USER_NOTICE 1024]所有配置参数值Array
+2014-05-21 20:46:13/0.00010895729064941s[E_USER_NOTICE 1024]加载核心函数文件Struggle/Config/Functions.php
+2014-05-21 20:46:13/0.001317024230957s[E_USER_NOTICE 1024]加载核心配置文件Struggle/Config/Config.php
+2014-05-21 20:46:13/0.0015921592712402s[E_USER_NOTICE 1024]加载项目配置文件Config/Config.php
+2014-05-21 20:46:13/0.0018031597137451s[E_USER_NOTICE 1024]所有配置参数值Array
 (
     [DISPATCHER_DEFAULT_MODULE] => index
     [DISPATCHER_DEFAULT_ACTION] => index
@@ -380,23 +31,22 @@
     [AUTOLOAD_DIR] => AddOnes/,Struggle/Libraries/,Struggle/Libraries/Cache/Driver/
 )
 
-2014-05-21 23:23:14/0.0038270950317383s[E_USER_NOTICE 1024]语言配置文件Struggle/Config/zh-cn.php处理
-2014-05-21 23:23:14/0.003960132598877s[E_USER_WARNING 512]语言文件不存在Config/zh-cn.php,文件名区分大小写
-2014-05-21 23:23:14/0.0042691230773926s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Object.php
-2014-05-21 23:23:14/0.0046491622924805s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Exception.php
-2014-05-21 23:23:14/0.0060291290283203s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Route.php
-2014-05-21 23:23:14/0.0063951015472412s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Controll.php
-2014-05-21 23:23:14/0.0072150230407715s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/View.php
-2014-05-21 23:23:14/0.0074160099029541s[E_USER_NOTICE 1024]设置/opt/lampp/htdocs/appu/app/struggle/code/AddOnes/:/opt/lampp/htdocs/appu/app/struggle/code/Struggle/Libraries/:/opt/lampp/htdocs/appu/app/struggle/code/Struggle/Libraries/Cache/Driver/:自动包含目录
-2014-05-21 23:23:14/0.00748610496521s[E_USER_NOTICE 1024]自定义自动包含处理函数\autoLoad
-2014-05-21 23:23:14/0.0075080394744873s[E_USER_NOTICE 1024]自定义shutdown处理句柄\struggle\libraries\Exception::shutdownHandle
-2014-05-21 23:23:14/0.0075311660766602s[E_USER_NOTICE 1024]自定义异常处理句柄\struggle\libraries\Exception::exceptionHandle
-2014-05-21 23:23:14/0.0075550079345703s[E_USER_NOTICE 1024]自定义错误处理句柄\struggle\libraries\Exception::errorHandle
-2014-05-21 23:23:14/0.0076119899749756s[E_USER_NOTICE 1024]初始化类Route
-2014-05-21 23:23:14/0.0076661109924316s[E_NOTICE 8]Undefined property: struggle\libraries\Route::$msMode	/git/struggle/code/Struggle/Libraries/Core/Route.php	第12行
-2014-05-21 23:23:14/0.0077230930328369s[E_USER_NOTICE 1024]初始化类Debug
-2014-05-21 23:23:14/0.0077559947967529s[E_USER_NOTICE 1024]自动加载类struggle\libraries\Debug
-2014-05-21 23:23:14/0.0092730522155762s[E_USER_NOTICE 1024]初始化类\struggle\libraries\cache\driver\File,初始化参数Array
+2014-05-21 20:46:13/0.0019190311431885s[E_USER_NOTICE 1024]语言配置文件Struggle/Config/zh-cn.php处理
+2014-05-21 20:46:13/0.002007007598877s[E_USER_WARNING 512]语言文件不存在Config/zh-cn.php,文件名区分大小写
+2014-05-21 20:46:13/0.0021841526031494s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Object.php
+2014-05-21 20:46:13/0.0024850368499756s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Exception.php
+2014-05-21 20:46:13/0.0035650730133057s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Route.php
+2014-05-21 20:46:13/0.0036859512329102s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Controll.php
+2014-05-21 20:46:13/0.0046019554138184s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/View.php
+2014-05-21 20:46:13/0.0052201747894287s[E_USER_NOTICE 1024]设置/apps/www/htdocs/app/struggle/code/AddOnes/:/apps/www/htdocs/app/struggle/code/Struggle/Libraries/:/apps/www/htdocs/app/struggle/code/Struggle/Libraries/Cache/Driver/:自动包含目录
+2014-05-21 20:46:13/0.0052340030670166s[E_USER_NOTICE 1024]自定义自动包含处理函数\autoLoad
+2014-05-21 20:46:13/0.0052440166473389s[E_USER_NOTICE 1024]自定义shutdown处理句柄\struggle\libraries\Exception::shutdownHandle
+2014-05-21 20:46:13/0.0052540302276611s[E_USER_NOTICE 1024]自定义异常处理句柄\struggle\libraries\Exception::exceptionHandle
+2014-05-21 20:46:13/0.005263090133667s[E_USER_NOTICE 1024]自定义错误处理句柄\struggle\libraries\Exception::errorHandle
+2014-05-21 20:46:13/0.0052871704101562s[E_USER_NOTICE 1024]初始化类Route
+2014-05-21 20:46:13/0.0053160190582275s[E_USER_NOTICE 1024]初始化类Debug
+2014-05-21 20:46:13/0.0053310394287109s[E_USER_NOTICE 1024]自动加载类struggle\libraries\Debug
+2014-05-21 20:46:13/0.0062651634216309s[E_USER_NOTICE 1024]初始化类\struggle\libraries\cache\driver\File,初始化参数Array
 (
     [file] => Caches/Runtime/application.log
     [mode] => ab
@@ -404,14 +54,14 @@
     [renum] => 3
 )
 
-2014-05-21 23:23:14/0.0093040466308594s[E_USER_NOTICE 1024]自动加载类struggle\libraries\cache\driver\File
-2014-05-21 23:23:14/0.0076980590820312s[E_USER_NOTICE 1024]路由模式;url=>/appu/app/struggle/code/
-2014-05-21 23:23:14/0.012896060943604s[E_USER_NOTICE 1024]模块标签=>m;动作标签=>m
-2014-05-21 23:23:14/0.01304817199707s[E_USER_ERROR 256]fdadf
-2014-05-21 23:23:30/0.0015430450439453s[E_USER_NOTICE 1024]加载核心函数文件Struggle/Config/Functions.php
-2014-05-21 23:23:30/0.0066990852355957s[E_USER_NOTICE 1024]加载核心配置文件Struggle/Config/Config.php
-2014-05-21 23:23:30/0.0071399211883545s[E_USER_NOTICE 1024]加载项目配置文件Config/Config.php
-2014-05-21 23:23:30/0.0074820518493652s[E_USER_NOTICE 1024]所有配置参数值Array
+2014-05-21 20:46:13/0.0062801837921143s[E_USER_NOTICE 1024]自动加载类struggle\libraries\cache\driver\File
+2014-05-21 20:46:13/0.0053060054779053s[E_USER_NOTICE 1024]路由模式normal;url=>/app/struggle/code/
+2014-05-21 20:46:13/0.0097751617431641s[E_USER_NOTICE 1024]模块标签=>m;动作标签=>a;模块=>Index;动作=>Index
+2014-05-21 20:46:13/0.0099411010742188s[E_USER_ERROR 256]controller文件不存在Controller/Index.php
+2014-05-21 20:46:24/5.793571472168E-5s[E_USER_NOTICE 1024]加载核心函数文件Struggle/Config/Functions.php
+2014-05-21 20:46:24/0.00051689147949219s[E_USER_NOTICE 1024]加载核心配置文件Struggle/Config/Config.php
+2014-05-21 20:46:24/0.00060892105102539s[E_USER_NOTICE 1024]加载项目配置文件Config/Config.php
+2014-05-21 20:46:24/0.00067400932312012s[E_USER_NOTICE 1024]所有配置参数值Array
 (
     [DISPATCHER_DEFAULT_MODULE] => index
     [DISPATCHER_DEFAULT_ACTION] => index
@@ -441,23 +91,22 @@
     [AUTOLOAD_DIR] => AddOnes/,Struggle/Libraries/,Struggle/Libraries/Cache/Driver/
 )
 
-2014-05-21 23:23:30/0.0082418918609619s[E_USER_NOTICE 1024]语言配置文件Struggle/Config/zh-cn.php处理
-2014-05-21 23:23:30/0.0084569454193115s[E_USER_WARNING 512]语言文件不存在Config/zh-cn.php,文件名区分大小写
-2014-05-21 23:23:30/0.0090110301971436s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Object.php
-2014-05-21 23:23:30/0.0096690654754639s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Exception.php
-2014-05-21 23:23:30/0.011919021606445s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Route.php
-2014-05-21 23:23:30/0.012181043624878s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Controll.php
-2014-05-21 23:23:30/0.013114929199219s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/View.php
-2014-05-21 23:23:30/0.013269901275635s[E_USER_NOTICE 1024]设置/opt/lampp/htdocs/appu/app/struggle/code/AddOnes/:/opt/lampp/htdocs/appu/app/struggle/code/Struggle/Libraries/:/opt/lampp/htdocs/appu/app/struggle/code/Struggle/Libraries/Cache/Driver/:自动包含目录
-2014-05-21 23:23:30/0.013365983963013s[E_USER_NOTICE 1024]自定义自动包含处理函数\autoLoad
-2014-05-21 23:23:30/0.013389110565186s[E_USER_NOTICE 1024]自定义shutdown处理句柄\struggle\libraries\Exception::shutdownHandle
-2014-05-21 23:23:30/0.013412952423096s[E_USER_NOTICE 1024]自定义异常处理句柄\struggle\libraries\Exception::exceptionHandle
-2014-05-21 23:23:30/0.013434886932373s[E_USER_NOTICE 1024]自定义错误处理句柄\struggle\libraries\Exception::errorHandle
-2014-05-21 23:23:30/0.013490915298462s[E_USER_NOTICE 1024]初始化类Route
-2014-05-21 23:23:30/0.013560056686401s[E_NOTICE 8]Undefined property: struggle\libraries\Route::$msMode	/git/struggle/code/Struggle/Libraries/Core/Route.php	第12行
-2014-05-21 23:23:30/0.013617038726807s[E_USER_NOTICE 1024]初始化类Debug
-2014-05-21 23:23:30/0.013649940490723s[E_USER_NOTICE 1024]自动加载类struggle\libraries\Debug
-2014-05-21 23:23:30/0.015228986740112s[E_USER_NOTICE 1024]初始化类\struggle\libraries\cache\driver\File,初始化参数Array
+2014-05-21 20:46:24/0.00075888633728027s[E_USER_NOTICE 1024]语言配置文件Struggle/Config/zh-cn.php处理
+2014-05-21 20:46:24/0.00080204010009766s[E_USER_WARNING 512]语言文件不存在Config/zh-cn.php,文件名区分大小写
+2014-05-21 20:46:24/0.00088596343994141s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Object.php
+2014-05-21 20:46:24/0.0010380744934082s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Exception.php
+2014-05-21 20:46:24/0.0011699199676514s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Route.php
+2014-05-21 20:46:24/0.0012228488922119s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Controll.php
+2014-05-21 20:46:24/0.0014479160308838s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/View.php
+2014-05-21 20:46:24/0.0014779567718506s[E_USER_NOTICE 1024]设置/apps/www/htdocs/app/struggle/code/AddOnes/:/apps/www/htdocs/app/struggle/code/Struggle/Libraries/:/apps/www/htdocs/app/struggle/code/Struggle/Libraries/Cache/Driver/:自动包含目录
+2014-05-21 20:46:24/0.0014848709106445s[E_USER_NOTICE 1024]自定义自动包含处理函数\autoLoad
+2014-05-21 20:46:24/0.0014889240264893s[E_USER_NOTICE 1024]自定义shutdown处理句柄\struggle\libraries\Exception::shutdownHandle
+2014-05-21 20:46:24/0.0014939308166504s[E_USER_NOTICE 1024]自定义异常处理句柄\struggle\libraries\Exception::exceptionHandle
+2014-05-21 20:46:24/0.0014998912811279s[E_USER_NOTICE 1024]自定义错误处理句柄\struggle\libraries\Exception::errorHandle
+2014-05-21 20:46:24/0.0015120506286621s[E_USER_NOTICE 1024]初始化类Route
+2014-05-21 20:46:24/0.00152587890625s[E_USER_NOTICE 1024]初始化类Debug
+2014-05-21 20:46:24/0.0015308856964111s[E_USER_NOTICE 1024]自动加载类struggle\libraries\Debug
+2014-05-21 20:46:24/0.0019819736480713s[E_USER_NOTICE 1024]初始化类\struggle\libraries\cache\driver\File,初始化参数Array
 (
     [file] => Caches/Runtime/application.log
     [mode] => ab
@@ -465,14 +114,14 @@
     [renum] => 3
 )
 
-2014-05-21 23:23:30/0.015260934829712s[E_USER_NOTICE 1024]自动加载类struggle\libraries\cache\driver\File
-2014-05-21 23:23:30/0.013592004776001s[E_USER_NOTICE 1024]路由模式;url=>/appu/app/struggle/code/
-2014-05-21 23:23:30/0.018136978149414s[E_USER_NOTICE 1024]模块标签=>m;动作标签=>a
-2014-05-21 23:23:30/0.018274068832397s[E_USER_ERROR 256]fdadf
-2014-05-21 23:23:53/0.0011241436004639s[E_USER_NOTICE 1024]加载核心函数文件Struggle/Config/Functions.php
-2014-05-21 23:23:53/0.0029411315917969s[E_USER_NOTICE 1024]加载核心配置文件Struggle/Config/Config.php
-2014-05-21 23:23:53/0.0032119750976562s[E_USER_NOTICE 1024]加载项目配置文件Config/Config.php
-2014-05-21 23:23:53/0.0034089088439941s[E_USER_NOTICE 1024]所有配置参数值Array
+2014-05-21 20:46:24/0.0019879341125488s[E_USER_NOTICE 1024]自动加载类struggle\libraries\cache\driver\File
+2014-05-21 20:46:24/0.0015208721160889s[E_USER_NOTICE 1024]路由模式normal;url=>/app/struggle/code/
+2014-05-21 20:46:24/0.0027768611907959s[E_USER_NOTICE 1024]模块标签=>m;动作标签=>a;模块=>Index;动作=>Index
+2014-05-21 20:46:24/0.0028159618377686s[E_USER_ERROR 256]controller文件不存在Controller/Index.php
+2014-05-21 20:48:57/0.00010204315185547s[E_USER_NOTICE 1024]加载核心函数文件Struggle/Config/Functions.php
+2014-05-21 20:48:57/0.0011038780212402s[E_USER_NOTICE 1024]加载核心配置文件Struggle/Config/Config.php
+2014-05-21 20:48:57/0.0012900829315186s[E_USER_NOTICE 1024]加载项目配置文件Config/Config.php
+2014-05-21 20:48:57/0.0014119148254395s[E_USER_NOTICE 1024]所有配置参数值Array
 (
     [DISPATCHER_DEFAULT_MODULE] => index
     [DISPATCHER_DEFAULT_ACTION] => index
@@ -502,23 +151,22 @@
     [AUTOLOAD_DIR] => AddOnes/,Struggle/Libraries/,Struggle/Libraries/Cache/Driver/
 )
 
-2014-05-21 23:23:53/0.003809928894043s[E_USER_NOTICE 1024]语言配置文件Struggle/Config/zh-cn.php处理
-2014-05-21 23:23:53/0.0039350986480713s[E_USER_WARNING 512]语言文件不存在Config/zh-cn.php,文件名区分大小写
-2014-05-21 23:23:53/0.0042569637298584s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Object.php
-2014-05-21 23:23:53/0.0045819282531738s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Exception.php
-2014-05-21 23:23:53/0.0060091018676758s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Route.php
-2014-05-21 23:23:53/0.0063309669494629s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Controll.php
-2014-05-21 23:23:53/0.0073869228363037s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/View.php
-2014-05-21 23:23:53/0.0075690746307373s[E_USER_NOTICE 1024]设置/opt/lampp/htdocs/appu/app/struggle/code/AddOnes/:/opt/lampp/htdocs/appu/app/struggle/code/Struggle/Libraries/:/opt/lampp/htdocs/appu/app/struggle/code/Struggle/Libraries/Cache/Driver/:自动包含目录
-2014-05-21 23:23:53/0.0076339244842529s[E_USER_NOTICE 1024]自定义自动包含处理函数\autoLoad
-2014-05-21 23:23:53/0.0076570510864258s[E_USER_NOTICE 1024]自定义shutdown处理句柄\struggle\libraries\Exception::shutdownHandle
-2014-05-21 23:23:53/0.0076799392700195s[E_USER_NOTICE 1024]自定义异常处理句柄\struggle\libraries\Exception::exceptionHandle
-2014-05-21 23:23:53/0.0077030658721924s[E_USER_NOTICE 1024]自定义错误处理句柄\struggle\libraries\Exception::errorHandle
-2014-05-21 23:23:53/0.0077590942382812s[E_USER_NOTICE 1024]初始化类Route
-2014-05-21 23:23:53/0.0078129768371582s[E_NOTICE 8]Undefined property: struggle\libraries\Route::$msMode	/git/struggle/code/Struggle/Libraries/Core/Route.php	第12行
-2014-05-21 23:23:53/0.0078690052032471s[E_USER_NOTICE 1024]初始化类Debug
-2014-05-21 23:23:53/0.0079030990600586s[E_USER_NOTICE 1024]自动加载类struggle\libraries\Debug
-2014-05-21 23:23:53/0.009613037109375s[E_USER_NOTICE 1024]初始化类\struggle\libraries\cache\driver\File,初始化参数Array
+2014-05-21 20:48:57/0.0015199184417725s[E_USER_NOTICE 1024]语言配置文件Struggle/Config/zh-cn.php处理
+2014-05-21 20:48:57/0.0016548633575439s[E_USER_WARNING 512]语言文件不存在Config/zh-cn.php,文件名区分大小写
+2014-05-21 20:48:57/0.0018370151519775s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Object.php
+2014-05-21 20:48:57/0.0020859241485596s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Exception.php
+2014-05-21 20:48:57/0.0031869411468506s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Route.php
+2014-05-21 20:48:57/0.0033068656921387s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Controll.php
+2014-05-21 20:48:57/0.0038728713989258s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/View.php
+2014-05-21 20:48:57/0.0039379596710205s[E_USER_NOTICE 1024]设置/apps/www/htdocs/app/struggle/code/AddOnes/:/apps/www/htdocs/app/struggle/code/Struggle/Libraries/:/apps/www/htdocs/app/struggle/code/Struggle/Libraries/Cache/Driver/:自动包含目录
+2014-05-21 20:48:57/0.0039510726928711s[E_USER_NOTICE 1024]自定义自动包含处理函数\autoLoad
+2014-05-21 20:48:57/0.0039610862731934s[E_USER_NOTICE 1024]自定义shutdown处理句柄\struggle\libraries\Exception::shutdownHandle
+2014-05-21 20:48:57/0.0039708614349365s[E_USER_NOTICE 1024]自定义异常处理句柄\struggle\libraries\Exception::exceptionHandle
+2014-05-21 20:48:57/0.0039799213409424s[E_USER_NOTICE 1024]自定义错误处理句柄\struggle\libraries\Exception::errorHandle
+2014-05-21 20:48:57/0.0040068626403809s[E_USER_NOTICE 1024]初始化类Route
+2014-05-21 20:48:57/0.0040359497070312s[E_USER_NOTICE 1024]初始化类Debug
+2014-05-21 20:48:57/0.0040509700775146s[E_USER_NOTICE 1024]自动加载类struggle\libraries\Debug
+2014-05-21 20:48:57/0.0049710273742676s[E_USER_NOTICE 1024]初始化类\struggle\libraries\cache\driver\File,初始化参数Array
 (
     [file] => Caches/Runtime/application.log
     [mode] => ab
@@ -526,14 +174,14 @@
     [renum] => 3
 )
 
-2014-05-21 23:23:53/0.0096449851989746s[E_USER_NOTICE 1024]自动加载类struggle\libraries\cache\driver\File
-2014-05-21 23:23:53/0.0078439712524414s[E_USER_NOTICE 1024]路由模式;url=>/appu/app/struggle/code/
-2014-05-21 23:23:53/0.012787103652954s[E_USER_NOTICE 1024]模块标签=>m;动作标签=>a
-2014-05-21 23:23:53/0.012947082519531s[E_USER_ERROR 256]fdadf
-2014-05-21 23:24:45/0.00073885917663574s[E_USER_NOTICE 1024]加载核心函数文件Struggle/Config/Functions.php
-2014-05-21 23:24:45/0.002593994140625s[E_USER_NOTICE 1024]加载核心配置文件Struggle/Config/Config.php
-2014-05-21 23:24:45/0.0029740333557129s[E_USER_NOTICE 1024]加载项目配置文件Config/Config.php
-2014-05-21 23:24:45/0.0032129287719727s[E_USER_NOTICE 1024]所有配置参数值Array
+2014-05-21 20:48:57/0.0049848556518555s[E_USER_NOTICE 1024]自动加载类struggle\libraries\cache\driver\File
+2014-05-21 20:48:57/0.0040249824523926s[E_USER_NOTICE 1024]路由模式normal;url=>/app/struggle/code/
+2014-05-21 20:48:57/0.029649972915649s[E_USER_NOTICE 1024]模块标签=>m;动作标签=>a;模块=>Index;动作=>Index
+2014-05-21 20:48:57/0.029701948165894s[E_USER_ERROR 256]controller文件不存在Controller/Index.php
+2014-05-21 20:52:07/6.103515625E-5s[E_USER_NOTICE 1024]加载核心函数文件Struggle/Config/Functions.php
+2014-05-21 20:52:07/0.00059914588928223s[E_USER_NOTICE 1024]加载核心配置文件Struggle/Config/Config.php
+2014-05-21 20:52:07/0.00069808959960938s[E_USER_NOTICE 1024]加载项目配置文件Config/Config.php
+2014-05-21 20:52:07/0.0007631778717041s[E_USER_NOTICE 1024]所有配置参数值Array
 (
     [DISPATCHER_DEFAULT_MODULE] => index
     [DISPATCHER_DEFAULT_ACTION] => index
@@ -563,23 +211,22 @@
     [AUTOLOAD_DIR] => AddOnes/,Struggle/Libraries/,Struggle/Libraries/Cache/Driver/
 )
 
-2014-05-21 23:24:45/0.0036258697509766s[E_USER_NOTICE 1024]语言配置文件Struggle/Config/zh-cn.php处理
-2014-05-21 23:24:45/0.0037598609924316s[E_USER_WARNING 512]语言文件不存在Config/zh-cn.php,文件名区分大小写
-2014-05-21 23:24:45/0.004335880279541s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Object.php
-2014-05-21 23:24:45/0.0047750473022461s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Exception.php
-2014-05-21 23:24:45/0.0086219310760498s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Route.php
-2014-05-21 23:24:45/0.0088708400726318s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Controll.php
-2014-05-21 23:24:45/0.0097270011901855s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/View.php
-2014-05-21 23:24:45/0.0098898410797119s[E_USER_NOTICE 1024]设置/opt/lampp/htdocs/appu/app/struggle/code/AddOnes/:/opt/lampp/htdocs/appu/app/struggle/code/Struggle/Libraries/:/opt/lampp/htdocs/appu/app/struggle/code/Struggle/Libraries/Cache/Driver/:自动包含目录
-2014-05-21 23:24:45/0.010045051574707s[E_USER_NOTICE 1024]自定义自动包含处理函数\autoLoad
-2014-05-21 23:24:45/0.010069847106934s[E_USER_NOTICE 1024]自定义shutdown处理句柄\struggle\libraries\Exception::shutdownHandle
-2014-05-21 23:24:45/0.010093927383423s[E_USER_NOTICE 1024]自定义异常处理句柄\struggle\libraries\Exception::exceptionHandle
-2014-05-21 23:24:45/0.010117053985596s[E_USER_NOTICE 1024]自定义错误处理句柄\struggle\libraries\Exception::errorHandle
-2014-05-21 23:24:45/0.010174989700317s[E_USER_NOTICE 1024]初始化类Route
-2014-05-21 23:24:45/0.010232925415039s[E_NOTICE 8]Undefined property: struggle\libraries\Route::$msMode	/git/struggle/code/Struggle/Libraries/Core/Route.php	第12行
-2014-05-21 23:24:45/0.010289907455444s[E_USER_NOTICE 1024]初始化类Debug
-2014-05-21 23:24:45/0.010324001312256s[E_USER_NOTICE 1024]自动加载类struggle\libraries\Debug
-2014-05-21 23:24:45/0.012150049209595s[E_USER_NOTICE 1024]初始化类\struggle\libraries\cache\driver\File,初始化参数Array
+2014-05-21 20:52:07/0.00081706047058105s[E_USER_NOTICE 1024]语言配置文件Struggle/Config/zh-cn.php处理
+2014-05-21 20:52:07/0.00085806846618652s[E_USER_WARNING 512]语言文件不存在Config/zh-cn.php,文件名区分大小写
+2014-05-21 20:52:07/0.00094413757324219s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Object.php
+2014-05-21 20:52:07/0.0010721683502197s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Exception.php
+2014-05-21 20:52:07/0.001209020614624s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Route.php
+2014-05-21 20:52:07/0.0013070106506348s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Controll.php
+2014-05-21 20:52:07/0.0015599727630615s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/View.php
+2014-05-21 20:52:07/0.0015890598297119s[E_USER_NOTICE 1024]设置/apps/www/htdocs/app/struggle/code/AddOnes/:/apps/www/htdocs/app/struggle/code/Struggle/Libraries/:/apps/www/htdocs/app/struggle/code/Struggle/Libraries/Cache/Driver/:自动包含目录
+2014-05-21 20:52:07/0.0015959739685059s[E_USER_NOTICE 1024]自定义自动包含处理函数\autoLoad
+2014-05-21 20:52:07/0.001600980758667s[E_USER_NOTICE 1024]自定义shutdown处理句柄\struggle\libraries\Exception::shutdownHandle
+2014-05-21 20:52:07/0.0016059875488281s[E_USER_NOTICE 1024]自定义异常处理句柄\struggle\libraries\Exception::exceptionHandle
+2014-05-21 20:52:07/0.0016109943389893s[E_USER_NOTICE 1024]自定义错误处理句柄\struggle\libraries\Exception::errorHandle
+2014-05-21 20:52:07/0.0016241073608398s[E_USER_NOTICE 1024]初始化类Route
+2014-05-21 20:52:07/0.0016381740570068s[E_USER_NOTICE 1024]初始化类Debug
+2014-05-21 20:52:07/0.0016441345214844s[E_USER_NOTICE 1024]自动加载类struggle\libraries\Debug
+2014-05-21 20:52:07/0.0021100044250488s[E_USER_NOTICE 1024]初始化类\struggle\libraries\cache\driver\File,初始化参数Array
 (
     [file] => Caches/Runtime/application.log
     [mode] => ab
@@ -587,14 +234,13 @@
     [renum] => 3
 )
 
-2014-05-21 23:24:45/0.012189865112305s[E_USER_NOTICE 1024]自动加载类struggle\libraries\cache\driver\File
-2014-05-21 23:24:45/0.010264873504639s[E_USER_NOTICE 1024]路由模式;url=>/appu/app/struggle/code/
-2014-05-21 23:24:45/0.015715837478638s[E_USER_NOTICE 1024]模块标签=>m;动作标签=>a;模块=>index;动作=>index
-2014-05-21 23:24:45/0.015864849090576s[E_USER_ERROR 256]fdadf
-2014-05-21 23:25:42/0.0003199577331543s[E_USER_NOTICE 1024]加载核心函数文件Struggle/Config/Functions.php
-2014-05-21 23:25:42/0.0014801025390625s[E_USER_NOTICE 1024]加载核心配置文件Struggle/Config/Config.php
-2014-05-21 23:25:42/0.0017521381378174s[E_USER_NOTICE 1024]加载项目配置文件Config/Config.php
-2014-05-21 23:25:42/0.0019049644470215s[E_USER_NOTICE 1024]所有配置参数值Array
+2014-05-21 20:52:07/0.0021171569824219s[E_USER_NOTICE 1024]自动加载类struggle\libraries\cache\driver\File
+2014-05-21 20:52:07/0.0016331672668457s[E_USER_NOTICE 1024]路由模式normal;url=>/app/struggle/code/
+2014-05-21 20:52:07/0.0028951168060303s[E_USER_NOTICE 1024]模块标签=>m;动作标签=>a;模块=>Index;动作=>Index
+2014-05-21 20:52:09/8.392333984375E-5s[E_USER_NOTICE 1024]加载核心函数文件Struggle/Config/Functions.php
+2014-05-21 20:52:09/0.0011069774627686s[E_USER_NOTICE 1024]加载核心配置文件Struggle/Config/Config.php
+2014-05-21 20:52:09/0.0012860298156738s[E_USER_NOTICE 1024]加载项目配置文件Config/Config.php
+2014-05-21 20:52:09/0.0013940334320068s[E_USER_NOTICE 1024]所有配置参数值Array
 (
     [DISPATCHER_DEFAULT_MODULE] => index
     [DISPATCHER_DEFAULT_ACTION] => index
@@ -624,23 +270,22 @@
     [AUTOLOAD_DIR] => AddOnes/,Struggle/Libraries/,Struggle/Libraries/Cache/Driver/
 )
 
-2014-05-21 23:25:42/0.0022680759429932s[E_USER_NOTICE 1024]语言配置文件Struggle/Config/zh-cn.php处理
-2014-05-21 23:25:42/0.0024280548095703s[E_USER_WARNING 512]语言文件不存在Config/zh-cn.php,文件名区分大小写
-2014-05-21 23:25:42/0.0027730464935303s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Object.php
-2014-05-21 23:25:42/0.0030820369720459s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Exception.php
-2014-05-21 23:25:42/0.0034019947052002s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Route.php
-2014-05-21 23:25:42/0.0035820007324219s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Controll.php
-2014-05-21 23:25:42/0.0041451454162598s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/View.php
-2014-05-21 23:25:42/0.0042800903320312s[E_USER_NOTICE 1024]设置/opt/lampp/htdocs/appu/app/struggle/code/AddOnes/:/opt/lampp/htdocs/appu/app/struggle/code/Struggle/Libraries/:/opt/lampp/htdocs/appu/app/struggle/code/Struggle/Libraries/Cache/Driver/:自动包含目录
-2014-05-21 23:25:42/0.0043129920959473s[E_USER_NOTICE 1024]自定义自动包含处理函数\autoLoad
-2014-05-21 23:25:42/0.0043320655822754s[E_USER_NOTICE 1024]自定义shutdown处理句柄\struggle\libraries\Exception::shutdownHandle
-2014-05-21 23:25:42/0.0043540000915527s[E_USER_NOTICE 1024]自定义异常处理句柄\struggle\libraries\Exception::exceptionHandle
-2014-05-21 23:25:42/0.0043771266937256s[E_USER_NOTICE 1024]自定义错误处理句柄\struggle\libraries\Exception::errorHandle
-2014-05-21 23:25:42/0.0044350624084473s[E_USER_NOTICE 1024]初始化类Route
-2014-05-21 23:25:42/0.0045609474182129s[E_NOTICE 8]Undefined property: struggle\libraries\Route::$msMode	/git/struggle/code/Struggle/Libraries/Core/Route.php	第12行
-2014-05-21 23:25:42/0.0046250820159912s[E_USER_NOTICE 1024]初始化类Debug
-2014-05-21 23:25:42/0.0046589374542236s[E_USER_NOTICE 1024]自动加载类struggle\libraries\Debug
-2014-05-21 23:25:42/0.0063741207122803s[E_USER_NOTICE 1024]初始化类\struggle\libraries\cache\driver\File,初始化参数Array
+2014-05-21 20:52:09/0.0014939308166504s[E_USER_NOTICE 1024]语言配置文件Struggle/Config/zh-cn.php处理
+2014-05-21 20:52:09/0.0015649795532227s[E_USER_WARNING 512]语言文件不存在Config/zh-cn.php,文件名区分大小写
+2014-05-21 20:52:09/0.0017809867858887s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Object.php
+2014-05-21 20:52:09/0.0020248889923096s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Exception.php
+2014-05-21 20:52:09/0.0022728443145752s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Route.php
+2014-05-21 20:52:09/0.0023679733276367s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Controll.php
+2014-05-21 20:52:09/0.0028820037841797s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/View.php
+2014-05-21 20:52:09/0.002936840057373s[E_USER_NOTICE 1024]设置/apps/www/htdocs/app/struggle/code/AddOnes/:/apps/www/htdocs/app/struggle/code/Struggle/Libraries/:/apps/www/htdocs/app/struggle/code/Struggle/Libraries/Cache/Driver/:自动包含目录
+2014-05-21 20:52:09/0.0029489994049072s[E_USER_NOTICE 1024]自定义自动包含处理函数\autoLoad
+2014-05-21 20:52:09/0.002957820892334s[E_USER_NOTICE 1024]自定义shutdown处理句柄\struggle\libraries\Exception::shutdownHandle
+2014-05-21 20:52:09/0.0029678344726562s[E_USER_NOTICE 1024]自定义异常处理句柄\struggle\libraries\Exception::exceptionHandle
+2014-05-21 20:52:09/0.0029768943786621s[E_USER_NOTICE 1024]自定义错误处理句柄\struggle\libraries\Exception::errorHandle
+2014-05-21 20:52:09/0.0029988288879395s[E_USER_NOTICE 1024]初始化类Route
+2014-05-21 20:52:09/0.0030279159545898s[E_USER_NOTICE 1024]初始化类Debug
+2014-05-21 20:52:09/0.0030379295349121s[E_USER_NOTICE 1024]自动加载类struggle\libraries\Debug
+2014-05-21 20:52:09/0.0038409233093262s[E_USER_NOTICE 1024]初始化类\struggle\libraries\cache\driver\File,初始化参数Array
 (
     [file] => Caches/Runtime/application.log
     [mode] => ab
@@ -648,14 +293,13 @@
     [renum] => 3
 )
 
-2014-05-21 23:25:42/0.006411075592041s[E_USER_NOTICE 1024]自动加载类struggle\libraries\cache\driver\File
-2014-05-21 23:25:42/0.0045990943908691s[E_USER_NOTICE 1024]路由模式;url=>/appu/app/struggle/code/?m=my&a=shit
-2014-05-21 23:25:42/0.0098960399627686s[E_USER_NOTICE 1024]模块标签=>m;动作标签=>a;模块=>my;动作=>shit
-2014-05-21 23:25:42/0.010902166366577s[E_USER_ERROR 256]fdadf
-2014-05-22 00:08:20/0.00055217742919922s[E_USER_NOTICE 1024]加载核心函数文件Struggle/Config/Functions.php
-2014-05-22 00:08:20/0.0021300315856934s[E_USER_NOTICE 1024]加载核心配置文件Struggle/Config/Config.php
-2014-05-22 00:08:20/0.0023679733276367s[E_USER_NOTICE 1024]加载项目配置文件Config/Config.php
-2014-05-22 00:08:20/0.002528190612793s[E_USER_NOTICE 1024]所有配置参数值Array
+2014-05-21 20:52:09/0.0038549900054932s[E_USER_NOTICE 1024]自动加载类struggle\libraries\cache\driver\File
+2014-05-21 20:52:09/0.0030169486999512s[E_USER_NOTICE 1024]路由模式normal;url=>/app/struggle/code/
+2014-05-21 20:52:09/0.0054678916931152s[E_USER_NOTICE 1024]模块标签=>m;动作标签=>a;模块=>Index;动作=>Index
+2014-05-21 20:52:35/0.00017094612121582s[E_USER_NOTICE 1024]加载核心函数文件Struggle/Config/Functions.php
+2014-05-21 20:52:35/0.0011568069458008s[E_USER_NOTICE 1024]加载核心配置文件Struggle/Config/Config.php
+2014-05-21 20:52:35/0.0013468265533447s[E_USER_NOTICE 1024]加载项目配置文件Config/Config.php
+2014-05-21 20:52:35/0.0014638900756836s[E_USER_NOTICE 1024]所有配置参数值Array
 (
     [DISPATCHER_DEFAULT_MODULE] => index
     [DISPATCHER_DEFAULT_ACTION] => index
@@ -685,23 +329,22 @@
     [AUTOLOAD_DIR] => AddOnes/,Struggle/Libraries/,Struggle/Libraries/Cache/Driver/
 )
 
-2014-05-22 00:08:20/0.0029151439666748s[E_USER_NOTICE 1024]语言配置文件Struggle/Config/zh-cn.php处理
-2014-05-22 00:08:20/0.0033199787139893s[E_USER_WARNING 512]语言文件不存在Config/zh-cn.php,文件名区分大小写
-2014-05-22 00:08:20/0.0037260055541992s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Object.php
-2014-05-22 00:08:20/0.0043330192565918s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Exception.php
-2014-05-22 00:08:20/0.0070631504058838s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Route.php
-2014-05-22 00:08:20/0.00754714012146s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Controll.php
-2014-05-22 00:08:20/0.0081090927124023s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/View.php
-2014-05-22 00:08:20/0.0082540512084961s[E_USER_NOTICE 1024]设置/opt/lampp/htdocs/appu/app/struggle/code/AddOnes/:/opt/lampp/htdocs/appu/app/struggle/code/Struggle/Libraries/:/opt/lampp/htdocs/appu/app/struggle/code/Struggle/Libraries/Cache/Driver/:自动包含目录
-2014-05-22 00:08:20/0.0082859992980957s[E_USER_NOTICE 1024]自定义自动包含处理函数\autoLoad
-2014-05-22 00:08:20/0.0083041191101074s[E_USER_NOTICE 1024]自定义shutdown处理句柄\struggle\libraries\Exception::shutdownHandle
-2014-05-22 00:08:20/0.0083260536193848s[E_USER_NOTICE 1024]自定义异常处理句柄\struggle\libraries\Exception::exceptionHandle
-2014-05-22 00:08:20/0.0083479881286621s[E_USER_NOTICE 1024]自定义错误处理句柄\struggle\libraries\Exception::errorHandle
-2014-05-22 00:08:20/0.008404016494751s[E_USER_NOTICE 1024]初始化类Route
-2014-05-22 00:08:20/0.0084550380706787s[E_NOTICE 8]Undefined property: struggle\libraries\Route::$msMode	/git/struggle/code/Struggle/Libraries/Core/Route.php	第12行
-2014-05-22 00:08:20/0.0085101127624512s[E_USER_NOTICE 1024]初始化类Debug
-2014-05-22 00:08:20/0.0085420608520508s[E_USER_NOTICE 1024]自动加载类struggle\libraries\Debug
-2014-05-22 00:08:20/0.0095241069793701s[E_USER_NOTICE 1024]初始化类\struggle\libraries\cache\driver\File,初始化参数Array
+2014-05-21 20:52:35/0.001572847366333s[E_USER_NOTICE 1024]语言配置文件Struggle/Config/zh-cn.php处理
+2014-05-21 20:52:35/0.0016508102416992s[E_USER_WARNING 512]语言文件不存在Config/zh-cn.php,文件名区分大小写
+2014-05-21 20:52:35/0.0019478797912598s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Object.php
+2014-05-21 20:52:35/0.0022540092468262s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Exception.php
+2014-05-21 20:52:35/0.0033628940582275s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Route.php
+2014-05-21 20:52:35/0.0034849643707275s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Controll.php
+2014-05-21 20:52:35/0.0040678977966309s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/View.php
+2014-05-21 20:52:35/0.0041308403015137s[E_USER_NOTICE 1024]设置/apps/www/htdocs/app/struggle/code/AddOnes/:/apps/www/htdocs/app/struggle/code/Struggle/Libraries/:/apps/www/htdocs/app/struggle/code/Struggle/Libraries/Cache/Driver/:自动包含目录
+2014-05-21 20:52:35/0.0041439533233643s[E_USER_NOTICE 1024]自定义自动包含处理函数\autoLoad
+2014-05-21 20:52:35/0.0041539669036865s[E_USER_NOTICE 1024]自定义shutdown处理句柄\struggle\libraries\Exception::shutdownHandle
+2014-05-21 20:52:35/0.0041639804840088s[E_USER_NOTICE 1024]自定义异常处理句柄\struggle\libraries\Exception::exceptionHandle
+2014-05-21 20:52:35/0.0041749477386475s[E_USER_NOTICE 1024]自定义错误处理句柄\struggle\libraries\Exception::errorHandle
+2014-05-21 20:52:35/0.0041990280151367s[E_USER_NOTICE 1024]初始化类Route
+2014-05-21 20:52:35/0.0042300224304199s[E_USER_NOTICE 1024]初始化类Debug
+2014-05-21 20:52:35/0.0042409896850586s[E_USER_NOTICE 1024]自动加载类struggle\libraries\Debug
+2014-05-21 20:52:35/0.0052609443664551s[E_USER_NOTICE 1024]初始化类\struggle\libraries\cache\driver\File,初始化参数Array
 (
     [file] => Caches/Runtime/application.log
     [mode] => ab
@@ -709,7 +352,361 @@
     [renum] => 3
 )
 
-2014-05-22 00:08:20/0.009552001953125s[E_USER_NOTICE 1024]自动加载类struggle\libraries\cache\driver\File
-2014-05-22 00:08:20/0.0084869861602783s[E_USER_NOTICE 1024]路由模式;url=>/appu/app/struggle/code/?m=my&a=shit
-2014-05-22 00:08:20/0.012617111206055s[E_USER_NOTICE 1024]模块标签=>m;动作标签=>a;模块=>My;动作=>Shit
-2014-05-22 00:08:20/0.01276707649231s[E_USER_ERROR 256]fdadf
+2014-05-21 20:52:35/0.0052759647369385s[E_USER_NOTICE 1024]自动加载类struggle\libraries\cache\driver\File
+2014-05-21 20:52:35/0.0042188167572021s[E_USER_NOTICE 1024]路由模式normal;url=>/app/struggle/code/
+2014-05-21 20:52:35/0.0071909427642822s[E_USER_NOTICE 1024]模块标签=>m;动作标签=>a;模块=>Index;动作=>Index
+2014-05-21 20:56:38/0.00010395050048828s[E_USER_NOTICE 1024]加载核心函数文件Struggle/Config/Functions.php
+2014-05-21 20:56:38/0.0010890960693359s[E_USER_NOTICE 1024]加载核心配置文件Struggle/Config/Config.php
+2014-05-21 20:56:38/0.0012819766998291s[E_USER_NOTICE 1024]加载项目配置文件Config/Config.php
+2014-05-21 20:56:38/0.0014081001281738s[E_USER_NOTICE 1024]所有配置参数值Array
+(
+    [DISPATCHER_DEFAULT_MODULE] => index
+    [DISPATCHER_DEFAULT_ACTION] => index
+    [DISPATCHER_MODULE_TAG] => m
+    [DISPATCHER_ACTION_TAG] => a
+    [CACHE_ENGINE] => file
+    [CACHE_DIR] => 
+    [LOG_TYPE] => file
+    [LOG_BASE_PATH] => Caches/
+    [LOG_PATH] => Runtime/
+    [LOG_NAME] => application
+    [LOG_EXT] => log
+    [LOG_MAX_SIZE] => 2000
+    [VIEW_THEME_PATH] => 
+    [VIEW_THEME] => default
+    [VIEW_SUFFIX] => htm
+    [LANG_NAME] => zh-cn
+    [DEBUG_RECORD_TYPE] => file
+    [DEBUG_RECORD_FILE_NAME] => application
+    [DEBUG_RECORD_FILE_PATH] => Caches/Runtime/
+    [DEBUG_RECORD_FILE_EXT] => log
+    [DEBUG_RECORD_FILE_MODE] => ab
+    [DEBUG_RECORD_FILE_SIZE] => 2000
+    [DEBUG_RECORD_FILE_NUM] => 3
+    [DEBUG_LEVEL] => all
+    [ROUTE_MODE] => normal
+    [AUTOLOAD_DIR] => AddOnes/,Struggle/Libraries/,Struggle/Libraries/Cache/Driver/
+)
+
+2014-05-21 20:56:38/0.0015749931335449s[E_USER_NOTICE 1024]语言配置文件Struggle/Config/zh-cn.php处理
+2014-05-21 20:56:38/0.0016601085662842s[E_USER_WARNING 512]语言文件不存在Config/zh-cn.php,文件名区分大小写
+2014-05-21 20:56:38/0.0018351078033447s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Object.php
+2014-05-21 20:56:38/0.0020830631256104s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Exception.php
+2014-05-21 20:56:38/0.0031070709228516s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Route.php
+2014-05-21 20:56:38/0.0032238960266113s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Controll.php
+2014-05-21 20:56:38/0.0038070678710938s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/View.php
+2014-05-21 20:56:38/0.0038740634918213s[E_USER_NOTICE 1024]设置/apps/www/htdocs/app/struggle/code/AddOnes/:/apps/www/htdocs/app/struggle/code/Struggle/Libraries/:/apps/www/htdocs/app/struggle/code/Struggle/Libraries/Cache/Driver/:自动包含目录
+2014-05-21 20:56:38/0.0038869380950928s[E_USER_NOTICE 1024]自定义自动包含处理函数\autoLoad
+2014-05-21 20:56:38/0.0038959980010986s[E_USER_NOTICE 1024]自定义shutdown处理句柄\struggle\libraries\Exception::shutdownHandle
+2014-05-21 20:56:38/0.0039050579071045s[E_USER_NOTICE 1024]自定义异常处理句柄\struggle\libraries\Exception::exceptionHandle
+2014-05-21 20:56:38/0.0039150714874268s[E_USER_NOTICE 1024]自定义错误处理句柄\struggle\libraries\Exception::errorHandle
+2014-05-21 20:56:38/0.0039370059967041s[E_USER_NOTICE 1024]初始化类Route
+2014-05-21 20:56:38/0.003964900970459s[E_USER_NOTICE 1024]初始化类Debug
+2014-05-21 20:56:38/0.0039761066436768s[E_USER_NOTICE 1024]自动加载类struggle\libraries\Debug
+2014-05-21 20:56:38/0.0049018859863281s[E_USER_NOTICE 1024]初始化类\struggle\libraries\cache\driver\File,初始化参数Array
+(
+    [file] => Caches/Runtime/application.log
+    [mode] => ab
+    [size] => 2000
+    [renum] => 3
+)
+
+2014-05-21 20:56:38/0.0049159526824951s[E_USER_NOTICE 1024]自动加载类struggle\libraries\cache\driver\File
+2014-05-21 20:56:38/0.0039548873901367s[E_USER_NOTICE 1024]路由模式normal;url=>/app/struggle/code/
+2014-05-21 20:56:38/0.0066890716552734s[E_USER_NOTICE 1024]模块标签=>m;动作标签=>a;模块=>Index;动作=>Index
+2014-05-21 20:58:04/0.00017309188842773s[E_USER_NOTICE 1024]加载核心函数文件Struggle/Config/Functions.php
+2014-05-21 20:58:04/0.0012040138244629s[E_USER_NOTICE 1024]加载核心配置文件Struggle/Config/Config.php
+2014-05-21 20:58:04/0.0014111995697021s[E_USER_NOTICE 1024]加载项目配置文件Config/Config.php
+2014-05-21 20:58:04/0.0015389919281006s[E_USER_NOTICE 1024]所有配置参数值Array
+(
+    [DISPATCHER_DEFAULT_MODULE] => index
+    [DISPATCHER_DEFAULT_ACTION] => index
+    [DISPATCHER_MODULE_TAG] => m
+    [DISPATCHER_ACTION_TAG] => a
+    [CACHE_ENGINE] => file
+    [CACHE_DIR] => 
+    [LOG_TYPE] => file
+    [LOG_BASE_PATH] => Caches/
+    [LOG_PATH] => Runtime/
+    [LOG_NAME] => application
+    [LOG_EXT] => log
+    [LOG_MAX_SIZE] => 2000
+    [VIEW_THEME_PATH] => 
+    [VIEW_THEME] => default
+    [VIEW_SUFFIX] => htm
+    [LANG_NAME] => zh-cn
+    [DEBUG_RECORD_TYPE] => file
+    [DEBUG_RECORD_FILE_NAME] => application
+    [DEBUG_RECORD_FILE_PATH] => Caches/Runtime/
+    [DEBUG_RECORD_FILE_EXT] => log
+    [DEBUG_RECORD_FILE_MODE] => ab
+    [DEBUG_RECORD_FILE_SIZE] => 2000
+    [DEBUG_RECORD_FILE_NUM] => 3
+    [DEBUG_LEVEL] => all
+    [ROUTE_MODE] => normal
+    [AUTOLOAD_DIR] => AddOnes/,Struggle/Libraries/,Struggle/Libraries/Cache/Driver/
+)
+
+2014-05-21 20:58:04/0.0016491413116455s[E_USER_NOTICE 1024]语言配置文件Struggle/Config/zh-cn.php处理
+2014-05-21 20:58:04/0.0017290115356445s[E_USER_WARNING 512]语言文件不存在Config/zh-cn.php,文件名区分大小写
+2014-05-21 20:58:04/0.0019011497497559s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Object.php
+2014-05-21 20:58:04/0.002251148223877s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Exception.php
+2014-05-21 20:58:04/0.0036001205444336s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Route.php
+2014-05-21 20:58:04/0.0037300586700439s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Controll.php
+2014-05-21 20:58:04/0.0043051242828369s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/View.php
+2014-05-21 20:58:04/0.0043761730194092s[E_USER_NOTICE 1024]设置/apps/www/htdocs/app/struggle/code/AddOnes/:/apps/www/htdocs/app/struggle/code/Struggle/Libraries/:/apps/www/htdocs/app/struggle/code/Struggle/Libraries/Cache/Driver/:自动包含目录
+2014-05-21 20:58:04/0.0043931007385254s[E_USER_NOTICE 1024]自定义自动包含处理函数\autoLoad
+2014-05-21 20:58:04/0.0044040679931641s[E_USER_NOTICE 1024]自定义shutdown处理句柄\struggle\libraries\Exception::shutdownHandle
+2014-05-21 20:58:04/0.0044140815734863s[E_USER_NOTICE 1024]自定义异常处理句柄\struggle\libraries\Exception::exceptionHandle
+2014-05-21 20:58:04/0.0044240951538086s[E_USER_NOTICE 1024]自定义错误处理句柄\struggle\libraries\Exception::errorHandle
+2014-05-21 20:58:04/0.0044491291046143s[E_USER_NOTICE 1024]初始化类Route
+2014-05-21 20:58:04/0.0044801235198975s[E_USER_NOTICE 1024]初始化类Debug
+2014-05-21 20:58:04/0.0044960975646973s[E_USER_NOTICE 1024]自动加载类struggle\libraries\Debug
+2014-05-21 20:58:04/0.029204130172729s[E_USER_NOTICE 1024]初始化类\struggle\libraries\cache\driver\File,初始化参数Array
+(
+    [file] => Caches/Runtime/application.log
+    [mode] => ab
+    [size] => 2000
+    [renum] => 3
+)
+
+2014-05-21 20:58:04/0.029220104217529s[E_USER_NOTICE 1024]自动加载类struggle\libraries\cache\driver\File
+2014-05-21 20:58:04/0.0044691562652588s[E_USER_NOTICE 1024]路由模式normal;url=>/app/struggle/code/
+2014-05-21 20:58:04/0.030604124069214s[E_USER_NOTICE 1024]模块标签=>m;动作标签=>a;模块=>Index;动作=>Index
+2014-05-21 20:58:18/0.00010991096496582s[E_USER_NOTICE 1024]加载核心函数文件Struggle/Config/Functions.php
+2014-05-21 20:58:18/0.0011558532714844s[E_USER_NOTICE 1024]加载核心配置文件Struggle/Config/Config.php
+2014-05-21 20:58:18/0.0013470649719238s[E_USER_NOTICE 1024]加载项目配置文件Config/Config.php
+2014-05-21 20:58:18/0.0014729499816895s[E_USER_NOTICE 1024]所有配置参数值Array
+(
+    [DISPATCHER_DEFAULT_MODULE] => index
+    [DISPATCHER_DEFAULT_ACTION] => index
+    [DISPATCHER_MODULE_TAG] => m
+    [DISPATCHER_ACTION_TAG] => a
+    [CACHE_ENGINE] => file
+    [CACHE_DIR] => 
+    [LOG_TYPE] => file
+    [LOG_BASE_PATH] => Caches/
+    [LOG_PATH] => Runtime/
+    [LOG_NAME] => application
+    [LOG_EXT] => log
+    [LOG_MAX_SIZE] => 2000
+    [VIEW_THEME_PATH] => 
+    [VIEW_THEME] => default
+    [VIEW_SUFFIX] => htm
+    [LANG_NAME] => zh-cn
+    [DEBUG_RECORD_TYPE] => file
+    [DEBUG_RECORD_FILE_NAME] => application
+    [DEBUG_RECORD_FILE_PATH] => Caches/Runtime/
+    [DEBUG_RECORD_FILE_EXT] => log
+    [DEBUG_RECORD_FILE_MODE] => ab
+    [DEBUG_RECORD_FILE_SIZE] => 2000
+    [DEBUG_RECORD_FILE_NUM] => 3
+    [DEBUG_LEVEL] => all
+    [ROUTE_MODE] => normal
+    [AUTOLOAD_DIR] => AddOnes/,Struggle/Libraries/,Struggle/Libraries/Cache/Driver/
+)
+
+2014-05-21 20:58:18/0.0015840530395508s[E_USER_NOTICE 1024]语言配置文件Struggle/Config/zh-cn.php处理
+2014-05-21 20:58:18/0.0016720294952393s[E_USER_WARNING 512]语言文件不存在Config/zh-cn.php,文件名区分大小写
+2014-05-21 20:58:18/0.0036139488220215s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Object.php
+2014-05-21 20:58:18/0.0041298866271973s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Exception.php
+2014-05-21 20:58:18/0.0072178840637207s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Route.php
+2014-05-21 20:58:18/0.0076000690460205s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Controll.php
+2014-05-21 20:58:18/0.0084860324859619s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/View.php
+2014-05-21 20:58:18/0.0085618495941162s[E_USER_NOTICE 1024]设置/apps/www/htdocs/app/struggle/code/AddOnes/:/apps/www/htdocs/app/struggle/code/Struggle/Libraries/:/apps/www/htdocs/app/struggle/code/Struggle/Libraries/Cache/Driver/:自动包含目录
+2014-05-21 20:58:18/0.0085759162902832s[E_USER_NOTICE 1024]自定义自动包含处理函数\autoLoad
+2014-05-21 20:58:18/0.0085868835449219s[E_USER_NOTICE 1024]自定义shutdown处理句柄\struggle\libraries\Exception::shutdownHandle
+2014-05-21 20:58:18/0.0085968971252441s[E_USER_NOTICE 1024]自定义异常处理句柄\struggle\libraries\Exception::exceptionHandle
+2014-05-21 20:58:18/0.0086078643798828s[E_USER_NOTICE 1024]自定义错误处理句柄\struggle\libraries\Exception::errorHandle
+2014-05-21 20:58:18/0.0086328983306885s[E_USER_NOTICE 1024]初始化类Route
+2014-05-21 20:58:18/0.0086660385131836s[E_USER_NOTICE 1024]初始化类Debug
+2014-05-21 20:58:18/0.0086839199066162s[E_USER_NOTICE 1024]自动加载类struggle\libraries\Debug
+2014-05-21 20:58:18/0.010637998580933s[E_USER_NOTICE 1024]初始化类\struggle\libraries\cache\driver\File,初始化参数Array
+(
+    [file] => Caches/Runtime/application.log
+    [mode] => ab
+    [size] => 2000
+    [renum] => 3
+)
+
+2014-05-21 20:58:18/0.010654926300049s[E_USER_NOTICE 1024]自动加载类struggle\libraries\cache\driver\File
+2014-05-21 20:58:18/0.0086550712585449s[E_USER_NOTICE 1024]路由模式normal;url=>/app/struggle/code/
+2014-05-21 20:58:18/0.012547969818115s[E_USER_NOTICE 1024]模块标签=>m;动作标签=>a;模块=>Index;动作=>Index
+2014-05-21 20:58:38/6.0081481933594E-5s[E_USER_NOTICE 1024]加载核心函数文件Struggle/Config/Functions.php
+2014-05-21 20:58:38/0.00061511993408203s[E_USER_NOTICE 1024]加载核心配置文件Struggle/Config/Config.php
+2014-05-21 20:58:38/0.00073409080505371s[E_USER_NOTICE 1024]加载项目配置文件Config/Config.php
+2014-05-21 20:58:38/0.0008080005645752s[E_USER_NOTICE 1024]所有配置参数值Array
+(
+    [DISPATCHER_DEFAULT_MODULE] => index
+    [DISPATCHER_DEFAULT_ACTION] => index
+    [DISPATCHER_MODULE_TAG] => m
+    [DISPATCHER_ACTION_TAG] => a
+    [CACHE_ENGINE] => file
+    [CACHE_DIR] => 
+    [LOG_TYPE] => file
+    [LOG_BASE_PATH] => Caches/
+    [LOG_PATH] => Runtime/
+    [LOG_NAME] => application
+    [LOG_EXT] => log
+    [LOG_MAX_SIZE] => 2000
+    [VIEW_THEME_PATH] => 
+    [VIEW_THEME] => default
+    [VIEW_SUFFIX] => htm
+    [LANG_NAME] => zh-cn
+    [DEBUG_RECORD_TYPE] => file
+    [DEBUG_RECORD_FILE_NAME] => application
+    [DEBUG_RECORD_FILE_PATH] => Caches/Runtime/
+    [DEBUG_RECORD_FILE_EXT] => log
+    [DEBUG_RECORD_FILE_MODE] => ab
+    [DEBUG_RECORD_FILE_SIZE] => 2000
+    [DEBUG_RECORD_FILE_NUM] => 3
+    [DEBUG_LEVEL] => all
+    [ROUTE_MODE] => normal
+    [AUTOLOAD_DIR] => AddOnes/,Struggle/Libraries/,Struggle/Libraries/Cache/Driver/
+)
+
+2014-05-21 20:58:38/0.00086498260498047s[E_USER_NOTICE 1024]语言配置文件Struggle/Config/zh-cn.php处理
+2014-05-21 20:58:38/0.00091004371643066s[E_USER_WARNING 512]语言文件不存在Config/zh-cn.php,文件名区分大小写
+2014-05-21 20:58:38/0.0018630027770996s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Object.php
+2014-05-21 20:58:38/0.0021741390228271s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Exception.php
+2014-05-21 20:58:38/0.0031321048736572s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Route.php
+2014-05-21 20:58:38/0.0032470226287842s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Controll.php
+2014-05-21 20:58:38/0.0036730766296387s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/View.php
+2014-05-21 20:58:38/0.0038540363311768s[E_USER_NOTICE 1024]设置/apps/www/htdocs/app/struggle/code/AddOnes/:/apps/www/htdocs/app/struggle/code/Struggle/Libraries/:/apps/www/htdocs/app/struggle/code/Struggle/Libraries/Cache/Driver/:自动包含目录
+2014-05-21 20:58:38/0.0038671493530273s[E_USER_NOTICE 1024]自定义自动包含处理函数\autoLoad
+2014-05-21 20:58:38/0.0038771629333496s[E_USER_NOTICE 1024]自定义shutdown处理句柄\struggle\libraries\Exception::shutdownHandle
+2014-05-21 20:58:38/0.0038859844207764s[E_USER_NOTICE 1024]自定义异常处理句柄\struggle\libraries\Exception::exceptionHandle
+2014-05-21 20:58:38/0.0038931369781494s[E_USER_NOTICE 1024]自定义错误处理句柄\struggle\libraries\Exception::errorHandle
+2014-05-21 20:58:38/0.0039160251617432s[E_USER_NOTICE 1024]初始化类Route
+2014-05-21 20:58:38/0.0039470195770264s[E_USER_NOTICE 1024]初始化类Debug
+2014-05-21 20:58:38/0.0039551258087158s[E_USER_NOTICE 1024]自动加载类struggle\libraries\Debug
+2014-05-21 20:58:38/0.0063810348510742s[E_USER_NOTICE 1024]初始化类\struggle\libraries\cache\driver\File,初始化参数Array
+(
+    [file] => Caches/Runtime/application.log
+    [mode] => ab
+    [size] => 2000
+    [renum] => 3
+)
+
+2014-05-21 20:58:38/0.0063931941986084s[E_USER_NOTICE 1024]自动加载类struggle\libraries\cache\driver\File
+2014-05-21 20:58:38/0.0039350986480713s[E_USER_NOTICE 1024]路由模式normal;url=>/app/struggle/code/
+2014-05-21 20:58:38/0.0072062015533447s[E_USER_NOTICE 1024]模块标签=>m;动作标签=>a;模块=>Index;动作=>Index
+2014-05-21 21:00:58/0.00026583671569824s[E_USER_NOTICE 1024]加载核心函数文件Struggle/Config/Functions.php
+2014-05-21 21:00:58/0.0015029907226562s[E_USER_NOTICE 1024]加载核心配置文件Struggle/Config/Config.php
+2014-05-21 21:00:58/0.0017139911651611s[E_USER_NOTICE 1024]加载项目配置文件Config/Config.php
+2014-05-21 21:00:58/0.0020568370819092s[E_USER_NOTICE 1024]所有配置参数值Array
+(
+    [DISPATCHER_DEFAULT_MODULE] => index
+    [DISPATCHER_DEFAULT_ACTION] => index
+    [DISPATCHER_MODULE_TAG] => m
+    [DISPATCHER_ACTION_TAG] => a
+    [CACHE_ENGINE] => file
+    [CACHE_DIR] => 
+    [LOG_TYPE] => file
+    [LOG_BASE_PATH] => Caches/
+    [LOG_PATH] => Runtime/
+    [LOG_NAME] => application
+    [LOG_EXT] => log
+    [LOG_MAX_SIZE] => 2000
+    [VIEW_THEME_PATH] => 
+    [VIEW_THEME] => default
+    [VIEW_SUFFIX] => htm
+    [LANG_NAME] => zh-cn
+    [DEBUG_RECORD_TYPE] => file
+    [DEBUG_RECORD_FILE_NAME] => application
+    [DEBUG_RECORD_FILE_PATH] => Caches/Runtime/
+    [DEBUG_RECORD_FILE_EXT] => log
+    [DEBUG_RECORD_FILE_MODE] => ab
+    [DEBUG_RECORD_FILE_SIZE] => 2000
+    [DEBUG_RECORD_FILE_NUM] => 3
+    [DEBUG_LEVEL] => all
+    [ROUTE_MODE] => normal
+    [AUTOLOAD_DIR] => AddOnes/,Struggle/Libraries/,Struggle/Libraries/Cache/Driver/
+)
+
+2014-05-21 21:00:58/0.0021848678588867s[E_USER_NOTICE 1024]语言配置文件Struggle/Config/zh-cn.php处理
+2014-05-21 21:00:58/0.0026218891143799s[E_USER_WARNING 512]语言文件不存在Config/zh-cn.php,文件名区分大小写
+2014-05-21 21:00:58/0.0030498504638672s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Object.php
+2014-05-21 21:00:58/0.0034849643707275s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Exception.php
+2014-05-21 21:00:58/0.0053620338439941s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Route.php
+2014-05-21 21:00:58/0.0055088996887207s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Controll.php
+2014-05-21 21:00:58/0.0059919357299805s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/View.php
+2014-05-21 21:00:58/0.0060539245605469s[E_USER_NOTICE 1024]设置/apps/www/htdocs/app/struggle/code/AddOnes/:/apps/www/htdocs/app/struggle/code/Struggle/Libraries/:/apps/www/htdocs/app/struggle/code/Struggle/Libraries/Cache/Driver/:自动包含目录
+2014-05-21 21:00:58/0.0060670375823975s[E_USER_NOTICE 1024]自定义自动包含处理函数\autoLoad
+2014-05-21 21:00:58/0.0060780048370361s[E_USER_NOTICE 1024]自定义shutdown处理句柄\struggle\libraries\Exception::shutdownHandle
+2014-05-21 21:00:58/0.0060880184173584s[E_USER_NOTICE 1024]自定义异常处理句柄\struggle\libraries\Exception::exceptionHandle
+2014-05-21 21:00:58/0.0060980319976807s[E_USER_NOTICE 1024]自定义错误处理句柄\struggle\libraries\Exception::errorHandle
+2014-05-21 21:00:58/0.0061240196228027s[E_USER_NOTICE 1024]初始化类Route
+2014-05-21 21:00:58/0.0061550140380859s[E_USER_NOTICE 1024]初始化类Debug
+2014-05-21 21:00:58/0.006166934967041s[E_USER_NOTICE 1024]自动加载类struggle\libraries\Debug
+2014-05-21 21:00:58/0.0071208477020264s[E_USER_NOTICE 1024]初始化类\struggle\libraries\cache\driver\File,初始化参数Array
+(
+    [file] => Caches/Runtime/application.log
+    [mode] => ab
+    [size] => 2000
+    [renum] => 3
+)
+
+2014-05-21 21:00:58/0.0071358680725098s[E_USER_NOTICE 1024]自动加载类struggle\libraries\cache\driver\File
+2014-05-21 21:00:58/0.0061440467834473s[E_USER_NOTICE 1024]路由模式normal;url=>/app/struggle/code/
+2014-05-21 21:00:58/0.0089700222015381s[E_USER_NOTICE 1024]模块标签=>m;动作标签=>a;模块=>Index;动作=>Index
+2014-05-21 21:00:58/0.009289026260376s[E_USER_ERROR 256]操作部存在{$this->action}}
+2014-05-21 21:01:42/0.00016117095947266s[E_USER_NOTICE 1024]加载核心函数文件Struggle/Config/Functions.php
+2014-05-21 21:01:42/0.0012140274047852s[E_USER_NOTICE 1024]加载核心配置文件Struggle/Config/Config.php
+2014-05-21 21:01:42/0.0013110637664795s[E_USER_NOTICE 1024]加载项目配置文件Config/Config.php
+2014-05-21 21:01:42/0.0013761520385742s[E_USER_NOTICE 1024]所有配置参数值Array
+(
+    [DISPATCHER_DEFAULT_MODULE] => index
+    [DISPATCHER_DEFAULT_ACTION] => index
+    [DISPATCHER_MODULE_TAG] => m
+    [DISPATCHER_ACTION_TAG] => a
+    [CACHE_ENGINE] => file
+    [CACHE_DIR] => 
+    [LOG_TYPE] => file
+    [LOG_BASE_PATH] => Caches/
+    [LOG_PATH] => Runtime/
+    [LOG_NAME] => application
+    [LOG_EXT] => log
+    [LOG_MAX_SIZE] => 2000
+    [VIEW_THEME_PATH] => 
+    [VIEW_THEME] => default
+    [VIEW_SUFFIX] => htm
+    [LANG_NAME] => zh-cn
+    [DEBUG_RECORD_TYPE] => file
+    [DEBUG_RECORD_FILE_NAME] => application
+    [DEBUG_RECORD_FILE_PATH] => Caches/Runtime/
+    [DEBUG_RECORD_FILE_EXT] => log
+    [DEBUG_RECORD_FILE_MODE] => ab
+    [DEBUG_RECORD_FILE_SIZE] => 2000
+    [DEBUG_RECORD_FILE_NUM] => 3
+    [DEBUG_LEVEL] => all
+    [ROUTE_MODE] => normal
+    [AUTOLOAD_DIR] => AddOnes/,Struggle/Libraries/,Struggle/Libraries/Cache/Driver/
+)
+
+2014-05-21 21:01:42/0.0014350414276123s[E_USER_NOTICE 1024]语言配置文件Struggle/Config/zh-cn.php处理
+2014-05-21 21:01:42/0.0014750957489014s[E_USER_WARNING 512]语言文件不存在Config/zh-cn.php,文件名区分大小写
+2014-05-21 21:01:42/0.001561164855957s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Object.php
+2014-05-21 21:01:42/0.0016930103302002s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Exception.php
+2014-05-21 21:01:42/0.001845121383667s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Route.php
+2014-05-21 21:01:42/0.0018970966339111s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Controll.php
+2014-05-21 21:01:42/0.0021791458129883s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/View.php
+2014-05-21 21:01:42/0.0022101402282715s[E_USER_NOTICE 1024]设置/apps/www/htdocs/app/struggle/code/AddOnes/:/apps/www/htdocs/app/struggle/code/Struggle/Libraries/:/apps/www/htdocs/app/struggle/code/Struggle/Libraries/Cache/Driver/:自动包含目录
+2014-05-21 21:01:42/0.0022170543670654s[E_USER_NOTICE 1024]自定义自动包含处理函数\autoLoad
+2014-05-21 21:01:42/0.0022220611572266s[E_USER_NOTICE 1024]自定义shutdown处理句柄\struggle\libraries\Exception::shutdownHandle
+2014-05-21 21:01:42/0.0022280216217041s[E_USER_NOTICE 1024]自定义异常处理句柄\struggle\libraries\Exception::exceptionHandle
+2014-05-21 21:01:42/0.0022330284118652s[E_USER_NOTICE 1024]自定义错误处理句柄\struggle\libraries\Exception::errorHandle
+2014-05-21 21:01:42/0.0022470951080322s[E_USER_NOTICE 1024]初始化类Route
+2014-05-21 21:01:42/0.0022621154785156s[E_USER_NOTICE 1024]初始化类Debug
+2014-05-21 21:01:42/0.002269983291626s[E_USER_NOTICE 1024]自动加载类struggle\libraries\Debug
+2014-05-21 21:01:42/0.0026819705963135s[E_USER_NOTICE 1024]初始化类\struggle\libraries\cache\driver\File,初始化参数Array
+(
+    [file] => Caches/Runtime/application.log
+    [mode] => ab
+    [size] => 2000
+    [renum] => 3
+)
+
+2014-05-21 21:01:42/0.0026891231536865s[E_USER_NOTICE 1024]自动加载类struggle\libraries\cache\driver\File
+2014-05-21 21:01:42/0.0022571086883545s[E_USER_NOTICE 1024]路由模式normal;url=>/app/struggle/code/
+2014-05-21 21:01:42/0.0035920143127441s[E_USER_NOTICE 1024]模块标签=>m;动作标签=>a;模块=>Index;动作=>Index

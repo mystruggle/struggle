@@ -6,6 +6,8 @@ return array(
     //调度器
     'DISPATCHER_DEFAULT_MODULE' => 'index',
     'DISPATCHER_DEFAULT_ACTION' => 'index',
+    'DISPATCHER_MODULE_TAG'     => 'm',
+    'DISPATCHER_ACTION_TAG'     => 'a',
 
     //缓存设置
     'CACHE_ENGINE'           =>'file',

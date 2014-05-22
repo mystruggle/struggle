@@ -1,5 +1,7 @@
 <?php
 namespace struggle;
+
+
 defined('CORE_PATH') or die('Access Forbidden');
 
 header('Content-type:text/html;charset=utf-8');
@@ -67,31 +69,6 @@ Sle::run();
 
 
 
-
-
-
-
-
-function buildAppDir(){
-    $aDir = array(APP_ROOT,
-                  APP_PATH,
-                  APP_BACKEND,
-                  APP_CACHE,
-                  APP_CACHE.'Runtime/',
-                  APP_CONF,
-                  APP_LIB,
-                  APP_THEME,
-                  APP_THEME.'Default/'
-            );
-    foreach ($aDir as $sDir){
-        if (!is_dir($sDir)){
-            if(!@mkdir($sDir,0755,true)){
-                sysHalt("没有权限创建目录{$sDir}");
-            }
-        }
-    }
-}
-
 /**
  * 加载配置文件，导入配置值
  */
@@ -131,25 +108,6 @@ function importLangConf(){
     }
 }
 
-
-/**
- * 导入核心文件
- */
-function importCoreFile(){
-	$aFile = array(
-	    LIB_PATH.'Object.php',
-	    LIB_PATH.'Debug.php',
-	    LIB_PATH.'Exception.php',
-	    LIB_PATH.'ErrorMange.php',
-	    LIB_PATH.'Core/Controll.php',
-	    LIB_PATH.'Core/View.php',
-	    LIB_PATH.'Core/Dispatcher.php',
-	);
-	foreach ($aFile as $sFile){
-	    trace("加载文件{$sFile}", E_USER_NOTICE);
-	    require_cache($sFile);
-	}
-}
 
 
 
@@ -425,7 +383,7 @@ class Sle{
                     LIB_PATH.'Exception.php',
                     // LIB_PATH.'Log.php',
                     LIB_PATH.'Core/Route.php',
-                    LIB_PATH.'Core/Controll.php',
+                    LIB_PATH.'Core/Controller.php',
                     LIB_PATH.'Core/View.php',
                 );
                 foreach ($aCoreFile as $sFile){
@@ -509,7 +467,6 @@ class Sle{
         }
         //实例化类
         if (!self::$moHandle->mLastError){
-           
             //执行路由
             $this->Route->exec();
             if (APP_DEBUG && APP_DEBUG !== 'rescue')

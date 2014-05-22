@@ -1,8 +1,9 @@
 <?php
+use struggle\libraries\core;
+use struggle\libraries;
 /*
  * 全局函数
  */
-
 
 /**
  * 包含文件，区分大小写

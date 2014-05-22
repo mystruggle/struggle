@@ -1,7 +1,8 @@
 <?php
+use \struggle\libraries\core\Controller as Controller;
 
-class IndexController{
-    public function index(){
-        echo '(index)';
+class IndexController extends Controller{
+    public function actionIndex(){
+        $this->display('index/index');
     }
 }

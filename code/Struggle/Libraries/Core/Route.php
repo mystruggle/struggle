@@ -6,6 +6,7 @@ class Route extends Object{
     public  $module = '';
     public  $action = '';
     private $moduleSuffix = 'Controller';
+    private $actionPrefix = 'action';
 	
     public function __construct($sUrl){
         $this->mode = \C('ROUTE_MODE');
@@ -32,12 +33,12 @@ class Route extends Object{
             if(file_exists($sControlFile)){
                 \require_cache($sControlFile);
                 $sClassName = $this->module.$this->moduleSuffix;
+                $sMethod = "{$this->actionPrefix}{$this->action}";
                 $oController = new $sClassName();
-                if(method_exists($oController,$this->action)){
-                    $sMethod = $this->action;
+                if(method_exists($oController,$sMethod)){
                     $oController->$sMethod();
                 }else{
-                    $this->debug('操作不存在{$this->action}}',E_USER_ERROR);
+                    $this->debug("方法不存在{$sClassName}::{$sMethod}",E_USER_ERROR);
                 }
             }else{
                 $this->debug("controller文件不存在{$sControlFile}", E_USER_ERROR);

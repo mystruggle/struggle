@@ -13,11 +13,11 @@ class View{
     public function __construct(){
         $this->itsThemePath = APP_THEME;
         $this->itsCompiledPath = APP_CACHE;
-        \struggle\C('VIEW_THEME_PATH') && $this->itsThemePath = \struggle\C('VIEW_THEME_PATH');
-        \struggle\C('VIEW_SUFFIX')    && $this->itsSuffix   = \struggle\C('VIEW_SUFFIX');
-        \struggle\C('VIEW_THEME')     && $this->itsTheme    = \struggle\C('VIEW_THEME');
-        \struggle\C('VIEW_CACHE_PATH')    && $this->itsCompiledPath    = \struggle\C('VIEW_CACHE_PATH');
-        \struggle\C('VIEW_CACHE_DIR')     && $this->itsCompiledSaveDir = \struggle\C('VIEW_CACHE_DIR');
+        \C('VIEW_THEME_PATH') && $this->itsThemePath = \C('VIEW_THEME_PATH');
+        \C('VIEW_SUFFIX')    && $this->itsSuffix   = \C('VIEW_SUFFIX');
+        \C('VIEW_THEME')     && $this->itsTheme    = \C('VIEW_THEME');
+        \C('VIEW_CACHE_PATH')    && $this->itsCompiledPath    = \C('VIEW_CACHE_PATH');
+        \C('VIEW_CACHE_DIR')     && $this->itsCompiledSaveDir = \C('VIEW_CACHE_DIR');
         
     }
     

@@ -5,8 +5,10 @@ class Route extends Object{
     public  $mode = '';
     public  $module = '';
     public  $action = '';
-    private $moduleSuffix = 'Controller';
-    private $actionPrefix = 'action';
+    public  $moduleSuffix = 'Controller';
+    public  $moduleFileSuffix = '.controller.php';
+    public  $methodPrefix = 'action';
+
 	
     public function __construct($sUrl){
         $this->mode = \C('ROUTE_MODE');
@@ -29,11 +31,11 @@ class Route extends Object{
             else 
                 $this->action = ctop($_GET[$sActionTag]);
             $this->debug("模块标签=>{$sModuleTag};动作标签=>{$sActionTag};模块=>{$this->module};动作=>{$this->action}",E_USER_NOTICE);
-            $sControlFile = APP_CONTROLLER."{$this->module}.php";
-            if(file_exists($sControlFile)){
+            $sControlFile = APP_CONTROLLER."{$this->module}{$this->moduleFileSuffix}";
+            if(file_exists($sControlFile) && is_readable($sControlFile)){
                 \require_cache($sControlFile);
                 $sClassName = $this->module.$this->moduleSuffix;
-                $sMethod = "{$this->actionPrefix}{$this->action}";
+                $sMethod = "{$this->methodPrefix}{$this->action}";
                 $oController = new $sClassName();
                 if(method_exists($oController,$sMethod)){
                     $oController->$sMethod();
@@ -41,7 +43,7 @@ class Route extends Object{
                     $this->debug("方法不存在{$sClassName}::{$sMethod}",E_USER_ERROR);
                 }
             }else{
-                $this->debug("controller文件不存在{$sControlFile}", E_USER_ERROR);
+                $this->debug("controller文件不存在或不可读{$sControlFile}", E_USER_ERROR);
             }
         }
     }

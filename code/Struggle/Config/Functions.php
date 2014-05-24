@@ -1,6 +1,5 @@
 <?php
-use struggle\libraries\core;
-use struggle\libraries;
+namespace struggle;
 /*
  * 全局函数
  */
@@ -279,6 +278,26 @@ function autoLoad($sName){
         \struggle\Sle::getInstance()->hasInfo("自动加载类{$sName}失败", E_USER_ERROR, \struggle\Sle::SLE_SYS);
     }
 }
+
+
+
+
+function fexists($sFileName){
+    $bRlt = false;
+    if (is_string($sFileName)){
+        if (file_exists($sFileName) && (basename($sFileName) == basename(realpath($sFileName)))){
+            $bRlt = true;
+        }
+    }
+    return $bRlt;
+}
+
+
+function isResource ($oRes) {
+    return !is_null(@get_resource_type($oRes)); 
+}
+
+
 
 
 

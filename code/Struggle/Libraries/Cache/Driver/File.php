@@ -1,5 +1,6 @@
 <?php
 namespace struggle\libraries\cache\driver;
+use struggle as sle;
 /**
  * 需要动态改变配置的，不用写在config.php文件中，如日志跟其他文本文件的读写，
    其他文件的路径、文件名随时都有可能改变，所以不需要写入，只需在构造函数添加
@@ -30,7 +31,6 @@ class File extends \struggle\libraries\Object{
         }
         if (!$this->chkFileSize())
             return $bRlt;
-        //$sContent = "[".date('Y-m-d H:i:s')."]{$sContent}".PHP_EOL;
         @flock($this->moHandle, LOCK_EX);
         $mStat = @fwrite($this->moHandle, $sContent);
         @flock($this->moHandle, LOCK_UN);
@@ -66,9 +66,9 @@ class File extends \struggle\libraries\Object{
     private function open(){
         $bRlt = false;
         if (is_writable(dirname($this->file))){
-            if (is_null($this->moHandle) && ($this->moHandle = fopen($this->file, $this->mode))){
+            if (is_null($this->moHandle) && ($this->moHandle = @fopen($this->file, $this->mode))){
                 $bRlt = true;
-            }elseif (!is_null($this->moHandle)){
+            }elseif (sle\isResource($this->moHandle)){
                 $bRlt = true;
             }
         }
@@ -81,7 +81,7 @@ class File extends \struggle\libraries\Object{
     
     
     public function __destruct(){
-        if (!is_null($this->moHandle))
+        if (sle\isResource($this->moHandle))
             @fclose($this->moHandle);
     }
 

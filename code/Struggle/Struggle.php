@@ -1,7 +1,6 @@
 <?php
 namespace struggle;
 
-
 defined('CORE_PATH') or die('Access Forbidden');
 
 header('Content-type:text/html;charset=utf-8');
@@ -41,84 +40,6 @@ defined('APP_DEBUG') or define('APP_DEBUG', false);
 
 
 
-/*
-$sFuncFile = CONF_PATH.'functions.php';
-if (file_exists($sFuncFile)){
-    include_once $sFuncFile;
-}else{
-    sysHalt("{$sFuncFile}文件不存在");
-}
-
-
-
-//创建应用目录
-buildAppDir();
-
-//导入配置文件
-importConf();
-
-//导入核心文件
-importCoreFile();
-
-//开始运行
-Sle::run();
-
-
-*/
-
-
-
-
-/**
- * 加载配置文件，导入配置值
- */
-function importConf(){
-    static $aConf = array();
-    if (empty($aConf)){
-        $sConfFile=CONF_PATH.'config.php';
-        $sAppConfigFile = APP_CONF.'config.php';
-        if (file_exists($sConfFile) && is_readable($sConfFile)){
-            $aConf = include $sConfFile;
-            if (file_exists($sAppConfigFile) && is_readable($sAppConfigFile)){
-                $aConf = array_merge($aConf,include_once $sAppConfigFile);
-            }else{
-                trace("用户配置文件不存在或不可读，{$sAppConfigFile}", E_USER_ERROR);
-            }
-            //dump($aConf);//TODO  输出配置文件值
-            foreach ($aConf as $sKey=>$sVal){
-                C($sKey,$sVal);
-            }
-        }else{
-            sysHalt("配置文件({$sConfFile})不存在或不可读，请检查");
-        }
-    }
-}
-
-
-/**
- * 加载语言文件
- */
-function importLangConf(){
-    static $aLang=array();
-    if (empty($aLang)){
-        //加载框架语言文件
-        $sLangName=CONF_PATH.'zh_cn.php';
-        
-        $sLangName=C('LANG_NAME');
-    }
-}
-
-
-
-
-/*
- * 应用于本页面（即初始化工作部分）发生错误脚本终止；
- * 其他应调用Object类中halt
- */
-function sysHalt($sMsg){
-    trace($sMsg, E_USER_ERROR);
-    die($sMsg);
-}
 
 /**
  * 关于错误的相关信息
@@ -357,7 +278,7 @@ class Sle{
                 $this->hasInfo("语言文件不存在{$sLangFile},文件名区分大小写",E_USER_ERROR, Sle::SLE_SYS);
             }
             if (!$this->mLastError){
-                $sAppLangName = \C('LANG_NAME');
+                $sAppLangName = C('LANG_NAME');
                 $sAppLangFile = APP_CONF.$sAppLangName.'.php';
                 if (file_exists($sAppLangFile) && basename($sAppLangFile) == basename(realpath($sAppLangFile)) && is_readable($sAppLangFile)){
                     $this->hasInfo("用户语言配置文件{$sAppLangFile}处理",E_USER_NOTICE, Sle::SLE_SYS);
@@ -369,7 +290,7 @@ class Sle{
             
             if (!empty($aLang) && !$this->mLastError){
                 foreach ($aLang as $key=>$val){
-                    \L($key, $val);
+                    L($key, $val);
                 }
             }
             
@@ -435,7 +356,7 @@ class Sle{
             
             //自定义自动包含句柄
             if (!$this->mLastError){
-                $sFuncName = '\autoLoad';
+                $sFuncName = 'struggle\autoLoad';
                 if (spl_autoload_register($sFuncName)){
                     $this->hasInfo("自定义自动包含处理函数{$sFuncName}",E_USER_NOTICE, Sle::SLE_SYS);
                 }else{
@@ -497,55 +418,6 @@ function dump(){
         echo "<br>-------------".date('Y-m-d H:i:s')."--------------------<br />";
     }
 }
-
-
-function trace($sTraceInfo,$iCode){
-    //$aArgs=func_get_args();
-    static $aBackBug=array();
-    $iNoteTime=microtime(true);
-    if (APP_DEBUG){
-        if (($sClassName = C('DEBUG_CLASS')) && ($sBugMethod = C('DEBUG_RECORD_METHOD'))){
-            if(class_exists($sClassName) && is_null(Sle::getInstance()->moBug)){
-                Sle::getInstance()->moBug = new $sClassName();
-                if ($aBackBug){
-                    foreach ($aBackBug as $aInfo)
-                        Sle::getInstance()->moBug->$sBugMethod($aInfo[0], $aInfo[1], $aInfo[2],false);
-                    $aBackBug = array();
-                }
-            }
-        }
-        if (is_null(Sle::getInstance()->moBug)){
-            $aBackBug[] = array($sTraceInfo,$iCode,$iNoteTime);
-        }else{
-            Sle::getInstance()->moBug->$sBugMethod($sTraceInfo, $iCode,$iNoteTime,false);
-        }
-        sysNote($sTraceInfo, $iCode, $iNoteTime);
-    }
-}
-
-
-
-
-
-
-
-
-function load_config($sName){
-    static $aConfig = array();
-    $sFileName = $sName.'.php';
-    if (!isset($aConfig[$sName])){
-        $aConfig[$sName] = include CONF_PATH.$sFileName;
-        if (file_exists(APP_CONF.$sFileName)){
-            $aConfig[$sName] = array_merge($aConfig[$sName], include APP_CONF.$sFileName);
-        }
-    }
-    foreach ($aConfig[$sName] as $sKey => $mVal){
-        $sName == 'config' && C($sKey,$mVal);
-        $sName == 'zh-cn'  && L($sKey,$mVal);
-    }
-}
-
-
 
 
 

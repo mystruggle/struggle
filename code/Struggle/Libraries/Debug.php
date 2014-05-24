@@ -1,5 +1,6 @@
 <?php 
 namespace struggle\libraries;
+use struggle as sle;
 
 class Debug extends Object{
     private $maBugInfo = array();
@@ -17,13 +18,13 @@ class Debug extends Object{
     
     public function __construct(){
         static $oReocrd = null;
-        $this->recordType     = \C('DEBUG_RECORD_TYPE');
-        $this->recordFileName = \C('DEBUG_RECORD_FILE_NAME');
-        $this->recordFilePath = \C('DEBUG_RECORD_FILE_PATH');
-        $this->recordFileExt  = \C('DEBUG_RECORD_FILE_EXT');
-        $this->recordFileMode = \C('DEBUG_RECORD_FILE_MODE');
-        $this->recordFileSize = \C('DEBUG_RECORD_FILE_SIZE');
-        $this->recordFileNum  = \C('DEBUG_RECORD_FILE_NUM');
+        $this->recordType     = sle\C('DEBUG_RECORD_TYPE');
+        $this->recordFileName = sle\C('DEBUG_RECORD_FILE_NAME');
+        $this->recordFilePath = sle\C('DEBUG_RECORD_FILE_PATH');
+        $this->recordFileExt  = sle\C('DEBUG_RECORD_FILE_EXT');
+        $this->recordFileMode = sle\C('DEBUG_RECORD_FILE_MODE');
+        $this->recordFileSize = sle\C('DEBUG_RECORD_FILE_SIZE');
+        $this->recordFileNum  = sle\C('DEBUG_RECORD_FILE_NUM');
         $this->recordType     || $this->recordType     = 'file';
         $this->recordFileName || $this->recordFileName = 'application';
         $this->recordFilePath || $this->recordFilePath = APP_RUNTIME;
@@ -32,7 +33,7 @@ class Debug extends Object{
         $this->recordFileSize || $this->recordFileSize = 2000;
         $this->recordFileNum  || $this->recordFileNum  = 3;
         if (is_null($oReocrd)){
-            $sClassName = '\struggle\libraries\cache\driver\\'.ctop($this->recordType);
+            $sClassName = '\struggle\libraries\cache\driver\\'.sle\ctop($this->recordType);
             $sRecordFile = rtrim($this->recordFilePath,'/').'/'.$this->recordFileName.'.'.$this->recordFileExt;
             $aOpt = array('file'=>$sRecordFile,'mode'=>$this->recordFileMode,'size'=>$this->recordFileSize,'renum'=>$this->recordFileNum);
             \struggle\Sle::getInstance()->hasInfo("初始化类{$sClassName},初始化参数".print_r($aOpt,true),E_USER_NOTICE,\struggle\Sle::SLE_SYS,\microtime(true));
@@ -87,15 +88,15 @@ class Debug extends Object{
             $aInfoType = \struggle\getErrLevel($iCode);
             $sTxt .="[{$aInfoType[1]} {$aInfoType[2]}]{$mInfo}".PHP_EOL;
             if(!$this->hdRecord->write($sTxt))
-                throw new Exception('写入日志失败'.__FILE__.'第'.__LINE__.'行', E_USER_ERROR);
+                throw new \Exception('写入日志失败', E_USER_ERROR);
         }    
     }
     
     private function decideDebug($iCode,$iFrom){
         $bRlt = false;
         if (APP_DEBUG){
-            $sBugLevel = \C('DEBUG_LEVEL');
-            $aInfoType = \struggle\getErrLevel($iCode);
+            $sBugLevel = sle\C('DEBUG_LEVEL');
+            $aInfoType = sle\getErrLevel($iCode);
             switch ($sBugLevel){
                 case 'all':
                     $bRlt = true;

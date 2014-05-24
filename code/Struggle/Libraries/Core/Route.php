@@ -1,5 +1,6 @@
 <?php
 namespace struggle\libraries;
+use struggle as sle;
 class Route extends Object{
     public  $url  = '';
     public  $mode = '';
@@ -11,7 +12,7 @@ class Route extends Object{
 
 	
     public function __construct($sUrl){
-        $this->mode = \C('ROUTE_MODE');
+        $this->mode = sle\C('ROUTE_MODE');
         $this->url    = $sUrl;
         $this->debug("路由模式{$this->mode};url=>{$this->url}", E_USER_NOTICE);
     }
@@ -19,21 +20,21 @@ class Route extends Object{
     
     public function exec(){
         if ($this->mode == 'normal'){
-            $sModuleTag = \C('DISPATCHER_MODULE_TAG');
-            $sActionTag = \C('DISPATCHER_ACTION_TAG');
+            $sModuleTag = sle\C('DISPATCHER_MODULE_TAG');
+            $sActionTag = sle\C('DISPATCHER_ACTION_TAG');
             if (!isset($_GET[$sModuleTag]))
-                $this->module = ctop(\C('DISPATCHER_DEFAULT_MODULE'));
+                $this->module = sle\ctop(sle\C('DISPATCHER_DEFAULT_MODULE'));
             else 
-                $this->module = ctop($_GET[$sModuleTag]);
+                $this->module = sle\ctop($_GET[$sModuleTag]);
                 
             if (!isset($_GET[$sActionTag]))
-                $this->action = ctop(\C('DISPATCHER_DEFAULT_ACTION'));
+                $this->action = sle\ctop(sle\C('DISPATCHER_DEFAULT_ACTION'));
             else 
-                $this->action = ctop($_GET[$sActionTag]);
+                $this->action = sle\ctop($_GET[$sActionTag]);
             $this->debug("模块标签=>{$sModuleTag};动作标签=>{$sActionTag};模块=>{$this->module};动作=>{$this->action}",E_USER_NOTICE);
             $sControlFile = APP_CONTROLLER."{$this->module}{$this->moduleFileSuffix}";
             if(file_exists($sControlFile) && is_readable($sControlFile)){
-                \require_cache($sControlFile);
+                sle\require_cache($sControlFile);
                 $sClassName = $this->module.$this->moduleSuffix;
                 $sMethod = "{$this->methodPrefix}{$this->action}";
                 $oController = new $sClassName();

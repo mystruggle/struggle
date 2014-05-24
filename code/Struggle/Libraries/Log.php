@@ -1,5 +1,6 @@
 <?php
 namespace struggle\libraries;
+use struggle as sle;
 
 class Log{
     private static $itsStorageHandle = null;
@@ -27,14 +28,14 @@ class Log{
     private static function initStorageHandle(){
         if(empty(self::$itsStorageHandle)){
             $aOpt  = array();
-            if(!\struggle\C('log_type'))
-                throw new Exception(\struggle\L('param_invalid'));
-            $sType = \struggle\C('log_type');
+            if(!sle\C('log_type'))
+                throw new Exception(sle\L('param_invalid'));
+            $sType = sle\C('log_type');
             if($sType == 'file'){
-                \struggle\C('log_name') && $aOpt['fileName'] = \struggle\C('log_name');
-                \struggle\C('log_path') && $aOpt['savePath'] = \struggle\C('log_path');
-                \struggle\C('log_ext')  && $aOpt['fileExt']  = \struggle\C('log_ext');
-                \struggle\C('log_max_size')  && $aOpt['fileMaxSize']  = \struggle\C('log_max_size');
+                sle\C('log_name') && $aOpt['fileName'] = sle\C('log_name');
+                sle\C('log_path') && $aOpt['savePath'] = sle\C('log_path');
+                sle\C('log_ext')  && $aOpt['fileExt']  = sle\C('log_ext');
+                sle\C('log_max_size')  && $aOpt['fileMaxSize']  = sle\C('log_max_size');
             }
             if(!class_exists('struggle\\libraries\\cache\\Cache')){
                 include LIB_PATH.'cache/cache.php';
@@ -50,7 +51,7 @@ class Log{
             self::initStorageHandle();
         }
         if(!self::$itsStorageHandle)
-            throw new Exception(\struggle\L('res_invalid'));
+            throw new Exception(sle\L('res_invalid'));
         self::$itsStorageHandle -> write($msg);
     }
     

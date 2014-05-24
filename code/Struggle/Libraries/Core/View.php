@@ -1,23 +1,25 @@
 <?php 
 namespace struggle\libraries\core;
+use struggle as sle;
 
 
 class View{
-    private $itsThemePath = '';
-    private $itsSuffix   = 'htm';
-    private $itsTheme    = 'default';
+    private $mBasePath = '';
+    private $mCopiledPath = '';
+    private $mTplSuffix   = 'htm';
+    private $mTheme    = 'default';
     private $itsCompileFileName = ''; 
     private $itsCompiledPath = '';
     private $itsCompiledSaveDir = 'runtime/';
     
     public function __construct(){
-        $this->itsThemePath = APP_THEME;
-        $this->itsCompiledPath = APP_CACHE;
-        \C('VIEW_THEME_PATH') && $this->itsThemePath = \C('VIEW_THEME_PATH');
-        \C('VIEW_SUFFIX')    && $this->itsSuffix   = \C('VIEW_SUFFIX');
-        \C('VIEW_THEME')     && $this->itsTheme    = \C('VIEW_THEME');
-        \C('VIEW_CACHE_PATH')    && $this->itsCompiledPath    = \C('VIEW_CACHE_PATH');
-        \C('VIEW_CACHE_DIR')     && $this->itsCompiledSaveDir = \C('VIEW_CACHE_DIR');
+        $this->mBasePath    = APP_THEME;
+        $this->mCopiledPath = APP_CACHE;
+        sle\C('VIEW_THEME_PATH') && $this->itsThemePath = sle\C('VIEW_THEME_PATH');
+        sle\C('VIEW_SUFFIX')    && $this->itsSuffix   = sle\C('VIEW_SUFFIX');
+        sle\C('VIEW_THEME')     && $this->itsTheme    = sle\C('VIEW_THEME');
+        sle\C('VIEW_CACHE_PATH')    && $this->itsCompiledPath    = sle\C('VIEW_CACHE_PATH');
+        sle\C('VIEW_CACHE_DIR')     && $this->itsCompiledSaveDir = sle\C('VIEW_CACHE_DIR');
         
     }
     

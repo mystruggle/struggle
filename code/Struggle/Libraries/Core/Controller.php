@@ -5,6 +5,7 @@ class Controller extends \struggle\libraries\Object{
     private $mSle  = '';
     
     public function __construct(){
+        parent::__construct();
         static $oView='';
         if (!$oView){
             $oView = new View();
@@ -18,7 +19,7 @@ class Controller extends \struggle\libraries\Object{
         if (!$sPath){
             $sPath = "{$this->mSle->Route->module}/{$this->mSle->Route->action}";
         }
-        echo $sPath;
+        $this->mView->render($sPath);
     }
     
     

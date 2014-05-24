@@ -356,7 +356,7 @@ class Sle{
             
             //自定义自动包含句柄
             if (!$this->mLastError){
-                $sFuncName = 'struggle\autoLoad';
+                $sFuncName = '\struggle\autoLoad';
                 if (spl_autoload_register($sFuncName)){
                     $this->hasInfo("自定义自动包含处理函数{$sFuncName}",E_USER_NOTICE, Sle::SLE_SYS);
                 }else{

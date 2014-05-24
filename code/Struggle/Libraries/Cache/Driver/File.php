@@ -8,7 +8,7 @@ use struggle as sle;
 */
 class File extends \struggle\libraries\Object{
     public  $file    = '';
-    //public  $path    = '';
+    public  $length  = 1024;    //读取文件的长度，字节byte
     public  $mode    = 'ab';
     public  $size    = 2000;  //kb
     public  $renum   = 3;     //超过文件设置的大小时重命名的数量
@@ -76,7 +76,14 @@ class File extends \struggle\libraries\Object{
     }
     
     public function read(){
-        //
+        $sRlt = '';
+        if (is_null($this->moHandle) && !$this->open()){
+            return false;
+        }
+        while (!feof($this->moHandle)){
+            $sRlt .= fread($this->moHandle, $this->length);
+        }
+        return $sRlt;
     }
     
     

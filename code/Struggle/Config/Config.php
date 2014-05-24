@@ -22,9 +22,9 @@ return array(
     'LOG_EXT'                =>'log',
     'LOG_MAX_SIZE'           =>2000,  //kb
     //视图
-    'VIEW_THEME_PATH'		 =>'',     //模板根目录
-    'VIEW_THEME'             =>'default',
-    'VIEW_SUFFIX'            =>'htm',
+    'VIEW_THEME_PATH'		 =>APP_THEME,     //模板根目录
+    'VIEW_THEME'             =>'Default',
+    'VIEW_TPL_SUFFIX'        =>'htm',
     //语言
     'LANG_NAME'              =>'zh_cn',
     //调试                                                            

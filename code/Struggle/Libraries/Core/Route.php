@@ -31,7 +31,7 @@ class Route extends Object{
                 $this->action = sle\ctop(sle\C('DISPATCHER_DEFAULT_ACTION'));
             else 
                 $this->action = sle\ctop($_GET[$sActionTag]);
-            $this->debug("模块标签=>{$sModuleTag};动作标签=>{$sActionTag};模块=>{$this->module};动作=>{$this->action}",E_USER_NOTICE);
+            $this->debug("模块标签=>{$sModuleTag};方法标签=>{$sActionTag};模块=>{$this->module};方法=>{$this->action}",E_USER_NOTICE);
             $sControlFile = APP_CONTROLLER."{$this->module}{$this->moduleFileSuffix}";
             if(file_exists($sControlFile) && is_readable($sControlFile)){
                 sle\require_cache($sControlFile);

@@ -11,6 +11,7 @@ class View extends \struggle\libraries\Object{
     private $mCompileFileName = '';
     private $mWidgetThemePath = "Widget/";
     private $mWidgetModuleSuffix = '.widget.php';
+    private $mTplData = array();
     
     public function __construct(){
         parent::__construct();
@@ -40,25 +41,36 @@ class View extends \struggle\libraries\Object{
     /**
      * 渲染模板
      */
-    public function render($sRenderFile = '',$aTplData = array()){
+    public function render($sRenderFile = ''){
         static $aTpl = array();
         $sTplFile = '';
         if (sle\fexists($sRenderFile)){
             $sTplFile = $sRenderFile;
         }else {
-            $aTmp = explode('/', $sRenderFile);
-            if (count($aTmp) == 2){
-                $sTplFile = "{$this->mThemePath}{$this->mTheme}/{$aTmp[0]}/{$aTmp[1]}.{$this->mTplSuffix}";
+            $aTmp = parse_url($sRenderFile);
+            if(isset($aTmp['path']) && $aTmp['path']){
+                $aControlPart = explode('/',$aTmp['path']);
+                if (count($aControlPart) == 2){
+                    $sTplFile = "{$this->mThemePath}{$this->mTheme}/{$aControlPart[0]}/".(sle\ptoc($aControlPart[1])).".{$this->mTplSuffix}";
+                }
+                //传递的参数
+                if(isset($aTmp['query']) && $aTmp['query']){
+                    $this->TplData = array_merge($this->TplData,explode('&',$aTmp['query']));
+                }
             }
         }
         if ($sTplFile && sle\fexists($sTplFile) && is_readable($sTplFile)){
             $sKey = md5($sRenderFile.fileatime(realpath($sRenderFile)));
             if (!isset($aTpl[$sKey])){
-                $sCompileFile = "{$this->msCompilePath}{$sKey}.php";
+                $sCompileFile = APP_RUNTIME."{$this->msCompilePath}{$sKey}.php";
                 if (is_writeable(dirname($sCompileFile))){
                     $oFile=new \struggle\libraries\cache\driver\File(array('file'=>$sTplFile,'mode'=>'rb'));
                     $sTplCon = $oFile->read();
-                    $this->parse($sTplCon);
+                    $sParsedCon = $this->parse($sTplCon);
+                    $oFile = new \struggle\libraries\Cache\Driver\File(array('file'=>$sCompileFile,'mode'=>'wb'));
+                    if($oFile->write($sParsedCon)){
+                        $this->debug("把编译后内容写入编译文件{$sCompileFile}",E_USER_NOTICE);
+                    }
                 }else{
                     $this->debug("目录不可写".dirname($sCompileFile),E_USER_ERROR);
                 }
@@ -167,6 +179,8 @@ class View extends \struggle\libraries\Object{
     
     
     private function _widget($sWidgetTpl){
+        return "<?php \$this->widget('{$sWidgetTpl}');?>";
+        /*
         $aUrl = parse_url($sWidgetTpl);
         if (isset($aUrl['path'])){
             $aTmp = explode('/', $aUrl['path']);
@@ -177,6 +191,7 @@ class View extends \struggle\libraries\Object{
                 die($sWidgetFile);
             }
         }
+        */
     }
     
     

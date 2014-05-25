@@ -6,6 +6,6 @@
 <title>Insert title here</title>
 </head>
 <body>
-
+<?php $this->widget('test/show');?>
 </body>
 </html>

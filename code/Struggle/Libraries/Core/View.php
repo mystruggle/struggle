@@ -9,6 +9,8 @@ class View extends \struggle\libraries\Object{
     private $mTheme    = 'default';
     private $msCompilePath = '';
     private $mCompileFileName = '';
+    private $mWidgetThemePath = "Widget/";
+    private $mWidgetModuleSuffix = '.widget.php';
     
     public function __construct(){
         parent::__construct();
@@ -165,7 +167,16 @@ class View extends \struggle\libraries\Object{
     
     
     private function _widget($sWidgetTpl){
-        die($sWidgetTpl.'|end');
+        $aUrl = parse_url($sWidgetTpl);
+        if (isset($aUrl['path'])){
+            $aTmp = explode('/', $aUrl['path']);
+            if (count($aTmp) == 2){
+                $sWidgetModule = sle\ctop($aTmp[0]);
+                $sWidgetMethod = sle\ctop($aTmp[1]);
+                $sWidgetFile = APP_CONTROLLER."{$sWidgetModule}{$this->mWidgetModuleSuffix}";
+                die($sWidgetFile);
+            }
+        }
     }
     
     

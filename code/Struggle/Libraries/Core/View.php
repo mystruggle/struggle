@@ -56,6 +56,7 @@ class View extends \struggle\libraries\Object{
                 if (is_writeable(dirname($sCompileFile))){
                     $oFile=new \struggle\libraries\cache\driver\File(array('file'=>$sTplFile,'mode'=>'rb'));
                     $sTplCon = $oFile->read();
+                    $this->parse($sTplCon);
                 }else{
                     $this->debug("目录不可写".dirname($sCompileFile),E_USER_ERROR);
                 }
@@ -102,13 +103,24 @@ class View extends \struggle\libraries\Object{
     }
     
     private function replaceTag($aMatch){
+        $mRlt = $aMatch[0];
         if (isset($aMatch[1])){
-            if ($aMatch[1][0] == '$'){
-                return $this->isVariable($aMatch[1]);
+            switch ($aMatch[1][0]){
+                case '$':
+                    break;
+                case '/':
+                    break;
+                default:
+                    $aTmp = explode(' ', $aMatch[1]);
+                    if (count($aTmp)>=2){
+                        $sMethodName = "_".array_shift($aTmp);
+                        if (method_exists($this, $sMethodName)){
+                            return $this->$sMethodName(implode(' ' , $aTmp));
+                        }
+                    }
             }
         }
-        return $aMatch[0];
-        \struggle\dump($aMatch);
+        return $mRlt;
     }
     
     private function isVariable($mVar){
@@ -143,9 +155,20 @@ class View extends \struggle\libraries\Object{
         return '<?php echo '.$sVar.';?>';
     }
     
+    
+    
+    
+    
     private function _if(){
         //
     }
+    
+    
+    private function _widget($sWidgetTpl){
+        die($sWidgetTpl.'|end');
+    }
+    
+    
     
 
 

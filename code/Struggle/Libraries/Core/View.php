@@ -59,6 +59,7 @@ class View extends \struggle\libraries\Object{
                 }
             }
         }
+        $sKey = '';
         if ($sTplFile && sle\fexists($sTplFile) && is_readable($sTplFile)){
             $sKey = md5($sRenderFile.fileatime(realpath($sRenderFile)));
             if (!isset($aTpl[$sKey])){
@@ -69,43 +70,17 @@ class View extends \struggle\libraries\Object{
                     $sParsedCon = $this->parse($sTplCon);
                     $oFile = new \struggle\libraries\Cache\Driver\File(array('file'=>$sCompileFile,'mode'=>'wb'));
                     if($oFile->write($sParsedCon)){
-                        $this->debug("把编译后内容写入编译文件{$sCompileFile}",E_USER_NOTICE);
+                        $aTpl[$sKey] = $sCompileFile;
+                        $this->debug("把编译后内容写入编译文件{$sCompileFile}",E_USER_NOTICE,sle\Sle::SLE_SYS);
                     }
                 }else{
-                    $this->debug("目录不可写".dirname($sCompileFile),E_USER_ERROR);
+                    $this->debug("目录不可写".dirname($sCompileFile),E_USER_ERROR,sle\Sle::SLE_SYS);
                 }
             }
         }else{
-            $this->debug("文件不存在或不可读{$sTplFile}", E_USER_ERROR);
+            $this->debug("文件不存在或不可读{$sTplFile}", E_USER_ERROR,sle\Sle::SLE_SYS);
         }
-        //if (!$this->Sle->LastError){
-            
-        //}
-        /*
-        echo $sTplFile;
-        $sFileContent = '';
-        $sBasePath = '';
-        if (is_file($sRenderFile)){
-            $sCompileFile = md5($sRenderFile.fileatime($sRenderFile));
-            if (!isset($aTpl[$sCompileFile])){
-                $sFileContent = file_get_contents($sRenderFile);
-                $sFileContent = $this->parse($sFileContent);
-                $sFile = $this->itsCompiledPath.$this->itsCompiledSaveDir.$sCompileFile.'.php';
-                
-            }
-        }else{
-            if ($sDotPos = strpos($sRenderFile, '.')){
-                $sPrefix = substr($sRenderFile, 0, $sDotPos);
-                $sRenderFile = substr($sRenderFile, $sDotPos+1);
-                if ($sPrefix == 'struggle' && $this->itsThemePath != THEME_PATH){
-                    $this->itsThemePath = THEME_PATH;
-                }
-            }
-            
-            $sRenderFile = $this->itsThemePath . $this->itsTheme.'/';
-        }
-        $this->itsCompileFileName = md5($sRenderFile.filemtime($sRenderFile));
-        */
+        return sle\Sle::getInstance()->LastError?false:$aTpl[$sKey];
     }
     
     

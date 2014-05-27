@@ -41,24 +41,23 @@ class View extends \struggle\libraries\Object{
     /**
      * 渲染模板
      * @param string $sRenderFile   模板路径.  format:   controller/action[?key1=value1&key2=value2] or 模板文件相对或绝对路径
+     * @param array  $aParam        传递的参数
      * @return boolean  成功返回编译后的模板路径失败返回false
      */
-    public function render($sRenderFile = ''){
+    public function render($sRenderFile = '', $aParam = array()){
         static $aTpl = array();
         $sTplFile = '';
         if (sle\fexists($sRenderFile)){
             $sTplFile = $sRenderFile;
         }else {
-            $aTmp = parse_url($sRenderFile);
-            if(isset($aTmp['path']) && $aTmp['path']){
-                $aControlPart = explode('/',trim($aTmp['path'],'/'));
-                if (count($aControlPart) == 2){
-                    $sTplFile = "{$this->mThemePath}{$this->mTheme}/{$aControlPart[0]}/".(sle\ptoc($aControlPart[1])).".{$this->mTplSuffix}";
-                }
-                //传递的参数
-                if(isset($aTmp['query']) && $aTmp['query']){
-                    $this->TplData = array_merge($this->TplData,explode('&',$aTmp['query']));
-                }
+            $aControlPart = explode('/', trim($sRenderFile,'/'));
+            if (count($aControlPart) >= 2){
+                $sTplFile = "{$this->mThemePath}{$this->mTheme}/{$aControlPart[0]}/".(sle\ptoc($aControlPart[1])).".{$this->mTplSuffix}";
+            }
+            //传递的参数
+            if (!is_array($aParam)){
+                $this->debug(__METHOD__."参数有误，非数组类型 ".(is_string($aParam)?$aParam:print_r($aParam,true))." line ".__LINE__, E_USER_ERROR,sle\Sle::SLE_SYS);
+                $aParam = array();
             }
         }
         $sKey = '';
@@ -67,7 +66,7 @@ class View extends \struggle\libraries\Object{
             //clearstatcache();TODO;
             if (!isset($aTpl[$sKey])){
                 $sCompileFile = APP_RUNTIME."{$this->msCompilePath}{$sKey}.php";
-                if(sle\fexists($sCompileFile)){
+                if(sle\fexists($sCompileFile) && !APP_DEBUG){
                     $aTpl[$sKey] = $sCompileFile;
                 }elseif (is_writeable(dirname($sCompileFile))){
                     $oFile=new \struggle\libraries\cache\driver\File(array('file'=>$sTplFile,'mode'=>'rb'));
@@ -91,7 +90,7 @@ class View extends \struggle\libraries\Object{
     
     private function parse($sTextCon){
         if (!empty($sTextCon)){
-            $sTextCon = preg_replace_callback('/[{]([^\s}][^}]*?)[}]/', array('struggle\\libraries\\core\\View','replaceTag'), $sTextCon);
+            $sTextCon = preg_replace_callback('/[{]([^\s{][^}]*?)[}]/', array('struggle\\libraries\\core\\View','replaceTag'), $sTextCon);
         }
         return $sTextCon;
     }
@@ -105,7 +104,7 @@ class View extends \struggle\libraries\Object{
                 case '/':
                     break;
                 default:
-                    $aTmp = str_split('/\s/', $aMatch[1]);
+                    $aTmp = preg_split('/\s/', $aMatch[1]);
                     if (count($aTmp)>=2){
                         $sMethodName = "_".trim(array_shift($aTmp));
                         if (method_exists($this, $sMethodName)){

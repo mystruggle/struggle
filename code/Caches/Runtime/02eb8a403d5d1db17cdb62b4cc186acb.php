@@ -7,5 +7,6 @@
 </head>
 <body>
 <?php $this->widget('test/show');?>
+
 </body>
 </html>

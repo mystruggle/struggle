@@ -24,24 +24,18 @@ class Controller extends \struggle\libraries\Object{
         if (!$sPath){
             $sPath = "{$this->mSle->Route->module}/{$this->mSle->Route->action}";
         }else {
-            $aTmp = parse_url($sPath);
-            if(isset($aTmp['path']) && $aTmp['path']){
-                $aControlPart = explode('/',trim($aTmp['path'],'/'));
-                if (count($aControlPart) == 2){
-                    $sPath = "{$aControlPart[0]}/{$aControlPart[1]}";
-                }else{
-                    $this->debug(__METHOD__."目标不存在或错误，请检查路径{$sPath} line ".__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
-                }
-                //传递的参数
-                if (!is_array($aTplData)){
-                    $this->debug("传递参数不规范，传递给模板的参数不是数组".(is_string($aTplData)?$aTplData:var_export($aTplData,true)).'line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
-                    $aTplData = array();
-                }
-                if(isset($aTmp['query']) && $aTmp['query']){
-                    $aTplData = array_merge($aTplData,explode('&',$aTmp['query']));
-                }
-                $this->mTplData = $aTplData;
+            $aControlPart = explode('/',trim($aTmp['path'],'/'));
+             if (count($aControlPart) >= 2){
+                $sPath = "{$aControlPart[0]}/{$aControlPart[1]}";
+            }else{
+                $this->debug(__METHOD__."目标不存在或错误，请检查路径{$sPath} line ".__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
             }
+            //传递的参数
+            if (!is_array($aTplData)){
+                $this->debug("传递参数不规范，传递给模板的参数不是数组".(is_string($aTplData)?$aTplData:var_export($aTplData,true)).'line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+                $aTplData = array();
+            }
+            $this->mTplData = array_merge($this->mTplData,$aTplData);
         }
         if (sle\Sle::getInstance()->LastError){
             $this->debug(__METHOD__."由于存在致命错误，程序中止执行 line ".__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
@@ -61,9 +55,15 @@ class Controller extends \struggle\libraries\Object{
     }
 
     public function widget($sPath){
-        $aTmp = explode('/',trim($sPath,'/'));
+        $aTmp = parse_url($sPath);
+        if (isset($aTmp['path']) && $aTmp['path']){
+            $aControlPart = explode('/',trim($aTmp['path'],'/'));
+        }else{
+            $this->debug(__METHOD__."传递的参数有误".(print_r($aTmp,true))." line".__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+            return ;
+        }
         if(count($aTmp)==2){
-            echo 'end';
+            print_r($aTmp);
         }
     }
     

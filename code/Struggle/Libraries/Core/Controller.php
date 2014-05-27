@@ -5,8 +5,11 @@ use struggle as sle;
 class Controller extends \struggle\libraries\Object{
     private $mView = '';
     private $mSle  = '';
+    private $msWidgetPath = '';
     private $mTplData = array();
     private $mCompiledTplFile = '';
+    private $mWidgetThemePath = "Widget/";
+    private $mWidgetModuleSuffix = '.widget.php';
     
     public function __construct(){
         parent::__construct();
@@ -41,6 +44,7 @@ class Controller extends \struggle\libraries\Object{
             $this->debug(__METHOD__."由于存在致命错误，程序中止执行 line ".__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
         }else{
             if($this->mCompiledTplFile = $this->mView->render($sPath)){
+                header('Content-type:text/html;charset=utf-8');
                 ob_flush();
                 flush();
                 ob_start();
@@ -54,16 +58,37 @@ class Controller extends \struggle\libraries\Object{
         }
     }
 
+    /**
+     * 挂件处理函数
+     * @param    string   $sPath    挂件目标地址，采用URI格式 module/action[?key1=value1&key2=value2]
+     * @return   void
+     */
     public function widget($sPath){
         $aTmp = parse_url($sPath);
+        $sWidgetFile = '';
         if (isset($aTmp['path']) && $aTmp['path']){
             $aControlPart = explode('/',trim($aTmp['path'],'/'));
+            if(count($aControlPart)>=2){
+                $sModuleName = sle\ctop($aControlPart[0]);
+                $sActName = sle\ctop($aControlPart[1]);
+                $sWidgetFile = APP_CONTROLLER."{$sModuleName}{$this->mWidgetModuleSuffix}";
+                if(sle\fexists($sWidgetFile) && is_readable($sWidgetFile)){
+                    $sClassName = $sModuleName.sle\ctop(dirname(trim(str_replace('.','/',$this->mWidgetModuleSuffix),'/')));
+                    $oWidget = new $sClassName();
+                    $sMethodName = "action{$sActName}";
+                    if(method_exists($oWidget,$sMethodName)){
+                        $oWidget->$sMethodName();
+                    }else{
+                        $this->debug(__METHOD__."该方法不存在{$sClassName}::{$sMethodName} line ".__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+                    }
+                }else{
+                    $this->debug(__METHOD__."文件不存在或不可读{$sWidgetFile} line ".__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+                }
+
+            }
         }else{
-            $this->debug(__METHOD__."传递的参数有误".(print_r($aTmp,true))." line".__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
-            return ;
-        }
-        if(count($aTmp)==2){
-            print_r($aTmp);
+            $this->debug(__METHOD__."传递的参数有误".(print_r($aTmp,true))." line ".__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+            return;
         }
     }
     
@@ -72,8 +97,8 @@ class Controller extends \struggle\libraries\Object{
         //
     }
     
-    public function printOut(){
-        //
+    public function output(){
+        echo 'output';
     }
 
 

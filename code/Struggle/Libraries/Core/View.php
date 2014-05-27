@@ -9,8 +9,6 @@ class View extends \struggle\libraries\Object{
     private $mTheme    = 'default';
     private $msCompilePath = '';
     private $mCompileFileName = '';
-    private $mWidgetThemePath = "Widget/";
-    private $mWidgetModuleSuffix = '.widget.php';
     private $mTplData = array();
     
     public function __construct(){
@@ -40,7 +38,7 @@ class View extends \struggle\libraries\Object{
     
     /**
      * 渲染模板
-     * @param string $sRenderFile   模板路径.  format:   controller/action[?key1=value1&key2=value2] or 模板文件相对或绝对路径
+     * @param string $sRenderFile   模板路径.  format:   controller/action or 模板文件相对或绝对路径
      * @param array  $aParam        传递的参数
      * @return boolean  成功返回编译后的模板路径失败返回false
      */
@@ -159,18 +157,6 @@ class View extends \struggle\libraries\Object{
     
     private function _widget($sWidgetTpl){
         return "<?php \$this->widget('{$sWidgetTpl}');?>";
-        /*
-        $aUrl = parse_url($sWidgetTpl);
-        if (isset($aUrl['path'])){
-            $aTmp = explode('/', $aUrl['path']);
-            if (count($aTmp) == 2){
-                $sWidgetModule = sle\ctop($aTmp[0]);
-                $sWidgetMethod = sle\ctop($aTmp[1]);
-                $sWidgetFile = APP_CONTROLLER."{$sWidgetModule}{$this->mWidgetModuleSuffix}";
-                die($sWidgetFile);
-            }
-        }
-        */
     }
     
     

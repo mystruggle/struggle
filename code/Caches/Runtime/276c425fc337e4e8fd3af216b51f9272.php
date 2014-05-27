@@ -6,7 +6,7 @@
 <title>Insert title here</title>
 </head>
 <body>
-{widget index/index}
+<?php $this->widget('index/index');?>
 
 </body>
 </html>

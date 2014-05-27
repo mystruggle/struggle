@@ -22,7 +22,13 @@ function require_cache($sName){
         if ($isAutoload){
             $sName = str_replace(array('\\','/'), DIRECTORY_SEPARATOR, $sName);
             $sName = basename($sName);
-            $sFile = $sName.'.php';
+            $sTmpName = trim(str_replace('_','/',ptoc($sName)),'/');
+            $sFileSuffix = '.php';
+            if(strpos($sTmpName,'/')){
+                $sFileSuffix = '.'.basename($sTmpName).'.php';
+                $sName = ctop(dirname($sTmpName));
+            }
+            $sFile = $sName.$sFileSuffix;
             require_once $sFile;
             $aFiles[$sKey] = true;
         }elseif (file_exists($sName) && is_readable($sName)){

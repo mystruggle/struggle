@@ -390,12 +390,6 @@ class Sle{
         if (!self::$moHandle->mLastError){
             //执行路由
             $this->Route->exec();
-            if (APP_DEBUG && APP_DEBUG !== 'rescue')
-                self::$moHandle->Debug->show();
-            //print_r($this->maInfo);
-            //显示页面调试信息
-            //self::$moHandle->moBug->show();
-            //$oMonit=new libraries\Core\Dispatcher();
         }
 
     }
@@ -408,6 +402,8 @@ class Sle{
 
 //系统开始运行
 Sle::getInstance()->run();
+if (APP_DEBUG && APP_DEBUG !== 'rescue')
+    Sle::getInstance()->Debug->show();
 
 
 

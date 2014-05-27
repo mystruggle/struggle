@@ -43,7 +43,7 @@ class Debug extends Object{
     }
     
     public function show(){
-        $sHtml="<div style='font-family:sans-serif,verdana,arial,\"新宋体\";width:auto;border:1px solid #cccccc;font-size:13px;position:relative;margin:0px;padding:10px;'>"
+        $sHtml="<div style='font-family:\"宋体\",sans-serif,verdana,arial;width:auto;border:1px solid #cccccc;font-size:13px;position:relative;margin:0px;padding:10px;'>"
                ."<div style='text-align:right;'><a style='text-decoration:none;color:blue;' href='javascript:void(0);' onclick='this.parentNode.parentNode.style.display=\"none\";'>X</a></div><div style='margin:0px;padding:0px;'><ul style='margin:0px;padding:0px;list-style-type:none;'>";
         $sTxt='';
         foreach (\struggle\Sle::getInstance()->aInfo as $info){

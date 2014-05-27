@@ -40,7 +40,7 @@ return array(
     //路由
     'ROUTE_MODE'             =>'normal',//normal 正常模式、pathinfo pathinfo模式、rewrite 伪静态模式 、compat兼容模式/?s=/name/vlaue
     //自动包含跟目录设置
-    'AUTOLOAD_DIR'           =>APP_LIB.','.LIB_PATH.','.LIB_PATH.'Cache/Driver/',
+    'AUTOLOAD_DIR'           =>APP_LIB.','.LIB_PATH.','.LIB_PATH.'Cache/Driver/,'.APP_CONTROLLER,
     //语言设置
     'LANG_NAME'              =>'zh-cn',
 );

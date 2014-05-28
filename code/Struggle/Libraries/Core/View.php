@@ -10,6 +10,7 @@ class View extends \struggle\libraries\Object{
     private $msCompilePath = '';
     private $mCompileFileName = '';
     private $mTplData = array();
+    public  $WidgetTplPath = '';
     
     public function __construct(){
         parent::__construct();
@@ -50,7 +51,7 @@ class View extends \struggle\libraries\Object{
         }else {
             $aControlPart = explode('/', trim($sRenderFile,'/'));
             if (count($aControlPart) >= 2){
-                $sTplFile = "{$this->mThemePath}{$this->mTheme}/{$aControlPart[0]}/".(sle\ptoc($aControlPart[1])).".{$this->mTplSuffix}";
+                $sTplFile = "{$this->mThemePath}{$this->mTheme}/{$this->mWidgetTplPath}{$aControlPart[0]}/".(sle\ptoc($aControlPart[1])).".{$this->mTplSuffix}";
             }
             //传递的参数
             if (!is_array($aParam)){

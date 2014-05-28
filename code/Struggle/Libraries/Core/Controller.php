@@ -10,6 +10,8 @@ class Controller extends \struggle\libraries\Object{
     private $mCompiledTplFile = '';
     private $mWidgetThemePath = "Widget/";
     private $mWidgetModuleSuffix = '.widget.php';
+    private $widgetModule = '';
+    private $widgetAction = '';
     
     public function __construct(){
         parent::__construct();
@@ -35,7 +37,7 @@ class Controller extends \struggle\libraries\Object{
             }
             //传递的参数
             if (!is_array($aTplData)){
-                $this->debug("传递参数不规范，传递给模板的参数不是数组".(is_string($aTplData)?$aTplData:var_export($aTplData,true)).'line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+                $this->debug("传递参数不规范，传递给模板的参数不是数组".(is_string($aTplData)?$aTplData:print_r($aTplData,true)).'line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
                 $aTplData = array();
             }
             $this->mTplData = array_merge($this->mTplData,$aTplData);
@@ -77,6 +79,8 @@ class Controller extends \struggle\libraries\Object{
                     $oWidget = new $sClassName();
                     $sMethodName = "action{$sActName}";
                     if(method_exists($oWidget,$sMethodName)){
+                        $oWidget->widgetModule = $sModuleName;
+                        $oWidget->widgetAction = $sActName;
                         $oWidget->$sMethodName();
                     }else{
                         $this->debug(__METHOD__."该方法不存在{$sClassName}::{$sMethodName} line ".__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
@@ -97,8 +101,38 @@ class Controller extends \struggle\libraries\Object{
         //
     }
     
-    public function output(){
-        echo 'output';
+    public function output($aData = array()){
+        if($this->widgetModule && $this->widgetAction){
+            $sPath = "{$this->widgetModule}/{$this->widgetAction}";
+        }else{
+            $this->debug(__METHOD__."挂件模块方法不能为空 line ".__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+        }
+        //传递的参数
+        if (!is_array($aData)){
+            $this->debug("传递参数不规范，传递给模板的参数不是数组".(is_string($aData)?$aData:print_r($aData,true)).'line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+            $aData = array();
+        }
+        $this->mTplData = array_merge($this->mTplData,$aData);
+
+        if (sle\Sle::getInstance()->LastError){
+            $this->debug(__METHOD__."由于存在致命错误，程序中止执行 line ".__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+        }else{
+            $this->mView->WidgetTplPath = 'Widget/';
+            if($this->mCompiledTplFile = $this->mView->render($sPath)){
+                echo $this->mCompiledTplFile;
+                //header('Content-type:text/html;charset=utf-8');
+                //ob_flush();
+                //flush();
+                //ob_start();
+                //extract($this->mTplData);
+                //include $this->mCompiledTplFile;
+                //$sTxt=ob_get_clean();
+                //echo $sTxt;
+            }else{
+                $this->debug(__METHOD__."挂件模板渲染失败！ line ".__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+            }
+
+        }
     }
 
 

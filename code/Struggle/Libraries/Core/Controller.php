@@ -65,7 +65,7 @@ class Controller extends \struggle\libraries\Object{
      * @param    string   $sPath    挂件目标地址，采用URI格式 module/action[?key1=value1&key2=value2]
      * @return   void
      */
-    public function widget($sPath){
+    public function _widget_($sPath){
         $aTmp = parse_url($sPath);
         $sWidgetFile = '';
         if (isset($aTmp['path']) && $aTmp['path']){
@@ -97,8 +97,8 @@ class Controller extends \struggle\libraries\Object{
     }
     
     
-    public function assgin(){
-        //
+    public function assgin($sKey,$mValue){
+        $this->mTplData[$sKey] = $mValue;
     }
     
     public function output($aData = array()){
@@ -117,21 +117,34 @@ class Controller extends \struggle\libraries\Object{
         if (sle\Sle::getInstance()->LastError){
             $this->debug(__METHOD__."由于存在致命错误，程序中止执行 line ".__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
         }else{
-            $this->mView->WidgetTplPath = 'Widget/';
+            $this->mView->WidgetTplPath='Widget/';
             if($this->mCompiledTplFile = $this->mView->render($sPath)){
-                echo $this->mCompiledTplFile;
-                //header('Content-type:text/html;charset=utf-8');
-                //ob_flush();
-                //flush();
-                //ob_start();
-                //extract($this->mTplData);
-                //include $this->mCompiledTplFile;
-                //$sTxt=ob_get_clean();
-                //echo $sTxt;
+                extract($this->mTplData);
+                include $this->mCompiledTplFile;
             }else{
                 $this->debug(__METHOD__."挂件模板渲染失败！ line ".__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
             }
 
+        }
+    }
+
+
+    public function _include_tpl_($sFile){
+        $aTmp = explode('/',trim($sFile));
+        $sIncludeFile = $sFile;
+        if(isset($aTmp[0]) && isset($aTmp[1])){
+            $sIncludeFile = "{$this->mView->IncludeTplPath}{$aTmp[0]}/{$aTmp[1]}.{$this->mView->TplSuffix}";
+        }
+        if(!sle\fexists($sIncludeFile)){
+            $sIncludeFile = "{$sFile}.{$this->mView->TplSuffix}";
+        }
+        if(sle\fexists($sIncludeFile) && is_readable($sIncludeFile) && ($this->mCompiledTplFile = $this->mView->render($sIncludeFile)) ){
+            ob_start();
+            include $this->mCompiledTplFile;
+            $sIncludeCon = ob_get_clean();
+            return $sIncludeCon;
+        }else{
+            $this->debug(__METHOD__."文件不存在或不可读 {$sIncludeFile} line ".__LINE__, E_USER_ERROR,sle\Sle::SLE_SYS);
         }
     }
 

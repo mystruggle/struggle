@@ -6,19 +6,20 @@ use struggle as sle;
 class View extends \struggle\libraries\Object{
     private $mThemePath = '';
     private $mTplSuffix   = 'htm';
-    private $mTheme    = 'default';
-    private $msCompilePath = '';
+    private $mTheme    = 'Default';
+    private $mCompilePath = '';
     private $mCompileFileName = '';
     private $mTplData = array();
-    public  $WidgetTplPath = '';
+    private $mWidgetTplPath = '';
+    private $mIncludeTplPath  = '';
     
     public function __construct(){
         parent::__construct();
         $this->mThemePath    = APP_THEME;
-        $this->msCompiledPath = APP_RUNTIME;
         sle\C('VIEW_THEME_PATH') && $this->mThemePath   = sle\C('VIEW_THEME_PATH');
         sle\C('VIEW_TPL_SUFFIX') && $this->mTplSuffix   = sle\C('VIEW_TPL_SUFFIX');
         sle\C('VIEW_THEME')      && $this->mTheme       = sle\C('VIEW_THEME');
+        $this->mIncludeTplPath = APP_PUBLIC."{$this->mTheme}/";
         
     }
         
@@ -30,6 +31,16 @@ class View extends \struggle\libraries\Object{
             }elseif (method_exists($this, $sName)){
                 return $this->$sName();
             }
+        }else{
+            $this->debug("访问一个不存在的属性{$sName}", E_USER_WARNING, \struggle\Sle::SLE_SYS);
+        }
+        return false;
+    }
+
+    public function __set($sName,$value){
+        $sAttrName = "m{$sName}";
+        if (isset($this->$sAttrName)){
+                $this->$sAttrName = $value;
         }else{
             $this->debug("访问一个不存在的属性{$sName}", E_USER_WARNING, \struggle\Sle::SLE_SYS);
         }
@@ -64,7 +75,7 @@ class View extends \struggle\libraries\Object{
             $sKey = md5($sTplFile.filemtime(realpath($sTplFile)));
             //clearstatcache();TODO;
             if (!isset($aTpl[$sKey])){
-                $sCompileFile = APP_RUNTIME."{$this->msCompilePath}{$sKey}.php";
+                $sCompileFile = APP_RUNTIME."{$this->mCompilePath}{$sKey}.php";
                 if(sle\fexists($sCompileFile) && !APP_DEBUG){
                     $aTpl[$sKey] = $sCompileFile;
                 }elseif (is_writeable(dirname($sCompileFile))){
@@ -99,15 +110,24 @@ class View extends \struggle\libraries\Object{
         if (isset($aMatch[1])){
             switch ($aMatch[1][0]){
                 case '$':
+                    return $this->isVariable($aMatch[1]);
                     break;
                 case '/':
+                    $sMethodName = str_replace('/','',$aMatch[1]);
+                    $sMethodName = "_close_{$sMethodName}";
+                    if(method_exists($this,$sMethodName)){
+                        $this->debug("调用".__CLASS__."::{$sMethodName}方法",E_USER_NOTICE,sle\Sle::SLE_SYS);
+                        return $this->$sMethodName();
+                    }
                     break;
                 default:
                     $aTmp = preg_split('/\s/', $aMatch[1]);
-                    if (count($aTmp)>=2){
+                    if (count($aTmp)>=1){
                         $sMethodName = "_".trim(array_shift($aTmp));
                         if (method_exists($this, $sMethodName)){
-                            return $this->$sMethodName(implode(' ' , $aTmp));
+                            $sTmpParam = implode(' ' , $aTmp);
+                            $this->debug("调用".__CLASS__."::{$sMethodName}('{$sTmpParam}')方法",E_USER_NOTICE,sle\Sle::SLE_SYS);
+                            return $this->$sMethodName($sTmpParam);
                         }
                     }
             }
@@ -151,13 +171,51 @@ class View extends \struggle\libraries\Object{
     
     
     
-    private function _if(){
-        //
+    private function _if($sCondition){
+        $sCondition = str_replace(array(' gt ',' ge ',' lt ',' le ',' eq '),array(' > ',' >= ',' < ',' <= ',' == '),$sCondition);
+        return "<?php if({$sCondition}):?>";
+    }
+
+
+    private function _elseif($sCondition){
+        $sCondition = str_replace(array(' gt ',' ge ',' lt ',' le ',' eq '),array(' > ',' >= ',' < ',' <= ',' == '),$sCondition);
+        return "<?php elseif({$sCondition}):?>";
+    }
+
+
+    private function _else(){
+        return "<?php else:?>";
     }
     
+
+    private function _close_if(){
+        return "<?php endif;?>";
+    }
     
     private function _widget($sWidgetTpl){
-        return "<?php \$this->widget('{$sWidgetTpl}');?>";
+        return "<?php \$this->_widget_('{$sWidgetTpl}');?>";
+    }
+
+
+    private function _include_once($sFile){
+        $aTmp = explode('/',trim($sFile));
+        $sIncludeFile = $sFile;
+        if(isset($aTmp[0]) && isset($aTmp[1])){
+            $sIncludeFile = "{$this->mIncludeTplPath}{$aTmp[0]}/{$aTmp[1]}.{$this->mTplSuffix}";
+        }
+        if(sle\fexists($sIncludeFile) && is_readable($sIncludeFile)){
+            ob_start();
+            include $sIncludeFile;
+            $sIncludeCon = ob_get_clean();
+            return $sIncludeCon;
+        }else{
+            $this->debug(__METHOD__."文件不存在或不可读 {$sIncludeFile} line ".__LINE__, E_USER_ERROR,sle\Sle::SLE_SYS);
+        }
+    }
+
+
+    private function _include($sFile){
+        return "<?php echo \$this->_include_tpl_('{$sFile}');?>";
     }
     
     

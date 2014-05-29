@@ -21,6 +21,7 @@ defined('APP_RUNTIME')   or define('APP_RUNTIME', 'Caches/Runtime/');
 defined('APP_CONTROLLER') or define('APP_CONTROLLER', 'Controller/');
 defined('APP_MODEL')     or define('APP_MODEL', 'Model/');
 defined('APP_THEME')     or define('APP_THEME','Themes/');
+defined('APP_PUBLIC')    or define('APP_PUBLIC','Public/');
 defined('APP_LIB')       or define('APP_LIB','AddOnes/');
 defined('APP_CONF')      or define('APP_CONF','Config/');
 
@@ -214,7 +215,7 @@ class Sle{
             }
             
             //建立目录
-            $aBuildAppDir = array(APP_ROOT, APP_CACHE, APP_RUNTIME, APP_CONTROLLER, APP_MODEL, APP_CONF, APP_LIB, APP_THEME, APP_THEME.'Default/');
+            $aBuildAppDir = array(APP_ROOT, APP_CACHE, APP_RUNTIME, APP_CONTROLLER, APP_MODEL, APP_CONF, APP_LIB, APP_THEME, APP_PUBLIC,APP_PUBLIC.'Default/',APP_PUBLIC.'Default/html/',APP_PUBLIC.'Default/js/',APP_PUBLIC.'Default/css/',APP_PUBLIC.'Default/images/', APP_THEME.'Default/');
             foreach ($aBuildAppDir as $sDir){
                 if (!is_dir($sDir)){
                     if (buildDir($sDir)){

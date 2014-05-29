@@ -6,7 +6,19 @@
 <title>Insert title here</title>
 </head>
 <body>
-<?php $this->widget('index/index');?>
+{include html/header2}
+<?php $this->_widget_('index/index');?>
+
+
+<?php if(($a==2 and $b==$d) or $k>=1):?>
+<?php echo $a;?>
+<?php elseif($a==$c):?>
+<?php echo trim(1,$b);?>
+<?php else:?>
+<?php echo $c;?>
+<?php endif;?>
+
+
 
 </body>
 </html>

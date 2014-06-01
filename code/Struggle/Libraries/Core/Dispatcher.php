@@ -2,7 +2,7 @@
 namespace struggle\libraries\core;
 use struggle as sle;
 
-class Dispatcher{
+class Model extends Object{
     private $itsDefaultModule = '';
     private $itsDefaultAction = '';
     public function start(){

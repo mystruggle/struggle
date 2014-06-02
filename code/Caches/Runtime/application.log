@@ -10717,3 +10717,73 @@
 2014-06-01 00:24:41/0.37190294265747s[E_USER_NOTICE 1024]调用struggle\libraries\core\View::_widget('index/show')方法
 2014-06-01 00:24:41/0.37427997589111s[E_USER_NOTICE 1024]把编译后内容写入编译文件Caches/Runtime/8cfe727c06ca121c6aa55e3a80bb5a4f.php
 2014-06-01 00:24:41/0.38429403305054s[E_USER_NOTICE 1024]把编译后内容写入编译文件Caches/Runtime/5ffc56526028b41917fd4cb7bd5bd1f1.php
+2014-06-02 12:23:19/0.00013184547424316s[E_USER_NOTICE 1024]加载核心函数文件Struggle/Config/Functions.php
+2014-06-02 12:23:19/0.00070595741271973s[E_USER_NOTICE 1024]加载核心配置文件Struggle/Config/Config.php
+2014-06-02 12:23:19/0.00079798698425293s[E_USER_NOTICE 1024]加载项目配置文件Config/Config.php
+2014-06-02 12:23:19/0.0008699893951416s[E_USER_NOTICE 1024]所有配置参数值Array
+(
+    [DISPATCHER_DEFAULT_MODULE] => index
+    [DISPATCHER_DEFAULT_ACTION] => index
+    [DISPATCHER_MODULE_TAG] => m
+    [DISPATCHER_ACTION_TAG] => a
+    [CACHE_ENGINE] => file
+    [CACHE_DIR] => 
+    [LOG_TYPE] => file
+    [LOG_BASE_PATH] => Caches/
+    [LOG_PATH] => Runtime/
+    [LOG_NAME] => application
+    [LOG_EXT] => log
+    [LOG_MAX_SIZE] => 2000
+    [VIEW_THEME_PATH] => Themes/
+    [VIEW_THEME] => Default
+    [VIEW_TPL_SUFFIX] => htm
+    [LANG_NAME] => zh-cn
+    [DEBUG_RECORD_TYPE] => file
+    [DEBUG_RECORD_FILE_NAME] => application
+    [DEBUG_RECORD_FILE_PATH] => Caches/Runtime/
+    [DEBUG_RECORD_FILE_EXT] => log
+    [DEBUG_RECORD_FILE_MODE] => ab
+    [DEBUG_RECORD_FILE_SIZE] => 2000
+    [DEBUG_RECORD_FILE_NUM] => 3
+    [DEBUG_LEVEL] => all
+    [ROUTE_MODE] => normal
+    [AUTOLOAD_DIR] => AddOnes/,Struggle/Libraries/,Struggle/Libraries/Cache/Driver/,Controller/
+)
+
+2014-06-02 12:23:19/0.0009768009185791s[E_USER_NOTICE 1024]语言配置文件Struggle/Config/zh-cn.php处理
+2014-06-02 12:23:19/0.0010209083557129s[E_USER_WARNING 512]语言文件不存在Config/zh-cn.php,文件名区分大小写
+2014-06-02 12:23:19/0.0011110305786133s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Object.php
+2014-06-02 12:23:19/0.0012328624725342s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Exception.php
+2014-06-02 12:23:19/0.0014238357543945s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Route.php
+2014-06-02 12:23:19/0.0018010139465332s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Controller.php
+2014-06-02 12:23:19/0.0022950172424316s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/View.php
+2014-06-02 12:23:19/0.0023288726806641s[E_USER_NOTICE 1024]设置/apps/www/htdocs/app/struggle/code/AddOnes/:/apps/www/htdocs/app/struggle/code/Struggle/Libraries/:/apps/www/htdocs/app/struggle/code/Struggle/Libraries/Cache/Driver/:/apps/www/htdocs/app/struggle/code/Controller/:自动包含目录
+2014-06-02 12:23:19/0.0023369789123535s[E_USER_NOTICE 1024]自定义自动包含处理函数\struggle\autoLoad
+2014-06-02 12:23:19/0.0023410320281982s[E_USER_NOTICE 1024]自定义shutdown处理句柄\struggle\libraries\Exception::shutdownHandle
+2014-06-02 12:23:19/0.0023458003997803s[E_USER_NOTICE 1024]自定义异常处理句柄\struggle\libraries\Exception::exceptionHandle
+2014-06-02 12:23:19/0.0023519992828369s[E_USER_NOTICE 1024]自定义错误处理句柄\struggle\libraries\Exception::errorHandle
+2014-06-02 12:23:19/0.0023648738861084s[E_USER_NOTICE 1024]初始化类Route
+2014-06-02 12:23:19/0.0023789405822754s[E_USER_NOTICE 1024]初始化类Debug
+2014-06-02 12:23:19/0.0023839473724365s[E_USER_NOTICE 1024]自动加载类struggle\libraries\Debug
+2014-06-02 12:23:19/0.0029020309448242s[E_USER_NOTICE 1024]初始化类\struggle\libraries\cache\driver\File,初始化参数Array
+(
+    [file] => Caches/Runtime/application.log
+    [mode] => ab
+    [size] => 2000
+    [renum] => 3
+)
+
+2014-06-02 12:23:19/0.0029089450836182s[E_USER_NOTICE 1024]自动加载类struggle\libraries\cache\driver\File
+2014-06-02 12:23:19/0.0023739337921143s[E_USER_NOTICE 1024]路由模式normal;url=>/app/struggle/code/
+2014-06-02 12:23:19/0.0037779808044434s[E_USER_NOTICE 1024]模块标签=>m;方法标签=>a;模块=>Index;方法=>Index
+2014-06-02 12:23:19/0.0041899681091309s[E_USER_NOTICE 1024]调用struggle\libraries\core\View::_include_once('html/header')方法
+2014-06-02 12:23:19/0.0047538280487061s[E_USER_NOTICE 1024]调用struggle\libraries\core\View::_widget('index/index')方法
+2014-06-02 12:23:19/0.0048069953918457s[E_USER_NOTICE 1024]调用struggle\libraries\core\View::_if('$a')方法
+2014-06-02 12:23:19/0.0048739910125732s[E_USER_NOTICE 1024]调用struggle\libraries\core\View::_elseif('$b')方法
+2014-06-02 12:23:19/0.0049188137054443s[E_USER_NOTICE 1024]调用struggle\libraries\core\View::_else('')方法
+2014-06-02 12:23:19/0.0049948692321777s[E_USER_NOTICE 1024]调用struggle\libraries\core\View::_close_if方法
+2014-06-02 12:23:19/0.0050318241119385s[E_USER_NOTICE 1024]调用struggle\libraries\core\View::_include_once('html/footer')方法
+2014-06-02 12:23:19/0.026567935943604s[E_USER_NOTICE 1024]把编译后内容写入编译文件Caches/Runtime/a90b2c1bd488af274b976488cde9020b.php
+2014-06-02 12:23:19/0.027566909790039s[E_USER_NOTICE 1024]调用struggle\libraries\core\View::_widget('index/show')方法
+2014-06-02 12:23:19/0.027704954147339s[E_USER_NOTICE 1024]把编译后内容写入编译文件Caches/Runtime/0b314e8693cd896380ce07f747f426cd.php
+2014-06-02 12:23:19/0.034168004989624s[E_USER_NOTICE 1024]把编译后内容写入编译文件Caches/Runtime/9c217b2ff6819d8d3d476e2323a387eb.php

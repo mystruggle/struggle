@@ -165,16 +165,21 @@ function strToArrElement($sName, $mVal, &$aAppend){
             }while(is_array($aOrg));
 
             //定位数组维度
-            $iPos= 1;echo "(".print_r($aName,true)."|".print_r($tarKeys,true).")<br>";
+            $iPos= 1;
             foreach($aName as $index=>$name){
-                if($tarKeys[$index] == $name)$iPos+=1;
+                if(isset($tarKeys[$index]) && $tarKeys[$index] == $name)$iPos+=1;
             }
             //定位json中的插入点
             $iPos2=-1;
-            for($i=0;$i<$iPos;$i++){
+			$iDeep2=$iPos;
+			$isDropWrap=true;
+			if((count($tarKeys) == ($iPos-1)) or (count($aName) == ($iPos-1))){
+				$iDeep2 -= 1;
+				$isDropWrap=false;
+			}
+            for($i=0;$i<$iDeep2;$i++){
                 $iPos2=strpos($sOrg,'{',$iPos2+1);
             }
-            //echo $iPos2."|".$sOrg."<br><br>";
             //去掉数组重复的维度
             $iDeep=$iPos;
             while(($iDeep-1)>0){
@@ -182,18 +187,19 @@ function strToArrElement($sName, $mVal, &$aAppend){
                 $iDeep-=1;
             }
             if(count($aName) == ($iPos-1)){
-                $iLastKeyPos=strpos($sOrg,end($aName),strrpos(substr($sOrg,0,$iPos2),'{'));//定位最后一维 $iPos2+1
+                $iLastKeyPos=strpos($sOrg,end($aName),$iPos2+1);//定位最后一维 
                 $iColonPos = strpos($sOrg,':',$iLastKeyPos+1);//定位冒号
                 $isArr = $sOrg[$iColonPos+1];//是否覆盖数组
                 if($isArr == '{'){
-                    echo end($aName),'|',$iColonPos,'|',$iLastKeyPos,'|',$sOrg;
                     $sPart1=substr($sOrg,0,$iColonPos+1);//截取到左大括号{
-                    $iPosPart2=strpos($sOrg,'}',$iColonPos+2);
-                    echo "end|$iPosPart2|end";
-                    $sPart2=substr($sOrg,$iPosPart2);echo "<{$sPart1}|{$sPart2}><br>";
+				    $iPosPart2=$iColonPos+1;
+					for($ii=1;$ii<$iPos;$ii++){
+                        $iPosPart2=strpos($sOrg,'}',$iPosPart2+1);
+					}
+                    $sPart2=substr($sOrg,$iPosPart2);
                 }else{
                     $sPart1=substr($sOrg,0,$iColonPos+1);//截取到冒号
-                    if($iPosPart2=strpos($sOrg,',',$iColonPos)){
+                    if($iPosPart2=strpos(substr($sOrg,0,strpos($sOrg,'}')),',',$iColonPos)){
                         $sPart2=substr($sOrg,$iPosPart2);
                     }else{
                         $iPosPart2=strpos($sOrg,'}',$iColonPos+2);
@@ -201,10 +207,26 @@ function strToArrElement($sName, $mVal, &$aAppend){
                     }
                 }
             }else{
-            $sPart2=substr($sOrg,$iPos2+1);
-            $sPart1=str_replace($sPart2,'',$sOrg);
+				if(count($tarKeys) == ($iPos-1)){
+					$iLastKeyPos=strpos($sOrg,end($tarKeys),$iPos2+1);//定位最后一维
+					$iColonPos = strpos($sOrg,':',$iLastKeyPos+1);//定位冒号
+                    $sPart1=substr($sOrg,0,$iColonPos+1);//截取到冒号
+                    if($iPosPart2=strpos(substr($sOrg,0,strpos($sOrg,'}')),',',$iColonPos)){
+                        $sPart2=substr($sOrg,$iPosPart2);
+                    }else{
+                        $iPosPart2=strpos($sOrg,'}',$iColonPos+2);
+                        $sPart2=substr($sOrg,$iPosPart2);
+                    }
+				}else{
+				$sPart2=substr($sOrg,$iPos2+1);
+				$sPart1=str_replace($sPart2,'',$sOrg);
+				}
             }
-            $sRlt= $sPart1.ltrim(rtrim(json_encode($aTar),'}'),'{').','.$sPart2;
+			$sAddJson = json_encode($aTar);
+			if($isDropWrap)
+			    $sAddJson = substr($sAddJson,1,(strlen($sAddJson)-2));
+            $sRlt= $sPart1.$sAddJson.($sPart2[0]=='}'?'':',').$sPart2;
+			//echo $sRlt;
             $aRlt=json_decode($sRlt,true);
             $aAppend[\key($aRlt)]=\current($aRlt);
         }else{
@@ -299,8 +321,8 @@ function M($sName = ''){
     C('MODEL.CLASS.SUFFIX',$sModelClassSuffix);
     C('MODEL.NAMESPACE',$sModelNameSpace);
     C('a.b.c.d.e.f.g.h.i','j');
-    C('a.b.c.d.e','l');
-   // \var_dump(C('MODEL.CLASS.SUFFIX'),C('MODEL.NAMESPACE'),C('a.b.c.d.e.f.g.h.i'),C('a.b.c.d.e'));//
+    C('a.b.c.d.e.f.g.h.i','q');
+    \var_dump(C('MODEL.CLASS.SUFFIX'),C('MODEL.NAMESPACE'),C('a.b.c.d.e.f.g.h.i'),C('a.b.c.d.e'));//
 	$sKey = md5(var_export($sName,true));
 	if(empty($sName)){
 		$sClassName = $sModelNameSpace.$sModelClassSuffix;

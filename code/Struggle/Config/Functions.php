@@ -199,7 +199,7 @@ function strToArrElement($sName, $mVal, &$aAppend){
                     $sPart2=substr($sOrg,$iPosPart2);
                 }else{
                     $sPart1=substr($sOrg,0,$iColonPos+1);//截取到冒号
-                    if($iPosPart2=strpos(substr($sOrg,0,strpos($sOrg,'}')),',',$iColonPos)){
+                    if($iPosPart2=strpos(substr($sOrg,0,strpos($sOrg,'}',$iColonPos)),',',$iColonPos)){
                         $sPart2=substr($sOrg,$iPosPart2);
                     }else{
                         $iPosPart2=strpos($sOrg,'}',$iColonPos+2);
@@ -211,7 +211,7 @@ function strToArrElement($sName, $mVal, &$aAppend){
 					$iLastKeyPos=strpos($sOrg,end($tarKeys),$iPos2+1);//定位最后一维
 					$iColonPos = strpos($sOrg,':',$iLastKeyPos+1);//定位冒号
                     $sPart1=substr($sOrg,0,$iColonPos+1);//截取到冒号
-                    if($iPosPart2=strpos(substr($sOrg,0,strpos($sOrg,'}')),',',$iColonPos)){
+                    if($iPosPart2=strpos(substr($sOrg,0,strpos($sOrg,'}',$iColonPos)),',',$iColonPos)){
                         $sPart2=substr($sOrg,$iPosPart2);
                     }else{
                         $iPosPart2=strpos($sOrg,'}',$iColonPos+2);

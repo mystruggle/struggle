@@ -4,14 +4,14 @@ use struggle as sle;
 
 
 class View extends \struggle\libraries\Object{
-    private $mThemePath = '';
-    private $mTplSuffix   = 'htm';
-    private $mTheme    = 'Default';
-    private $mCompilePath = '';
-    private $mCompileFileName = '';
-    private $mTplData = array();
-    private $mWidgetTplPath = '';
-    private $mIncludeTplPath  = '';
+    protected $mThemePath = '';
+    protected $mTplSuffix   = 'htm';
+    protected $mTheme    = 'Default';
+    protected $mCompilePath = '';
+    protected $mCompileFileName = '';
+    protected $mTplData = array();
+    protected $mWidgetTplPath = '';
+    protected $mIncludeTplPath  = '';
     
     public function __construct(){
         parent::__construct();
@@ -22,31 +22,6 @@ class View extends \struggle\libraries\Object{
         $this->mIncludeTplPath = APP_PUBLIC."{$this->mTheme}/";
         
     }
-        
-    public function __get($sName){
-        $sAttrName = "m{$sName}";
-        if (isset($this->$sAttrName)){
-            if ($this->$sAttrName){
-                return $this->$sAttrName;
-            }elseif (method_exists($this, $sName)){
-                return $this->$sName();
-            }
-        }else{
-            $this->debug("访问一个不存在的属性{$sName}", E_USER_WARNING, \struggle\Sle::SLE_SYS);
-        }
-        return false;
-    }
-
-    public function __set($sName,$value){
-        $sAttrName = "m{$sName}";
-        if (isset($this->$sAttrName)){
-                $this->$sAttrName = $value;
-        }else{
-            $this->debug("访问一个不存在的属性{$sName}", E_USER_WARNING, \struggle\Sle::SLE_SYS);
-        }
-        return false;
-    }
-    
     
     /**
      * 渲染模板

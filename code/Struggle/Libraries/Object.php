@@ -5,7 +5,36 @@ class Object{
     static $itsErrors=array();
     private $test=null;
     public function __construct(){
+		$this->_init();
     }
+
+	protected function _init(){
+	}
+
+
+
+	public function __get($sName){
+		$sAttr = "m{$sName}";
+		if(property_exists($this,$sAttr)){
+			$sMethod = "_{$sName}";
+			if(method_exists($this,$sMethod)){
+				return $this->$sMethod();
+			}else{
+			    return $this->$sAttr;
+			}
+		}else{
+			$this->debug("访问一个不存在的属性{$sName},在".__METHOD__.' line '.__LINE__, E_USER_WARNING, \struggle\Sle::SLE_SYS);
+		}
+	}
+
+	public function __set($sName,$mVal){
+		$sName = "m{$sName}";
+		if(property_exists($this,$sName)){
+			$this->$sName = $mVal;
+		}else{
+			$this->debug("访问一个不存在的属性{$sName},在".__METHOD__.' line '.__LINE__, E_USER_WARNING, \struggle\Sle::SLE_SYS);
+		}
+	}
 
     
     

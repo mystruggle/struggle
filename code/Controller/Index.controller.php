@@ -11,7 +11,8 @@ class IndexController extends Controller{
 		//$b=\struggle\M();
 		//print_r($b);
 		$c=\struggle\M();
-		$c->find();
+
+		var_dump($c->Link);
         $this->display();
     }
 }

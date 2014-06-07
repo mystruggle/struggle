@@ -306,6 +306,7 @@ class Sle{
                     // LIB_PATH.'Log.php',
                     LIB_PATH.'Core/Route.php',
                     LIB_PATH.'Core/Controller.php',
+                    LIB_PATH.'Core/Model.php',
                     LIB_PATH.'Core/View.php',
                 );
                 foreach ($aCoreFile as $sFile){

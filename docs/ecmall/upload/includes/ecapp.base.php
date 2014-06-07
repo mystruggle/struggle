@@ -84,7 +84,7 @@ class ECBaseApp extends BaseApp
     function __construct()
     {
         $this->ECBaseApp();
-    }
+    }function _get_detail(){echo 'yes222';}
     function ECBaseApp()
     {
         parent::__construct();

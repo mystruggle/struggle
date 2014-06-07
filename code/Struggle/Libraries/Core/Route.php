@@ -9,6 +9,7 @@ class Route extends Object{
     public  $moduleSuffix = 'Controller';
     public  $moduleFileSuffix = '.controller.php';
     public  $methodPrefix = 'action';
+	public  $namespaceModule = '\struggle\controller\\';
 
 	
     public function __construct($sUrl){
@@ -35,7 +36,7 @@ class Route extends Object{
             $sControlFile = APP_CONTROLLER."{$this->module}{$this->moduleFileSuffix}";
             if(file_exists($sControlFile) && is_readable($sControlFile)){
                 sle\require_cache($sControlFile);
-                $sClassName = $this->module.$this->moduleSuffix;
+                $sClassName = $this->namespaceModule.$this->module.$this->moduleSuffix;
                 $sMethod = "{$this->methodPrefix}{$this->action}";
                 $oController = new $sClassName();
                 if(method_exists($oController,$sMethod)){

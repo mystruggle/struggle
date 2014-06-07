@@ -235,6 +235,29 @@ function getLibDir($sDir){
     return $aRlt;
 }
 
+
+function M($sName = ''){
+	static $aModel = array();
+	$sModelClassSuffix = 'Model';
+	$sModelNameSpace = '\struggle\model\\';
+	$sKey = md5(var_export($sName,true));
+	if(empty($sName)){
+		$sClassName = $sModelNameSpace.$sModelClassSuffix;
+		$aModel[$sKey] = new $sClassName;
+	}
+	if(!isset($aModel[$sKey])){
+		$sModelSuffix = '.model.php';
+		$sModelFile = APP_ROOT.APP_MODEL."{$sName}{$sModelSuffix}";
+		if(require_cache($sModelFile)){
+			$sClassName = "{$sModelNameSpace}{$sName}{$sModelClassSuffix}";
+			if(class_exists($sClassName)){
+				$oModel =  new $sClassName();
+				$aModel[$sKey] = $oModel;
+			}
+		}
+	}
+	return isset($aModel[$sKey])?$aModel[$sKey]:null;
+}
 /**
  * 名称命名转换
  * @param  string       $sName    需要转换的名称

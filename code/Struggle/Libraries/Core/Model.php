@@ -2,10 +2,9 @@
 namespace struggle\libraries\core;
 use struggle as sle;
 
-abstract class Model extends \struggle\libraries\Object{
-    abstract public $table = '';
-    abstract public $alias = '';
-    abstract public $mName = '';
+abstract class BaseModel extends \struggle\libraries\Object{
+    public $alias = '';
+    public $mName = '';
     public function start(){
         $this->itsDefaultModule = 'index';
         $this->itsDefaultAction = 'index';
@@ -13,8 +12,15 @@ abstract class Model extends \struggle\libraries\Object{
         sle\C('DISPATCHER_DEFAULT_MODULE') && $this->itsDefaultModule = struggle\C('DISPATCHER_DEFAULT_MODULE');
     }
 
-    abstract public function find(){}
-    abstract public function findAll(){}
-    abstract public function findBySql(){}
-    abstract public function findAllBySql(){}
+    public function find(){echo 'find';}
+    public function findAll(){}
+    public function findBySql(){}
+    public function findAllBySql(){}
 }
+
+
+
+
+
+namespace  struggle\model;
+class Model extends \struggle\libraries\core\BaseModel{}

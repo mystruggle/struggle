@@ -1,0 +1,7 @@
+Fri, 06 Jun 2014 08:13:09 +0200	[256]Unkown database type.	/eccore/ecmall.php	555
+Fri, 06 Jun 2014 19:36:22 +0200	[256]MySQL Error[1054]: Unknown column 'user_name' in 'field list'
+MySQL Query:SELECT user_name, email,address.user_id,address.addr_id FROM ecm_address address WHERE address.user_id  IN ('1') 
+Wrong File:  /git/struggle/docs/ecmall/upload/eccore/model/mysql.php[534]	/eccore/model/mysql.php	286
+Fri, 06 Jun 2014 19:39:24 +0200	[256]MySQL Error[1054]: Unknown column 'user_name' in 'field list'
+MySQL Query:SELECT user_name, email,address.user_id,address.addr_id FROM ecm_address address WHERE address.user_id  IN ('1') 
+Wrong File:  /git/struggle/docs/ecmall/upload/eccore/model/mysql.php[534]	/eccore/model/mysql.php	286

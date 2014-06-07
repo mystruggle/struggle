@@ -159,9 +159,9 @@ class BaseModel extends Object
 
         /* 完整的SQL */
         $sql = "SELECT {$fields} FROM {$tables}{$conditions}{$order}{$limit}";
-
-        return $index_key ? $this->db->getAllWithIndex($sql, $index_key) :
-                            $this->db->getAll($sql);
+echo "|{$sql}|",$index_key;return $this->db->getAllWithIndex($sql, $index_key);
+        //return $index_key ? $this->db->getAllWithIndex($sql, $index_key) :
+                            //$this->db->getAll($sql);
     }
 
     /**
@@ -1109,6 +1109,7 @@ class BaseModel extends Object
 
         return $result;
     }
+
     function _getJoinString($relation_info)
     {
         switch ($relation_info['type'])

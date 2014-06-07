@@ -2,7 +2,7 @@
 namespace struggle\libraries\core;
 use struggle as sle;
 
-class Controller extends \struggle\libraries\Object{
+class BaseController extends \struggle\libraries\Object{
     private $mView = '';
     private $mSle  = '';
     private $msWidgetPath = '';
@@ -75,7 +75,9 @@ class Controller extends \struggle\libraries\Object{
                 $sActName = sle\ctop($aControlPart[1]);
                 $sWidgetFile = APP_CONTROLLER."{$sModuleName}{$this->mWidgetModuleSuffix}";
                 if(sle\fexists($sWidgetFile) && is_readable($sWidgetFile)){
-                    $sClassName = $sModuleName.sle\ctop(dirname(trim(str_replace('.','/',$this->mWidgetModuleSuffix),'/')));
+					sle\require_cache($sWidgetFile);
+                    $sClassName = $this->mSle->Route->namespaceModule.$sModuleName.
+						          sle\ctop(dirname(trim(str_replace('.','/',$this->mWidgetModuleSuffix),'/')));
                     $oWidget = new $sClassName();
                     $sMethodName = "action{$sActName}";
                     if(method_exists($oWidget,$sMethodName)){
@@ -155,6 +157,9 @@ class Controller extends \struggle\libraries\Object{
 }
 
 
+
+namespace struggle\controller;
+class Controller extends \struggle\libraries\core\BaseController{}
 
 
 

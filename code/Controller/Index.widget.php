@@ -1,5 +1,5 @@
 <?php
-use struggle\libraries\core\Controller as Controller;
+namespace struggle\controller;
 class IndexWidget extends Controller{
     public function actionIndex(){
 		$this->assgin('b','widget b');

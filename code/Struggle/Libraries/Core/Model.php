@@ -22,10 +22,6 @@ class BaseModel extends \struggle\libraries\Object{
 
     public function __construct(){
         parent::__construct();
-        static $aLink = array();
-        if(!$this->mLink){
-            
-        }
     }
 
 
@@ -35,7 +31,7 @@ class BaseModel extends \struggle\libraries\Object{
 		$this->mDriver = sle\C('DB_DRIVER')?sle\C('DB_DRIVER'):'mysql';
 		$this->mDb     = sle\C('DB_NAME')?sle\C('DB_NAME'):null;
 		$this->mHost   = sle\C('DB_HOST')?sle\C('DB_HOST'):'127.0.0.1';
-		$this->mPort   = sle\C('DB_PORT')?sle\C('DB_PORT'):'3306';
+		$this->mPort   = sle\C('DB_PORT')?sle\C('DB_PORT'):'330';
 		$this->mUser   = sle\C('DB_USER')?sle\C('DB_USER'):'root';
 		$this->mPwd    = sle\C('DB_PWD')?sle\C('DB_PWD'):'';
 		$this->mDns    = sle\C('DB_DNS')?sle\C('DB_DNS'):'';

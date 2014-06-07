@@ -49,6 +49,9 @@ return array(
     'DB_NAME'                =>'',       //数据库名
     'DB_USER'                =>'root',       //数据库用户名
     'DB_PWD'                 =>'',      //数据库用户密码
+    'DB_HOST'                =>'localhost',      //数据库用户密码
+    'DB_PORT'                =>'3306',      //数据库用户密码
+    'DB_DNS'                 =>'',      //数据库用户密码
 );
 
 

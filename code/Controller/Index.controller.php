@@ -10,9 +10,9 @@ class IndexController extends Controller{
 		//print_r($a);
 		//$b=\struggle\M();
 		//print_r($b);
-		$c=\struggle\M('User');print_r($c);
+		$c=\struggle\M('User');//print_r($c);
 $c->setAttr(\PDO::ATTR_ERRMODE,\PDO::ERRMODE_EXCEPTION);
-		var_dump($c->getAttr(\PDO::ATTR_ERRMODE));
+		//var_dump($c->getAttr(\PDO::ATTR_ERRMODE));
         $this->display();
     }
 }

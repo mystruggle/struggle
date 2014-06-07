@@ -19,7 +19,19 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
             $this->mErrorInfo = $oLink->errorInfo();
             $this->mErrorCode = $oLink->errorCode();
         }
+		$this->initMetadata($aOpt,$oLink);
         return $this->mLink = $oLink;
+	}
+
+	public function initMetadata($aOpt,$oLink){
+		static $aMetadata;
+		$sKey = md5("{$aOpt['host']}:{$aOpt['port']}.{$aOpt['dbname']}.{$aOpt['table']}");
+		if(!isset($aMetadata[$sKey])){
+			$sMetaSql = "show create table {$aOpt['table']}";
+			$oStatement = $oLink->query($sMetaSql);
+			$aTmp=$oStatement->fetchAll(\PDO::FETCH_ASSOC);
+			//print_r($aTmp);
+		}
 	}
 
 

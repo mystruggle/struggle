@@ -145,6 +145,7 @@ function strToArrElement($sName, $mVal, &$aAppend){
             return $temp;
         $mRlt = null;
     }else{
+		$mVal = addslashes($mVal); 
         $sArrKey = '';
         $sCloseTag = '';
         foreach ($aName as $key){
@@ -153,7 +154,17 @@ function strToArrElement($sName, $mVal, &$aAppend){
         }
         $temp = "{$sArrKey}\"{$mVal}\"{$sCloseTag}";
         $temp = json_decode($temp,true);
-        $aAppend[key($temp)] = current($temp);
+		$aTmp=$aAppend;
+		foreach($temp as $k=>$v){
+			if(isset($aTmp[$k])){
+				$aTmp = $aAppend[$k];
+			}else{echo '<br><br>||',$k,'||<br><br>';
+				$aTmp[$k] = $v;
+				break;
+		    }
+		}print_r($aTmp);echo '|1<br>';
+		//$aAppend=array_merge($aAppend,$temp);print_r($aAppend);echo '|1<br>';
+        $aAppend[\key($aTmp)] = \current($aTmp);
         $mRlt = true;
     }
     return $mRlt;

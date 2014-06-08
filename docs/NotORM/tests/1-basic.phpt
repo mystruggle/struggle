@@ -4,7 +4,7 @@ Basic operations
 <?php
 include_once dirname(__FILE__) . "/connect.inc.php";
 
-foreach ($software->application() as $application) {$hd=fopen('/tmp/my.log','ab+');fwrite($hd,"|{$application[title]}\r\n");fclose($hd);
+foreach ($software->application() as $application) {
 	echo "$application[title] (" . $application->author["name"] . ")\n";
 	foreach ($application->application_tag() as $application_tag) {
 		echo "\t" . $application_tag->tag["name"] . "\n";

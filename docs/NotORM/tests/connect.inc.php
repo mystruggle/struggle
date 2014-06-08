@@ -5,5 +5,5 @@ include dirname(__FILE__) . "/../NotORM.php";
 $connection = new PDO("mysql:dbname=software", "root");
 $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 $connection->setAttribute(PDO::ATTR_CASE, PDO::CASE_LOWER);
-$software = new NotORM($connection);$software->debug = true;
+$software = new NotORM($connection);
 //~ $software->debug = true;

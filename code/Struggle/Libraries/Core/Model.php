@@ -2,9 +2,25 @@
 namespace struggle\libraries\core;
 use struggle as sle;
 
-abstract class BaseModel extends \struggle\libraries\Object{
-    public $alias = '';
-    public $mName = '';
+class BaseModel extends \struggle\libraries\Object{
+    public  $alias = '';
+    public  $mName = '';
+    /** 数据库连接 */
+    private $mLink  = array();
+
+    public function __construct(){
+        parent::__construct();
+        $this->_init();
+        static $aLink = array();
+        if(!$this->mLink){
+            
+        }
+    }
+
+    private function _init(){
+        //var_dump('|',property_exists($this,'test'),'|');
+    }
+
     public function start(){
         $this->itsDefaultModule = 'index';
         $this->itsDefaultAction = 'index';
@@ -12,7 +28,10 @@ abstract class BaseModel extends \struggle\libraries\Object{
         sle\C('DISPATCHER_DEFAULT_MODULE') && $this->itsDefaultModule = struggle\C('DISPATCHER_DEFAULT_MODULE');
     }
 
-    public function find(){echo 'find';}
+    public function find(){
+        if(property_exists($this,'Db')){
+        }
+    }
     public function findAll(){}
     public function findBySql(){}
     public function findAllBySql(){}

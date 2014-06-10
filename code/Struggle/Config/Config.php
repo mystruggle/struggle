@@ -43,6 +43,12 @@ return array(
     'AUTOLOAD_DIR'           =>APP_LIB.','.LIB_PATH.','.LIB_PATH.'Cache/Driver/,'.APP_CONTROLLER,
     //语言设置
     'LANG_NAME'              =>'zh-cn',
+    //数据库设置
+    'DB_TYPE'                =>'pdo',    //数据库类型，pdo,mysql,
+    'DB_DRIVER'              =>'sqlite', //数据库驱动类型,sqlite ,mysql,sql server,oracle
+    'DB_NAME'                =>'',       //数据库名
+    'DB_USER'                =>'root',       //数据库用户名
+    'DB_PWD'                 =>'',      //数据库用户密码
 );
 
 

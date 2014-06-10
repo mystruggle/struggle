@@ -3,6 +3,7 @@ namespace struggle\libraries;
 
 class Object{
     static $itsErrors=array();
+    private $test=null;
     public function __construct(){
     }
 

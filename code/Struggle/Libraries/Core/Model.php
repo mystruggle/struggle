@@ -10,9 +10,12 @@ class BaseModel extends \struggle\libraries\Object{
 	protected $mType = '';   //数据库类型
 	protected $mDriver = '';   //数据库驱动
 	protected $mDb     = '';  //数据库名
+	protected $mHost   = '';  //数据库服务器ip
+	protected $mPort   = '';  //数据库端口
 	protected $mUser   = '';   //数据库用户名
 	protected $mPwd    = '';   //数据库用户密码
 	protected $mDns    = '';   //type为pdo时的连接dns
+    protected $mNewLink = false;
 	private   $mDrvFileSuffix = '.driver.php';
 	private   $mDrvClassSuffix = 'Driver';
 	private   $mDrvNameSpace = '\struggle\libraries\db\driver\\';
@@ -31,6 +34,8 @@ class BaseModel extends \struggle\libraries\Object{
 		$this->mType   = sle\C('DB_TYPE')?sle\C('DB_TYPE'):'pdo';
 		$this->mDriver = sle\C('DB_DRIVER')?sle\C('DB_DRIVER'):'mysql';
 		$this->mDb     = sle\C('DB_NAME')?sle\C('DB_NAME'):null;
+		$this->mHost   = sle\C('DB_HOST')?sle\C('DB_HOST'):'127.0.0.1';
+		$this->mPort   = sle\C('DB_PORT')?sle\C('DB_PORT'):'3306';
 		$this->mUser   = sle\C('DB_USER')?sle\C('DB_USER'):'root';
 		$this->mPwd    = sle\C('DB_PWD')?sle\C('DB_PWD'):'';
 		$this->mDns    = sle\C('DB_DNS')?sle\C('DB_DNS'):'';
@@ -38,6 +43,7 @@ class BaseModel extends \struggle\libraries\Object{
 
 
 	protected function _Link(){
+        static $aLink = array();
 		$sFileName = $this->mDriver;
 		if(strtolower($this->mType) != strtolower($this->mDriver)){
 			$sFileName = "{$this->mType}_{$this->mDriver}";
@@ -51,8 +57,10 @@ class BaseModel extends \struggle\libraries\Object{
 		if(!class_exists($sClassName)){
 			$this->debug("当前类不存在{$sClassName} 在".__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
 		}
-		$oDb = new $sClassName();
-		$this->mLink = $oDb;
+        $sKey = md5($sClassName.$this->mType.$this->mDriver);
+        if(!isset($aLink[$sKey]))
+		    $aLink[$sKey] = new $sClassName();
+        return $aLink[$sKey]->connect($this->mType,$this->mDriver,$this->mHost,$this->mPort,$this->mDb,$this->mUser,$this->mPwd,array());
 	}
 
 

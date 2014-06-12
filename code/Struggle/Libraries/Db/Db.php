@@ -2,11 +2,10 @@
 namespace struggle\libraries\db;
 abstract class Db extends \struggle\libraries\Object{
 
+
 	abstract public function setAttr($name,$value);
-
-
-
-    abstract public function connect($type,$driver,$host,$port,$dbname,$user,$pwd,$opt);
+	abstract public function getAttr($name);
+    abstract public function connect($option);
 	//abstract public function find();
 	//abstract public function findAll();
 	//abstract public function findBySql();

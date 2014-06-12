@@ -50,8 +50,10 @@ return array(
     'DB_USER'                =>'root',       //数据库用户名
     'DB_PWD'                 =>'',      //数据库用户密码
     'DB_HOST'                =>'localhost',      //数据库用户密码
-    'DB_PORT'                =>'3306',      //数据库用户密码
+    'DB_PORT'                =>'330',      //数据库用户密码
     'DB_DNS'                 =>'',      //数据库用户密码
+    'DB_TABLE_SUFFIX'        =>'',      //表后缀
+    'DB_TABLE_PREFIX'        =>'sle_',  //表前缀
 );
 
 

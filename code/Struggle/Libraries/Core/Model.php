@@ -3,18 +3,17 @@ namespace struggle\libraries\core;
 use struggle as sle;
 
 class BaseModel extends \struggle\libraries\Object{
-    public  $alias = '';
-    public  $mName = '';
     /* 数据库连接 */
-    protected $mLink  = array();
+    protected $mDb  = null;
 	protected $mType = '';   //数据库类型
 	protected $mDriver = '';   //数据库驱动
-	protected $mDb     = '';  //数据库名
+	protected $mDbName     = '';  //数据库名
 	protected $mHost   = '';  //数据库服务器ip
 	protected $mPort   = '';  //数据库端口
 	protected $mUser   = '';   //数据库用户名
 	protected $mPwd    = '';   //数据库用户密码
 	protected $mDns    = '';   //type为pdo时的连接dns
+    protected $mDbIdent = '';  //驱动类标识，用于扩展多线程
     protected $mNewLink = false;
 	private   $mDrvFileSuffix = '.driver.php';
 	private   $mDrvClassSuffix = 'Driver';
@@ -29,7 +28,7 @@ class BaseModel extends \struggle\libraries\Object{
     protected function _init(){
 		$this->mType   = sle\C('DB_TYPE')?sle\C('DB_TYPE'):'pdo';
 		$this->mDriver = sle\C('DB_DRIVER')?sle\C('DB_DRIVER'):'mysql';
-		$this->mDb     = sle\C('DB_NAME')?sle\C('DB_NAME'):null;
+		$this->mDbName = sle\C('DB_NAME')?sle\C('DB_NAME'):null;
 		$this->mHost   = sle\C('DB_HOST')?sle\C('DB_HOST'):'127.0.0.1';
 		$this->mPort   = sle\C('DB_PORT')?sle\C('DB_PORT'):'330';
 		$this->mUser   = sle\C('DB_USER')?sle\C('DB_USER'):'root';
@@ -38,8 +37,9 @@ class BaseModel extends \struggle\libraries\Object{
     }
 
 
-	protected function _Link(){
-        static $aLink = array();
+	protected function _Db(){
+        static $aDb = array();
+        $aOpt = array();
 		$sFileName = $this->mDriver;
 		if(strtolower($this->mType) != strtolower($this->mDriver)){
 			$sFileName = "{$this->mType}_{$this->mDriver}";
@@ -53,24 +53,47 @@ class BaseModel extends \struggle\libraries\Object{
 		if(!class_exists($sClassName)){
 			$this->debug("当前类不存在{$sClassName} 在".__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
 		}
-        $sKey = md5($sClassName.$this->mType.$this->mDriver);
-        if(!isset($aLink[$sKey]))
-		    $aLink[$sKey] = new $sClassName();
-        return $aLink[$sKey]->connect($this->mType,$this->mDriver,$this->mHost,$this->mPort,$this->mDb,$this->mUser,$this->mPwd,array());
+        $sKey = md5($sClassName.$this->mType.$this->mDriver.$this->mDbIdent);
+        $sModelName = str_replace(sle\C('MODEL.CLASS.SUFFIX'),'',basename(str_replace(array('/','\\'),'/',get_class($this))));
+        if($sModelName){
+            $sTableName = sle\ptoc($sModelName);
+            $sTablePrefix = sle\C('DB_TABLE_PREFIX');
+            $sTableSuffix = sle\C('DB_TABLE_SUFFIX');
+            $sTableName = $sTablePrefix.$sTableName.$sTableSuffix;
+            if(property_exists($this,'alias') && $this->alias){
+                $aOpt['alias'] = $this->alias;
+            }else{
+                $aOpt['alias'] = strtolower($sModelName[0]);
+            }
+            $aOpt['table'] = $sTableName;
+        }
+        $aTmpOpt = array('driver'=>$this->mDriver,
+                      'type'=>$this->mType,
+                      'host'=>$this->mHost,
+                      'port'=>$this->mPort,
+                      'dbname'=>$this->mDbName,
+                      'user'=>$this->mUser,
+                      'pwd'=>$this->mPwd,
+                );
+        $aOpt = array_merge($aOpt,$aTmpOpt);
+        echo '(',print_r($aOpt,true),')|end<br>';
+        if(!isset($aDb[$sKey]))
+		    $aDb[$sKey] = new $sClassName($aOpt);
+        return $this->mDb = $aDb[$sKey];
 	}
 
 
 
-    public function start(){
-        $this->itsDefaultModule = 'index';
-        $this->itsDefaultAction = 'index';
-        
-        sle\C('DISPATCHER_DEFAULT_MODULE') && $this->itsDefaultModule = struggle\C('DISPATCHER_DEFAULT_MODULE');
+    public function getAttr($name){
+        return $this->Db->getAttr($name);
+    }
+
+    public function setAttr($name,$value){
+        return $this->Db->setAttr($name,$value);
     }
 
     public function find(){
-        if(property_exists($this,'Db')){
-        }
+        $this->Db->find();
     }
     public function findAll(){}
     public function findBySql(){}

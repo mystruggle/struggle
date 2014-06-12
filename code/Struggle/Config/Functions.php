@@ -240,6 +240,8 @@ function M($sName = ''){
 	static $aModel = array();
 	$sModelClassSuffix = 'Model';
 	$sModelNameSpace = '\struggle\model\\';
+    C('MODEL.CLASS.SUFFIX',$sModelClassSuffix);
+    C('MODEL.NAMESPACE',$sModelNameSpace);
 	$sKey = md5(var_export($sName,true));
 	if(empty($sName)){
 		$sClassName = $sModelNameSpace.$sModelClassSuffix;

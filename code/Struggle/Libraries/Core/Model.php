@@ -55,7 +55,7 @@ class BaseModel extends \struggle\libraries\Object{
 		}
         $sKey = md5($sClassName.$this->mType.$this->mDriver.$this->mDbIdent);
         $sModelName = str_replace(sle\C('MODEL.CLASS.SUFFIX'),'',basename(str_replace(array('/','\\'),'/',get_class($this))));
-		echo sle\C('MODEL.NAMESPACE'),'|',__METHOD__;
+		//echo sle\C('MODEL.NAMESPACE'),'|',__METHOD__;
         if($sModelName){
             $sTableName = sle\ptoc($sModelName);
             $sTablePrefix = sle\C('DB_TABLE_PREFIX');

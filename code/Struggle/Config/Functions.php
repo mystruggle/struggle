@@ -111,6 +111,7 @@ function L($sName, $mVal = null){
 
 /**
  * 字符串点格式转换成数组元素
+ * (利用json建立动态数组)
  * @param string $sName      数组键名,  如key1.key2...
  * @param mixed  $mVal       键名对应的值
  * @param Array  $aAppend  & 插入的目标数组(引用类型)
@@ -152,19 +153,63 @@ function strToArrElement($sName, $mVal, &$aAppend){
             $sArrKey .= '{"'.$key.'":';
             $sCloseTag .= '}';
         }
-        $temp = "{$sArrKey}\"{$mVal}\"{$sCloseTag}";
-        $temp = json_decode($temp,true);
-		$aTmp=$aAppend;
-		foreach($temp as $k=>$v){
-			if(isset($aTmp[$k])){
-				$aTmp = $aAppend[$k];
-			}else{echo '<br><br>||',$k,'||<br><br>';
-				$aTmp[$k] = $v;
-				break;
-		    }
-		}print_r($aTmp);echo '|1<br>';
-		//$aAppend=array_merge($aAppend,$temp);print_r($aAppend);echo '|1<br>';
-        $aAppend[\key($aTmp)] = \current($aTmp);
+        $sTar = "{$sArrKey}\"{$mVal}\"{$sCloseTag}";
+        $aTar = json_decode($sTar,true);
+        if(isset($aAppend[\key($aTar)])){
+            $aOrg[\key($aTar)]=$aAppend[\key($aTar)];
+            $sOrg=json_encode($aOrg);
+            $tarKeys='';
+            do{
+                $tarKeys[]=\key($aOrg);
+                $aOrg=array_shift($aOrg);
+            }while(is_array($aOrg));
+
+            //定位数组维度
+            $iPos= 1;echo "(".print_r($aName,true)."|".print_r($tarKeys,true).")<br>";
+            foreach($aName as $index=>$name){
+                if($tarKeys[$index] == $name)$iPos+=1;
+            }
+            //定位json中的插入点
+            $iPos2=-1;
+            for($i=0;$i<$iPos;$i++){
+                $iPos2=strpos($sOrg,'{',$iPos2+1);
+            }
+            //echo $iPos2."|".$sOrg."<br><br>";
+            //去掉数组重复的维度
+            $iDeep=$iPos;
+            while(($iDeep-1)>0){
+                $aTar = array_shift($aTar);
+                $iDeep-=1;
+            }
+            if(count($aName) == ($iPos-1)){
+                $iLastKeyPos=strpos($sOrg,end($aName),strrpos(substr($sOrg,0,$iPos2),'{'));//定位最后一维 $iPos2+1
+                $iColonPos = strpos($sOrg,':',$iLastKeyPos+1);//定位冒号
+                $isArr = $sOrg[$iColonPos+1];//是否覆盖数组
+                if($isArr == '{'){
+                    echo end($aName),'|',$iColonPos,'|',$iLastKeyPos,'|',$sOrg;
+                    $sPart1=substr($sOrg,0,$iColonPos+1);//截取到左大括号{
+                    $iPosPart2=strpos($sOrg,'}',$iColonPos+2);
+                    echo "end|$iPosPart2|end";
+                    $sPart2=substr($sOrg,$iPosPart2);echo "<{$sPart1}|{$sPart2}><br>";
+                }else{
+                    $sPart1=substr($sOrg,0,$iColonPos+1);//截取到冒号
+                    if($iPosPart2=strpos($sOrg,',',$iColonPos)){
+                        $sPart2=substr($sOrg,$iPosPart2);
+                    }else{
+                        $iPosPart2=strpos($sOrg,'}',$iColonPos+2);
+                        $sPart2=substr($sOrg,$iPosPart2);
+                    }
+                }
+            }else{
+            $sPart2=substr($sOrg,$iPos2+1);
+            $sPart1=str_replace($sPart2,'',$sOrg);
+            }
+            $sRlt= $sPart1.ltrim(rtrim(json_encode($aTar),'}'),'{').','.$sPart2;
+            $aRlt=json_decode($sRlt,true);
+            $aAppend[\key($aRlt)]=\current($aRlt);
+        }else{
+            $aAppend[\key($aTar)] = \current($aTar);
+        }
         $mRlt = true;
     }
     return $mRlt;
@@ -253,6 +298,9 @@ function M($sName = ''){
 	$sModelNameSpace = '\struggle\model\\';
     C('MODEL.CLASS.SUFFIX',$sModelClassSuffix);
     C('MODEL.NAMESPACE',$sModelNameSpace);
+    C('a.b.c.d.e.f.g.h.i','j');
+    C('a.b.c.d.e','l');
+   // \var_dump(C('MODEL.CLASS.SUFFIX'),C('MODEL.NAMESPACE'),C('a.b.c.d.e.f.g.h.i'),C('a.b.c.d.e'));//
 	$sKey = md5(var_export($sName,true));
 	if(empty($sName)){
 		$sClassName = $sModelNameSpace.$sModelClassSuffix;

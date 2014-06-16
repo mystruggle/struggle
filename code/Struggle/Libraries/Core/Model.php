@@ -15,9 +15,11 @@ class BaseModel extends \struggle\libraries\Object{
 	protected $mDns    = '';   //type为pdo时的连接dns
     protected $mDbIdent = '';  //驱动类标识，用于扩展多线程
     protected $mNewLink = false;
+    protected $mCharset = '';
 	private   $mDrvFileSuffix = '.driver.php';
 	private   $mDrvClassSuffix = 'Driver';
 	private   $mDrvNameSpace = '\struggle\libraries\db\driver\\';
+
 
     public function __construct(){
         parent::__construct();
@@ -34,6 +36,8 @@ class BaseModel extends \struggle\libraries\Object{
 		$this->mUser   = sle\C('DB_USER')?sle\C('DB_USER'):'root';
 		$this->mPwd    = sle\C('DB_PWD')?sle\C('DB_PWD'):'';
 		$this->mDns    = sle\C('DB_DNS')?sle\C('DB_DNS'):'';
+        $this->mCharset = sle\C('LANG_CHARACTER_SET')?sle\C('LANG_CHARACTER_SET'):'utf8';
+        $this->mCharset = str_replace('-','',$this->mCharset);
     }
 
 
@@ -75,6 +79,7 @@ class BaseModel extends \struggle\libraries\Object{
                       'dbname'=>$this->mDbName,
                       'user'=>$this->mUser,
                       'pwd'=>$this->mPwd,
+                      'charset'=>$this->mCharset
                 );
         $aOpt = array_merge($aOpt,$aTmpOpt);
         //echo '(',print_r($aOpt,true),')|end<br>';
@@ -93,8 +98,8 @@ class BaseModel extends \struggle\libraries\Object{
         return $this->Db->setAttr($name,$value);
     }
 
-    public function find(){
-        $this->Db->find();
+    public function find($aOpt = array()){
+        $this->Db->find($aOpt);
     }
     public function findAll(){}
     public function findBySql(){}

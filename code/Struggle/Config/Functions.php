@@ -320,9 +320,6 @@ function M($sName = ''){
 	$sModelNameSpace = '\struggle\model\\';
     C('MODEL.CLASS.SUFFIX',$sModelClassSuffix);
     C('MODEL.NAMESPACE',$sModelNameSpace);
-    C('a.b.c.d.e.f.g.h.i','j');
-    C('a.b.c.d.e.f.g.h.i','q');
-    \var_dump(C('MODEL.CLASS.SUFFIX'),C('MODEL.NAMESPACE'),C('a.b.c.d.e.f.g.h.i'),C('a.b.c.d.e'));//
 	$sKey = md5(var_export($sName,true));
 	if(empty($sName)){
 		$sClassName = $sModelNameSpace.$sModelClassSuffix;

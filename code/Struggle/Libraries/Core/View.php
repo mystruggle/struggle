@@ -192,6 +192,54 @@ class View extends \struggle\libraries\Object{
     private function _include($sFile){
         return "<?php echo \$this->_include_tpl_('{$sFile}');?>";
     }
+
+
+
+
+    private function _url($path){
+        $sUrl = '';
+        $aPath = parse_url($path);
+        $sUrlModule = '';
+        $sUrlAction = '';
+        $sQuery     = '';
+        $oRoute = sle\Sle::getInstance()->Route;
+        if($oRoute->mode === self::ROUTE_NORMAL){
+            if(!isset($aPath['path']) || empty($aPath)){
+                $sUrlModule = $oRoute->defaultModule;
+                $sUrlAction = $oRoute->defaultAction;
+            }else{
+                $aTmpUrlPath = explode('/',$aPath['path']);
+                if(count($aTmpUrlPath) === 1){
+                    $sUrlModule = $oRoute->defaultModule;
+                    $surlAction = $aTmpUrlPath[0];
+                }else{
+                    $sUrlModule = $aTmpUrlPath[0];
+                    $sUrlAction = $aTmpUrlPath[1];
+                }
+            }
+            if(isset($aPath['query']) && !empty($aPath['query'])){
+                $aQuery = explode('&',trim($aPath['query'],'&'));
+                foreach($aQuery as $pair){
+                    $aPair = explode('=',$pair);
+                    $sKey = $aPair[0];
+                    if($sKey[0] == '$'){
+                        $sQuery .= "&<?php if(isset({$sKey}))echo {$sKey};?>";
+                    }else{
+                        $sQuery .= "&{$sKey}";
+                    }
+                    $sVal = $aPair[1];
+                    if($sVal[0] == '$'){
+                        $sQuery .= "=<?php if(isset({$sVal}))echo {$sVal};?>";
+                    }else{
+                        $sQuery .= "={$sVal}";
+                    }
+
+                }
+            }
+            $sUrl = "?{$oRoute->moduleTag}={$sUrlModule}&{$oRoute->actionTag}={$sUrlAction}".($sQuery[0] != '&'?'&'.substr($sQuery,1):$sQuery);
+        }
+        return $sUrl;
+    }
     
     
     

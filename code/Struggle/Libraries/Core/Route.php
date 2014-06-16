@@ -6,6 +6,10 @@ class Route extends Object{
     public  $mode = '';
     public  $module = '';
     public  $action = '';
+    public  $defaultModule = '';
+    public  $defaultAction = '';
+    public  $moduleTag     = '';
+    public  $actionTag     = '';
     public  $moduleSuffix = 'Controller';
     public  $moduleFileSuffix = '.controller.php';
     public  $methodPrefix = 'action';
@@ -20,19 +24,21 @@ class Route extends Object{
     
     
     public function exec(){
-        if ($this->mode == 'normal'){
-            $sModuleTag = sle\C('DISPATCHER_MODULE_TAG');
-            $sActionTag = sle\C('DISPATCHER_ACTION_TAG');
-            if (!isset($_GET[$sModuleTag]))
-                $this->module = sle\ctop(sle\C('DISPATCHER_DEFAULT_MODULE'));
+        if ($this->mode == self::ROUTE_NORMAL){
+            $this->moduleTag = sle\C('ROUTE_MODULE_TAG')?sle\C('ROUTE_MODULE_TAG'):'m';
+            $this->actionTag = sle\C('ROUTE_ACTION_TAG')?sle\C('ROUTE_ACTION_TAG'):'a';
+            $this->defaultModule = sle\C('ROUTE_DEFAULT_MODULE')?sle\C('ROUTE_DEFAULT_MODULE'):'index';
+            $this->defaultAction = sle\C('ROUTE_DEFAULT_ACTION')?sle\C('ROUTE_DEFAULT_ACTION'):'index';
+            if (!isset($_GET[$this->moduleTag]))
+                $this->module = sle\ctop($this->defaultModule);
             else 
-                $this->module = sle\ctop($_GET[$sModuleTag]);
+                $this->module = sle\ctop($_GET[$this->moduleTag]);
                 
-            if (!isset($_GET[$sActionTag]))
-                $this->action = sle\ctop(sle\C('DISPATCHER_DEFAULT_ACTION'));
+            if (!isset($_GET[$this->actionTag]))
+                $this->action = sle\ctop($this->defaultAction);
             else 
-                $this->action = sle\ctop($_GET[$sActionTag]);
-            $this->debug("模块标签=>{$sModuleTag};方法标签=>{$sActionTag};模块=>{$this->module};方法=>{$this->action}",E_USER_NOTICE);
+                $this->action = sle\ctop($_GET[$this->actionTag]);
+            $this->debug("模块标签=>{$this->moduleTag};方法标签=>{$this->actionTag};模块=>{$this->module};方法=>{$this->action}",E_USER_NOTICE);
             $sControlFile = APP_CONTROLLER."{$this->module}{$this->moduleFileSuffix}";
             if(file_exists($sControlFile) && is_readable($sControlFile)){
                 sle\require_cache($sControlFile);

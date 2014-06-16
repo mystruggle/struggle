@@ -10,9 +10,11 @@ class IndexController extends Controller{
 		//print_r($a);
 		//$b=\struggle\M();
 		//print_r($b);
-		$c=\struggle\M('User');//print_r($c);
-$c->setAttr(\PDO::ATTR_ERRMODE,\PDO::ERRMODE_EXCEPTION);
-		//var_dump($c->getAttr(\PDO::ATTR_ERRMODE));
+		$c=\struggle\M();//print_r($c);
+//$c->setAttr(\PDO::ATTR_ERRMODE,\PDO::ERRMODE_EXCEPTION);
+//		var_dump($c->getAttr(\PDO::ATTR_ERRMODE));
+//select feild join where groupby   having orderby limit
+$c->find(array('field'=>'id,name,pwd','join'=>'belong_to_role','where'=>array('id'=>2),'groupby'=>'id','having'=>'','orderby'=>'id','limit'=>""));
         $this->display();
     }
 }

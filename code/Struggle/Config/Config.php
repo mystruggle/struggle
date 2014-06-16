@@ -3,12 +3,6 @@
  * 全局配置文件
  */
 return array(
-    //调度器
-    'DISPATCHER_DEFAULT_MODULE' => 'index',
-    'DISPATCHER_DEFAULT_ACTION' => 'index',
-    'DISPATCHER_MODULE_TAG'     => 'm',
-    'DISPATCHER_ACTION_TAG'     => 'a',
-
     //缓存设置
     'CACHE_ENGINE'           =>'file',
     'CACHE_DIR'              =>'',
@@ -38,11 +32,16 @@ return array(
     /* all显示和记录来自系统平台和应用的所有信息;sys只显示和记录来自系统平台信息;sys_err只显示和记录来自系统平台错误信息;sys_other只显示和记录来自系统平台除错误的其他信息;app只显示和记录来自应用信息;app_err只显示和记录来自应用错误信息;app_other只显示和记录来自应用除错误的其他信息     */
     'DEBUG_LEVEL'            =>'all',
     //路由
-    'ROUTE_MODE'             =>'normal',//normal 正常模式、pathinfo pathinfo模式、rewrite 伪静态模式 、compat兼容模式/?s=/name/vlaue
+    'ROUTE_MODE'             => 0 ,//0 普通模式、1 pathinfo模式、2 伪静态模式(rewrite) 、3 兼容模式(compat)/?s=/name/vlaue
+    'ROUTE_DEFAULT_MODULE'   =>'index',
+    'ROUTE_DEFAULT_ACTION'   =>'index',
+    'ROUTE_MODULE_TAG'       =>'m',
+    'ROUTE_ACTION_TAG'       =>'a',
     //自动包含跟目录设置
     'AUTOLOAD_DIR'           =>APP_LIB.','.LIB_PATH.','.LIB_PATH.'Cache/Driver/,'.APP_CONTROLLER,
     //语言设置
     'LANG_NAME'              =>'zh-cn',
+    'LANG_CHARACTER_SET'     =>'utf-8',
     //数据库设置
     'DB_TYPE'                =>'pdo',    //数据库类型，pdo,mysql,
     'DB_DRIVER'              =>'mysql', //数据库驱动类型,sqlite ,mysql,sql server,oracle

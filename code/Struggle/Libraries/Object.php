@@ -2,8 +2,13 @@
 namespace struggle\libraries;
 
 class Object{
-    static $itsErrors=array();
-    private $test=null;
+    const ROUTE_NORMAL    = 0;
+    const ROUTE_PATHINFO  = 1;
+    const ROUTE_REWRITE   = 2;
+    const ROUTE_COMPAT    = 3;
+
+
+
     public function __construct(){
 		$this->_init();
     }

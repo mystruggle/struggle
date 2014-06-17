@@ -6,7 +6,11 @@ class UserModel extends Model{
     public $alias    = '';
     public $suffix   = '';
     public $prefix   = 'sle_';
-    public $relation = array();
+    public $relation = array(
+            'belong_to_role'=>array(
+                    'model'=>'role',
+                ),
+        );
 
 	public function test(){}
 }

@@ -7,6 +7,8 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
     protected $mConnTimeOut = 30;  //连接超时
     protected $mConnErrMode = \PDO::ERRMODE_WARNING;  //错误报告模式ERRMODE_EXCEPTION
     protected $mTableInfo   = array(); //表结构信息
+    protected $mTableFullName = '';
+    protected $mSelectInfo    = array();
 
     public function __construct($aOpt){
         parent::__construct();
@@ -43,8 +45,9 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
                 unset($info['Field']);
                 $aTableInfo[$sField] = $info;
             }
-            if(isset($aTableInfo['alias']))
-                $aOpt['alias'] = $aTableInfo['alias'];
+            if(isset($aOpt['alias']))
+                $aTableInfo['alias'] = $aOpt['alias'];
+            $this->mTableFullName = $aOpt['table'];
             $aMetadata[$sKey] = $aTableInfo;
 		}
         $this->mTableInfo[$aOpt['table']] = $aMetadata[$sKey];
@@ -72,12 +75,31 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
                 }
             }
         }
+        if(!isset($this->mSelectInfo['field']) || empty($this->mSelectInfo['field'])){
+            $this->mSelectInfo['field'] = "*";
+        }
+        print_r($this->mSelectInfo);
     }
 
     private function _field($sField){
         if(is_string($sField)){
-            $
-        }
+            if(strpos($sField,',') !== false){
+                $aField = explode(',',$sField);
+                foreach($aField as $index=>$field){
+                    preg_match('/\s+as\s+/i',$field,$arr);
+                    if(count($arr)){
+                        $aField[$index] = "__RELATION__ALIAS__.{$field}";
+                    }
+                }
+                $sField = implode(',',$aField);
+            }
+            $this->mSelectInfo['field'] = $sField;
+        }else
+            return false;
+    }
+
+    private function _join($param){
+        print_r($param);
     }
 
     private function _query($sSql){

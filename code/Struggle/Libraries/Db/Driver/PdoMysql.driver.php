@@ -96,7 +96,6 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
             $this->mSelectInfo['field'] = $sField;
         }else
             return false;
-        echo 'yes ,here';
 
     }
 

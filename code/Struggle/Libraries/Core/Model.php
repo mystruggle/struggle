@@ -99,16 +99,38 @@ class BaseModel extends \struggle\libraries\Object{
     }
 
     public function find($aOpt = array()){
+		$this->initOption($aOpt);
+        $this->Db->find($aOpt);
+    }
+
+
+	private function initOption(&$aOpt){
         if(isset($aOpt['join']) && !empty($aOpt['join'])){
             if(isset($this->relation[$aOpt['join']]) && !empty($this->relation[$aOpt['join']])){
                 $aOpt['join'] = $this->relation[$aOpt['join']];
             }
         }
-        $this->Db->find($aOpt);
-    }
+	}
+
+
+
+
+
+
+
+
+
     public function findAll(){}
     public function findBySql(){}
     public function findAllBySql(){}
+
+
+
+
+
+
+
+
 }
 
 

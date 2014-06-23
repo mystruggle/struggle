@@ -109,6 +109,9 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
     private function execute($sSql){
     }
 
+	public function prepare($sSql,$aParam){
+	}
+
 
 
 

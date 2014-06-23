@@ -19,6 +19,7 @@ class BaseModel extends \struggle\libraries\Object{
 	private   $mDrvFileSuffix = '.driver.php';
 	private   $mDrvClassSuffix = 'Driver';
 	private   $mDrvNameSpace = '\struggle\libraries\db\driver\\';
+	private   $mSelectSql    = array();
 
 
     public function __construct(){
@@ -104,7 +105,23 @@ class BaseModel extends \struggle\libraries\Object{
     }
 
 
+	public function where($condition){
+		if(is_array($condition)){
+			foreach($condition as $name=>$value){
+				$this->
+			}
+		}
+	}
+
+
 	private function initOption(&$aOpt){
+		if(is_array($aOpt)){
+			foreach($aOpt as $name=>$option){
+				if(method_exists($this,$name)){
+					$this->$name($option);
+				}
+			}
+		}
         if(isset($aOpt['join']) && !empty($aOpt['join'])){
             if(isset($this->relation[$aOpt['join']]) && !empty($this->relation[$aOpt['join']])){
                 $aOpt['join'] = $this->relation[$aOpt['join']];

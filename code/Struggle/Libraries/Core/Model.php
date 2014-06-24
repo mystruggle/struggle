@@ -19,7 +19,7 @@ class BaseModel extends \struggle\libraries\Object{
 	private   $mDrvFileSuffix = '.driver.php';
 	private   $mDrvClassSuffix = 'Driver';
 	private   $mDrvNameSpace = '\struggle\libraries\db\driver\\';
-	private   $mSelectSql    = array('field'=>'','table'=>'','join'=>'','where'=>'','groupby'=>'','having'=>'','orderby'=>'','limit'=>'');
+	private   $mSelectSql    = array('field'=>'','table'=>'','alias'=>'','join'=>'','where'=>'','groupby'=>'','having'=>'','orderby'=>'','limit'=>'');
 
 
     public function __construct(){
@@ -39,6 +39,22 @@ class BaseModel extends \struggle\libraries\Object{
 		$this->mDns    = sle\C('DB_DNS')?sle\C('DB_DNS'):'';
         $this->mCharset = sle\C('LANG_CHARACTER_SET')?sle\C('LANG_CHARACTER_SET'):'utf8';
         $this->mCharset = str_replace('-','',$this->mCharset);
+
+        $sModelName = str_replace(sle\C('MODEL.CLASS.SUFFIX'),'',basename(str_replace(array('/','\\'),'/',get_class($this))));
+        if($sModelName){
+            $sTableName = sle\ptoc($sModelName);
+            $sTablePrefix = sle\C('DB_TABLE_PREFIX');
+            $sTableSuffix = sle\C('DB_TABLE_SUFFIX');
+            $sTableName = $sTablePrefix.$sTableName.$sTableSuffix;
+            if(property_exists($this,'alias') && $this->alias){
+                $aOpt['alias'] = $this->alias;
+            }else{
+                $aOpt['alias'] = strtolower($sModelName[0]);
+            }
+            empty($this->alias) && $this->alias = $aOpt['alias'];
+            $this->mSelectSql['table'] = $aOpt['table'] = $sTableName;
+			$this->mSelectSql['alias'] = $this->alias;
+        }
     }
 
 
@@ -59,21 +75,6 @@ class BaseModel extends \struggle\libraries\Object{
 			$this->debug("当前类不存在{$sClassName} 在".__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
 		}
         $sKey = md5($sClassName.$this->mType.$this->mDriver.$this->mDbIdent);
-        $sModelName = str_replace(sle\C('MODEL.CLASS.SUFFIX'),'',basename(str_replace(array('/','\\'),'/',get_class($this))));
-		//echo sle\C('MODEL.NAMESPACE'),'|',__METHOD__;
-        if($sModelName){
-            $sTableName = sle\ptoc($sModelName);
-            $sTablePrefix = sle\C('DB_TABLE_PREFIX');
-            $sTableSuffix = sle\C('DB_TABLE_SUFFIX');
-            $sTableName = $sTablePrefix.$sTableName.$sTableSuffix;
-            if(property_exists($this,'alias') && $this->alias){
-                $aOpt['alias'] = $this->alias;
-            }else{
-                $aOpt['alias'] = strtolower($sModelName[0]);
-            }
-            empty($this->alias) && $this->alias = $aOpt['alias'];
-            $aOpt['table'] = $sTableName;
-        }
         $aTmpOpt = array('driver'=>$this->mDriver,
                       'type'=>$this->mType,
                       'host'=>$this->mHost,
@@ -84,7 +85,6 @@ class BaseModel extends \struggle\libraries\Object{
                       'charset'=>$this->mCharset
                 );
         $aOpt = array_merge($aOpt,$aTmpOpt);
-        //echo '(',print_r($aOpt,true),')|end<br>';
         if(!isset($aDb[$sKey]))
 		    $aDb[$sKey] = new $sClassName($aOpt);
         return $this->mDb = $aDb[$sKey];
@@ -103,7 +103,6 @@ class BaseModel extends \struggle\libraries\Object{
     public function find($aOpt = array()){
 		$this->initOption($aOpt);
         $this->Db->find($aOpt);
-        print_r($this->mSelectSql);
     }
 
 
@@ -117,9 +116,13 @@ class BaseModel extends \struggle\libraries\Object{
         $this->mSelectSql['where']=$aWhere;
 	}
 
+	public function groupby(){
+	}
 
-	private function initOption(&$aOpt){
-        $this->_Db();
+
+	private function initOption($aOpt){
+		if(!$this->mDb)
+            $this->_Db();
 		if(is_array($aOpt)){
 			foreach($aOpt as $name=>$option){
 				if(method_exists($this,$name)){

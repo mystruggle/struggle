@@ -1,0 +1,26 @@
+主从同步
+
+从服务器设置
+[mysqld]
+log-bin=mysql-bin  #打开二进制日志，从设置可不，推荐设置
+server-id       = 101  #不能跟master一样，between 1 and 2^32 - 1
+replicate-wild-do-table=rzx_phone_verify.rzx_app_%
+replicate-ignore-db = mysql
+replicate-ignore-db = test
+replicate-ignore-db = information_schema
+replicate-ignore-db = performance_schema
+
+
+change master to 
+master_host='121.201.32.87',
+master_user='test',
+master_password='123456',
+master_log_file='mysql-bin.000003',  #需master给出，是需要复制那个日志，如果开始复制的位置没有建表、库语句，需要手动创建
+master_log_pos=0;                    #需master给出，从那个位置开始复制
+
+
+start slave
+stop  slave
+
+
+show slave status

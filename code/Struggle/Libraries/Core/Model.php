@@ -19,7 +19,7 @@ class BaseModel extends \struggle\libraries\Object{
 	private   $mDrvFileSuffix = '.driver.php';
 	private   $mDrvClassSuffix = 'Driver';
 	private   $mDrvNameSpace = '\struggle\libraries\db\driver\\';
-	private   $mSelectSql    = array();
+	private   $mSelectSql    = array('field'=>'','table'=>'','join'=>'','where'=>'','groupby'=>'','having'=>'','orderby'=>'','limit'=>'');
 
 
     public function __construct(){
@@ -71,6 +71,7 @@ class BaseModel extends \struggle\libraries\Object{
             }else{
                 $aOpt['alias'] = strtolower($sModelName[0]);
             }
+            empty($this->alias) && $this->alias = $aOpt['alias'];
             $aOpt['table'] = $sTableName;
         }
         $aTmpOpt = array('driver'=>$this->mDriver,
@@ -102,19 +103,23 @@ class BaseModel extends \struggle\libraries\Object{
     public function find($aOpt = array()){
 		$this->initOption($aOpt);
         $this->Db->find($aOpt);
+        print_r($this->mSelectSql);
     }
 
 
 	public function where($condition){
 		if(is_array($condition)){
+            $aWhere = array();
 			foreach($condition as $name=>$value){
-				$this->
+				$aWhere[$this->alias.'.'.$name] = $value;
 			}
 		}
+        $this->mSelectSql['where']=$aWhere;
 	}
 
 
 	private function initOption(&$aOpt){
+        $this->_Db();
 		if(is_array($aOpt)){
 			foreach($aOpt as $name=>$option){
 				if(method_exists($this,$name)){

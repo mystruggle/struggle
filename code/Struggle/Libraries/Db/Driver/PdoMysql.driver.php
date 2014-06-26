@@ -75,10 +75,15 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
                 }
             }
         }
+		//获取列处理
         if(!isset($this->mSelectInfo['field']) || empty($this->mSelectInfo['field'])){
             $this->mSelectInfo['field'] = "*";
-        }
-        print_r($this->mSelectInfo);
+        }else{
+			$this->mSelectInfo['field']=vsprintf($this->mSelectInfo['field'],array($aOpt['alias'],$aOpt['alias']));
+			//$this->mSelectInfo['field'] = str_replace('this',$aOpt['alias'],$this->mSelectInfo['field']);
+			var_dump($this->mSelectInfo['field']);
+			//print_r($this->mSelectInfo['field']);
+		}
     }
 
     private function _field($sField){
@@ -88,8 +93,10 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
                 foreach($aField as $index=>$field){
                     preg_match('/\s+as\s+/i',$field,$arr);
                     if(count($arr)){
-                        $aField[$index] = "__RELATION__ALIAS__.{$field}";
-                    }
+                        $aField[$index] = "%s.{$field}";
+                    }else{
+						$aField[$index] = "%s.{$field}";
+					}
                 }
                 $sField = implode(',',$aField);
             }
@@ -100,7 +107,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
     }
 
     private function _join($param){
-        print_r($param);
+        //print_r($param);
     }
 
     private function _query($sSql){

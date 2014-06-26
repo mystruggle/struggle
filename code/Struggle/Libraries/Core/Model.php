@@ -102,7 +102,8 @@ class BaseModel extends \struggle\libraries\Object{
 
     public function find($aOpt = array()){
 		$this->initOption($aOpt);
-        $this->Db->find($aOpt);
+		//print_r($this->mSelectSql);
+        $this->Db->find($this->mSelectSql);
     }
 
 
@@ -110,19 +111,23 @@ class BaseModel extends \struggle\libraries\Object{
 		if(is_array($condition)){
             $aWhere = array();
 			foreach($condition as $name=>$value){
-				$aWhere[$this->alias.'.'.$name] = $value;
+				$aWhere[$name] = $value;
 			}
 		}
         $this->mSelectSql['where']=$aWhere;
 	}
+
+    //获取列处理
+	public function field($sField){
+		$this->mSelectSql['field'] = $sField;
+	}
+
 
 	public function groupby(){
 	}
 
 
 	private function initOption($aOpt){
-		if(!$this->mDb)
-            $this->_Db();
 		if(is_array($aOpt)){
 			foreach($aOpt as $name=>$option){
 				if(method_exists($this,$name)){
@@ -132,7 +137,7 @@ class BaseModel extends \struggle\libraries\Object{
 		}
         if(isset($aOpt['join']) && !empty($aOpt['join'])){
             if(isset($this->relation[$aOpt['join']]) && !empty($this->relation[$aOpt['join']])){
-                $aOpt['join'] = $this->relation[$aOpt['join']];
+                $this->mSelectSql['join'] = $this->relation[$aOpt['join']];
             }
         }
 	}

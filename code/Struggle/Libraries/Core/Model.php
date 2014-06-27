@@ -58,7 +58,6 @@ class BaseModel extends \struggle\libraries\Object{
 
 	protected function _Db(){
         static $aDb = array();
-        $aOpt = array();
 		$sFileName = $this->mDriver;
 		if(strtolower($this->mType) != strtolower($this->mDriver)){
 			$sFileName = "{$this->mType}_{$this->mDriver}";
@@ -84,6 +83,9 @@ class BaseModel extends \struggle\libraries\Object{
                 );
         if(!isset($aDb[$sKey]))
 		    $aDb[$sKey] = new $sClassName($aOpt);
+        //初始化表，读取表的元数据
+        if($this->mSelectElement['table'] && $this->mSelectElement['alias'])
+            $aDb[$sKey] ->initTableMetadata($this->mSelectElement['table'],$this->mSelectElement['alias']);
         return $this->mDb = $aDb[$sKey];
 	}
 
@@ -124,6 +126,7 @@ class BaseModel extends \struggle\libraries\Object{
 
 
 	private function initOption($aOpt){
+        static $aSqlElement = array_keys($this->mSelectElement);
 		if(is_array($aOpt)){
 			foreach($aOpt as $name=>$option){
 				if(method_exists($this,$name)){

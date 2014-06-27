@@ -8,11 +8,16 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
     protected $mConnErrMode = \PDO::ERRMODE_WARNING;  //错误报告模式ERRMODE_EXCEPTION
     protected $mTableInfo   = array(); //表结构信息
     protected $mTableFullName = '';
+    protected $mAlias         = '';
     protected $mSelectInfo    = array();
+    protected $mSelectParam   = array();  //绑定的参数
 
     public function __construct($aOpt){
         parent::__construct();
         $this->connect($aOpt);
+    }
+
+    public function _init(){
     }
 	public function connect($aOpt){
 		static $oLink = null;
@@ -26,18 +31,15 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
             $this->mErrorInfo = $oLink->errorInfo();
             $this->mErrorCode = $oLink->errorCode();
         }
-		$this->initTableMetadata($aOpt,$oLink);
         return $this->mLink = $oLink;
 	}
 
-	public function initTableMetadata($aOpt,$oLink){
+	public function initTableMetadata($sTab,$sAlias){
 		static $aMetadata;
-        if(!isset($aOpt['table']) || empty($aOpt['table']))
-            return ;
-		$sKey = md5("{$aOpt['host']}:{$aOpt['port']}.{$aOpt['dbname']}.{$aOpt['table']}");
+		$sKey = md5("{$sTab}.{$sAlias}");
 		if(!isset($aMetadata[$sKey])){
-			$sMetaSql = "desc {$aOpt['table']}";
-			$oStatement = $oLink->query($sMetaSql);
+			$sMetaSql = "desc {$sTab}";
+			$oStatement = $this->mLink->query($sMetaSql);
 			$aTmp=$oStatement->fetchAll(\PDO::FETCH_ASSOC);
             $aTableInfo=array();
 			foreach($aTmp as $info){
@@ -45,12 +47,11 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
                 unset($info['Field']);
                 $aTableInfo[$sField] = $info;
             }
-            if(isset($aOpt['alias']))
-                $aTableInfo['alias'] = $aOpt['alias'];
-            $this->mTableFullName = $aOpt['table'];
+            $this->mTableFullName = $sTab;
+            $this->mAlias         = $sAlias;
             $aMetadata[$sKey] = $aTableInfo;
 		}
-        $this->mTableInfo[$aOpt['table']] = $aMetadata[$sKey];
+        $this->mTableInfo[$sTab] = $aMetadata[$sKey];
 	}
 
 
@@ -64,7 +65,10 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 
     public function find($aOpt = array()){
         $this->parseOpt($aOpt);
+        print_r($this->mSelectInfo);
     }
+
+
 
     private function parseOpt($aOpt){
         if(is_array($aOpt)){
@@ -78,14 +82,10 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 		//获取列处理
         if(!isset($this->mSelectInfo['field']) || empty($this->mSelectInfo['field'])){
             $this->mSelectInfo['field'] = "*";
-        }else{
-
-			$this->mSelectInfo['field']=vsprintf($this->mSelectInfo['field'][0],$this->);
-			//$this->mSelectInfo['field'] = str_replace('this',$aOpt['alias'],$this->mSelectInfo['field']);
-			var_dump($this->mSelectInfo['field']);
-			//print_r($this->mSelectInfo['field']);
-		}
+        }
     }
+
+
 
     private function _field($sField){
 		$aParams = array();
@@ -94,15 +94,13 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 			foreach($aField as $index=>$field){
 				preg_match('/\s+as\s+/i',$field,$arr);
 				if(count($arr)){
-					$aField[$index] = "%s.{$field}";
-					$aParams[] = '_a';
+					$aField[$index] = "{$this->mSelectInfo['join']['alias']}.{$field}";
 				}else{
-					$aField[$index] = "%s.{$field}";
-					$aParams[] = 'a';
+					$aField[$index] = "{$this->mAlias}.{$field}";
 				}
 			}
             $sField = implode(',',$aField);
-            $this->mSelectInfo['field'] = array($sField,$aParams);
+            $this->mSelectInfo['field'] = $sField;
         }else
             return false;
 
@@ -110,6 +108,21 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 
     private function _join($param){
         //print_r($param);
+    }
+    private function _where($param){
+        if(is_array($param)){
+            $aVals = array();
+            foreach($param as $name=>$p){
+                $sMethod = "_m{$name}";
+                if(method_exists($this,$sMethod)){
+                    $this->$sMethod($p);
+                    continue;
+                }
+                $sParamKey = ":{$name}";
+                $aVals[] = "{$this->mAlias}.{$name}={$sParamKey}";
+                $this->mSelectParam['where'][$sParamKey] = $p;
+            }
+        }
     }
 
     private function _query($sSql){

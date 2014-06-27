@@ -48,9 +48,9 @@ return array(
     'DB_NAME'                =>'sle',       //数据库名
     'DB_USER'                =>'root',       //数据库用户名
     'DB_PWD'                 =>'',      //数据库用户密码
-    'DB_HOST'                =>'localhost',      //数据库用户密码
-    'DB_PORT'                =>'3306',      //数据库用户密码
-    'DB_DNS'                 =>'',      //数据库用户密码
+    'DB_HOST'                =>'127.0.0.1',      //数据库地址localhost
+    'DB_PORT'                =>'3306',      //数据库端口
+    'DB_DNS'                 =>'',      //数据库dns
     'DB_TABLE_SUFFIX'        =>'',      //表后缀
     'DB_TABLE_PREFIX'        =>'sle_',  //表前缀
 );

@@ -79,7 +79,8 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
         if(!isset($this->mSelectInfo['field']) || empty($this->mSelectInfo['field'])){
             $this->mSelectInfo['field'] = "*";
         }else{
-			$this->mSelectInfo['field']=vsprintf($this->mSelectInfo['field'],array($aOpt['alias'],$aOpt['alias']));
+
+			$this->mSelectInfo['field']=vsprintf($this->mSelectInfo['field'][0],$this->);
 			//$this->mSelectInfo['field'] = str_replace('this',$aOpt['alias'],$this->mSelectInfo['field']);
 			var_dump($this->mSelectInfo['field']);
 			//print_r($this->mSelectInfo['field']);
@@ -87,20 +88,21 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
     }
 
     private function _field($sField){
+		$aParams = array();
         if(is_string($sField)){
-            if(strpos($sField,',') !== false){
-                $aField = explode(',',$sField);
-                foreach($aField as $index=>$field){
-                    preg_match('/\s+as\s+/i',$field,$arr);
-                    if(count($arr)){
-                        $aField[$index] = "%s.{$field}";
-                    }else{
-						$aField[$index] = "%s.{$field}";
-					}
-                }
-                $sField = implode(',',$aField);
-            }
-            $this->mSelectInfo['field'] = $sField;
+			$aField = explode(',',$sField);
+			foreach($aField as $index=>$field){
+				preg_match('/\s+as\s+/i',$field,$arr);
+				if(count($arr)){
+					$aField[$index] = "%s.{$field}";
+					$aParams[] = '_a';
+				}else{
+					$aField[$index] = "%s.{$field}";
+					$aParams[] = 'a';
+				}
+			}
+            $sField = implode(',',$aField);
+            $this->mSelectInfo['field'] = array($sField,$aParams);
         }else
             return false;
 

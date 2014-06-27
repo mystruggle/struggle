@@ -19,7 +19,7 @@ class BaseModel extends \struggle\libraries\Object{
 	private   $mDrvFileSuffix = '.driver.php';
 	private   $mDrvClassSuffix = 'Driver';
 	private   $mDrvNameSpace = '\struggle\libraries\db\driver\\';
-	private   $mSelectSql    = array('field'=>'','table'=>'','alias'=>'','join'=>'','where'=>'','groupby'=>'','having'=>'','orderby'=>'','limit'=>'');
+	private   $mSelectElement    = array('field'=>'','table'=>'','alias'=>'','join'=>'','where'=>'','groupby'=>'','having'=>'','orderby'=>'','limit'=>'');
 
 
     public function __construct(){
@@ -47,13 +47,11 @@ class BaseModel extends \struggle\libraries\Object{
             $sTableSuffix = sle\C('DB_TABLE_SUFFIX');
             $sTableName = $sTablePrefix.$sTableName.$sTableSuffix;
             if(property_exists($this,'alias') && $this->alias){
-                $aOpt['alias'] = $this->alias;
+                $this->mSelectElement['alias'] = $this->alias;
             }else{
-                $aOpt['alias'] = strtolower($sModelName[0]);
+                $this->mSelectElement['alias'] = strtolower($sModelName[0]);
             }
-            empty($this->alias) && $this->alias = $aOpt['alias'];
-            $this->mSelectSql['table'] = $aOpt['table'] = $sTableName;
-			$this->mSelectSql['alias'] = $this->alias;
+            $this->mSelectElement['table'] = $sTableName;
         }
     }
 
@@ -75,7 +73,7 @@ class BaseModel extends \struggle\libraries\Object{
 			$this->debug("当前类不存在{$sClassName} 在".__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
 		}
         $sKey = md5($sClassName.$this->mType.$this->mDriver.$this->mDbIdent);
-        $aTmpOpt = array('driver'=>$this->mDriver,
+        $aOpt = array('driver'=>$this->mDriver,
                       'type'=>$this->mType,
                       'host'=>$this->mHost,
                       'port'=>$this->mPort,
@@ -84,7 +82,6 @@ class BaseModel extends \struggle\libraries\Object{
                       'pwd'=>$this->mPwd,
                       'charset'=>$this->mCharset
                 );
-        $aOpt = array_merge($aOpt,$aTmpOpt);
         if(!isset($aDb[$sKey]))
 		    $aDb[$sKey] = new $sClassName($aOpt);
         return $this->mDb = $aDb[$sKey];
@@ -102,8 +99,7 @@ class BaseModel extends \struggle\libraries\Object{
 
     public function find($aOpt = array()){
 		$this->initOption($aOpt);
-		//print_r($this->mSelectSql);
-        $this->Db->find($this->mSelectSql);
+        $this->Db->find($this->mSelectElement);
     }
 
 
@@ -114,12 +110,12 @@ class BaseModel extends \struggle\libraries\Object{
 				$aWhere[$name] = $value;
 			}
 		}
-        $this->mSelectSql['where']=$aWhere;
+        $this->mSelectElement['where']=$aWhere;
 	}
 
     //获取列处理
 	public function field($sField){
-		$this->mSelectSql['field'] = $sField;
+		$this->mSelectElement['field'] = $sField;
 	}
 
 
@@ -137,7 +133,7 @@ class BaseModel extends \struggle\libraries\Object{
 		}
         if(isset($aOpt['join']) && !empty($aOpt['join'])){
             if(isset($this->relation[$aOpt['join']]) && !empty($this->relation[$aOpt['join']])){
-                $this->mSelectSql['join'] = $this->relation[$aOpt['join']];
+                $this->mSelectElement['join'] = $this->relation[$aOpt['join']];
             }
         }
 	}

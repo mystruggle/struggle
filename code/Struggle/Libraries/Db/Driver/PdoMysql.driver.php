@@ -110,18 +110,28 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
         //print_r($param);
     }
     private function _where($param){
+        $aSql = array();
         if(is_array($param)){
-            $aVals = array();
             foreach($param as $name=>$p){
-                $sMethod = "_m{$name}";
+                $sMethod = "_Where".ucfirst($name);
                 if(method_exists($this,$sMethod)){
                     $this->$sMethod($p);
                     continue;
                 }
-                $sParamKey = ":{$name}";
-                $aVals[] = "{$this->mAlias}.{$name}={$sParamKey}";
-                $this->mSelectParam['where'][$sParamKey] = $p;
+				if(is_array($p)){
+					$this->traversalArr($p);
+				}else{
+					$sParamKey = ":{$name}";
+					$aSql[] = "{$this->mAlias}.{$name}={$sParamKey}";
+					$this->mSelectParam['where'][$sParamKey] = $p;
+				}
             }
+			if($aSql){
+				$sSep = ' and ';
+				isset($param['_logic']) && $sSep = " {$param['_logic']} ";
+				$this->mSelectInfo['where'][] = implode($sSep,$aSql);
+				$this->mSelectInfo['where']['_logic'] = $sSep;
+			}
         }
     }
 
@@ -132,6 +142,25 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
     }
 
 	public function prepare($sSql,$aParam){
+	}
+
+// a=1 or (b=2 and(c=3))
+//array('a'=>1,array('b'=>2,array('c'=>3,'_logic'=>'and'),'_logic'=>'and'),'_logic'=>'or')
+//array('a=1','or',)
+	private traversalArr($aVal){
+		static $iNum = 0;
+		$sTmpSql = "(";
+		foreach($aVal as $key=>$value){
+			if(is_array($value)){
+				$iNum = 1;
+				$this->traversalArr($value);
+			}else{
+				$k = ":{$key}";
+				$sTmp .="{$this->mAlias}.{$key}={$k}";
+				$this->mSelectParam['where'][$k] = $value;
+			}
+		}
+
 	}
 
 

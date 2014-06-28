@@ -34,8 +34,11 @@ class Object{
 
 	public function __set($sName,$mVal){
 		$sName = "m{$sName}";
+		$sMethod = "_".ucfirst($sName);
 		if(property_exists($this,$sName)){
 			$this->$sName = $mVal;
+		}elseif(method_exists($this,$sMethod)){
+			$this->$sMethod($mVal);
 		}else{
 			$this->debug("访问一个不存在的属性{$sName},在".__METHOD__.' line '.__LINE__, E_USER_WARNING, \struggle\Sle::SLE_SYS);
 		}

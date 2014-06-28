@@ -19,7 +19,8 @@ class BaseModel extends \struggle\libraries\Object{
 	private   $mDrvFileSuffix = '.driver.php';
 	private   $mDrvClassSuffix = 'Driver';
 	private   $mDrvNameSpace = '\struggle\libraries\db\driver\\';
-	private   $mSelectElement    = array('field'=>'','table'=>'','alias'=>'','join'=>'','where'=>'','groupby'=>'','having'=>'','orderby'=>'','limit'=>'');
+	private   $mSelectElement = array('field'  =>'','join'=>'','where'=>'',
+		                              'groupby'=>'','having'=>'','orderby'=>'','limit'=>'');
 
 
     public function __construct(){
@@ -101,6 +102,7 @@ class BaseModel extends \struggle\libraries\Object{
 
     public function find($aOpt = array()){
 		$this->initOption($aOpt);
+		echo print_r($this->mSelectElement,true),'<br><br>';
         $this->Db->find($this->mSelectElement);
     }
 
@@ -126,10 +128,12 @@ class BaseModel extends \struggle\libraries\Object{
 
 
 	private function initOption($aOpt){
-        static $aSqlElement = array_keys($this->mSelectElement);
+        static $aSqlElement = null;
+		if(!$aSqlElement)
+			$aSqlElement = array_keys($this->mSelectElement);
 		if(is_array($aOpt)){
 			foreach($aOpt as $name=>$option){
-				if(method_exists($this,$name)){
+				if(in_array($name,$aSqlElement) && method_exists($this,$name)){
 					$this->$name($option);
 				}
 			}
@@ -139,6 +143,21 @@ class BaseModel extends \struggle\libraries\Object{
                 $this->mSelectElement['join'] = $this->relation[$aOpt['join']];
             }
         }
+
+		$this->mSelectElement['limit'] = 'limit 1';
+	}
+
+	/**
+	 * 属性函数
+	 * 可以使$obj->where 的效果跟$obj->where()一样的
+	*/
+	protected function _mWhere($param){
+		$this->where($param);
+	}
+
+    //属性函数
+	protected function _mField($param){
+		$this->field($param);
 	}
 
 

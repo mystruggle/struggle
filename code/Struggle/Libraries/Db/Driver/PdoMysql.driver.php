@@ -1,5 +1,6 @@
 <?php
 namespace struggle\libraries\db\driver;
+use struggle as sle;
 class PdoMysqlDriver extends \struggle\libraries\db\Db{
 	protected $mLink = null;
     protected $mErrorInfo = '';
@@ -10,7 +11,9 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
     protected $mTableFullName = '';
     protected $mAlias         = '';
     protected $mSelectInfo    = array();
-    protected $mSelectParam   = array();  //绑定的参数
+    protected $mBindParam     = array();  //绑定的参数
+	private   $mPdoStatement  = null;
+	protected $mFetchMode     = \PDO::FETCH_BOTH;
 
     public function __construct($aOpt){
         parent::__construct();
@@ -65,8 +68,21 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 
     public function find($aOpt = array()){
         $this->parseOpt($aOpt);
-        print_r($this->mSelectInfo);
+		$sql = 'SELECT '.implode(' ',$this->mSelectInfo);
+		$this->debug("SQL statement:{$sql}",E_USER_NOTICE,sle\Sle::SLE_SYS);
+		$this->prepare($sql);
+		$this->_beginBind();
+		$this->fetchAll();
+		var_dump($this->fetch());
+		//return $this->fetch();
     }
+
+	private function _beginBind(){
+		foreach($this->mBindParam as $name=>$value){
+			$this->mPdoStatement->bindValue($name,$value);
+		}
+		$this->debug("SQL param:".print_r($this->mBindParam,true),E_USER_NOTICE,sle\Sle::SLE_SYS);
+	}
 
 
 
@@ -109,9 +125,74 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
     private function _join($param){
         //print_r($param);
     }
+
+    /**
+	 * 参数排序，让数组排在后面(由大到小排序)
+	 */
+	private function btosSort($param1,$param2){
+		//param1<param2  return 1;
+		//param1>param2  reutrn -1
+		//param1=param2  return 0
+		if(is_array($param1))return 1;
+		if(is_array($param2))return -1;
+		return 0;
+	}
+
+    /**
+	 * 开始事务
+	 * @return boolean 
+	 */
+	public function beginTransaction(){
+		return $this->mLink->beginTransaction();
+	}
+
+
+    /**
+	 * 事务提交
+	 * @return boolean 
+	 */
+	public function commit(){
+		return $this->mLink->commit();
+	}
+
+
+    /**
+	 * 事务回滚
+	 * @return boolean
+	 */
+	public function rollback(){
+		return $this->mLink->rollBack();
+	}
+
+	public function getErrorCode(){
+		return $this->mPdoStatement->errorCode();
+	}
+
+	public function execute($sql){
+	}
+
+	public function bindValue($name,$value){
+		if(is_string($name)){
+		    $this->mBindParam[$name] = $value;
+			return true;
+		}
+		return false;
+	}
+
+	public function fetch(){
+		return $this->mPdoStatement->fetch($this->mFetchMode);
+	}
+
+	public function fetchAll(){
+		return $this->mPdoStatement->fetchAll($this->mFetchMode);
+	}
+
     private function _where($param){
         $aSql = array();
+		$sepa  = 'AND';
         if(is_array($param)){
+		    uasort($param,array($this,'btosSort'));
+			$this->debug("where参数排序后=>".print_r($param,true).__METHOD__.' line '.__LINE__,E_USER_NOTICE,sle\Sle::SLE_SYS);
             foreach($param as $name=>$p){
                 $sMethod = "_Where".ucfirst($name);
                 if(method_exists($this,$sMethod)){
@@ -119,47 +200,80 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
                     continue;
                 }
 				if(is_array($p)){
-					$this->traversalArr($p);
+					$aSql[]=$this->traversalArr($p,true);
+					$this->debug("解析where数组参数后=>".print_r(end($aSql),true).__METHOD__.' line '.__LINE__,E_USER_NOTICE,sle\Sle::SLE_SYS);
 				}else{
+					if($name === '_logic'){
+						$sepa = strtoupper($p);
+						continue;
+					}
 					$sParamKey = ":{$name}";
 					$aSql[] = "{$this->mAlias}.{$name}={$sParamKey}";
-					$this->mSelectParam['where'][$sParamKey] = $p;
+					$this->mBindParam[$sParamKey] = $p;
 				}
-            }
+            }//end foreach
 			if($aSql){
-				$sSep = ' and ';
-				isset($param['_logic']) && $sSep = " {$param['_logic']} ";
-				$this->mSelectInfo['where'][] = implode($sSep,$aSql);
-				$this->mSelectInfo['where']['_logic'] = $sSep;
+				$this->mSelectInfo['where'] = 'WHERE '.implode(" {$sepa} ",$aSql);
 			}
-        }
+        }//end array
+
     }
+
+
+
+	private function _limit($param){
+		if(is_string($param)){
+		    $this->mSelectInfo['limit'] = "LIMIT {$param}";
+	    }
+	}
+
+
+
+
+
+
 
     private function _query($sSql){
     }
 
-    private function execute($sSql){
-    }
-
-	public function prepare($sSql,$aParam){
+	public function prepare($sSql,$aParam = array()){
+		$this->mPdoStatement = $this->mLink->prepare($sSql);
 	}
 
 // a=1 or (b=2 and(c=3))
 //array('a'=>1,array('b'=>2,array('c'=>3,'_logic'=>'and'),'_logic'=>'and'),'_logic'=>'or')
-//array('a=1','or',)
-	private traversalArr($aVal){
-		static $iNum = 0;
-		$sTmpSql = "(";
+//array('a=1','or',)   (b=2 and e=4) and(
+	private function traversalArr($aVal,$isNew = false){
+		uasort($aVal,array($this,'btosSort'));
+		static $sSql = '';
+		if($isNew)
+			$sSql = '';
+		$sSql .= '(';
+		$sepa = 'AND';
+		isset($aVal['_logic']) && $sepa = strtoupper($aVal['_logic']);
 		foreach($aVal as $key=>$value){
+			if($key === '_logic'){
+				continue;
+			}
 			if(is_array($value)){
-				$iNum = 1;
 				$this->traversalArr($value);
 			}else{
-				$k = ":{$key}";
-				$sTmp .="{$this->mAlias}.{$key}={$k}";
-				$this->mSelectParam['where'][$k] = $value;
+				$sKey = $key;
+				if(preg_match('/(.*)\.(gt|lt|ge|le|eq)$/i',$sKey,$arr)){
+					$aMap = array("gt"=>">","lt"=>"<","ge"=>">=","le"=>"<=","eq"=>"=");
+					$k = ":{$arr[1]}";
+					$key = "{$arr[1]}{$aMap[$arr[2]]}";
+				}else{
+					$k = ":{$key}";
+					$key = "{$key}=";
+				}
+				$sSql .="{$this->mAlias}.{$key}{$k} {$sepa} ";
+				$this->mBindParam[$k] = $value;
 			}
 		}
+		$sSql = substr($sSql,0,strrpos($sSql,$sepa));
+		$sSql .= ')';
+		return $sSql;
 
 	}
 

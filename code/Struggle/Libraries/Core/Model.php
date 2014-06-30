@@ -102,7 +102,7 @@ class BaseModel extends \struggle\libraries\Object{
 
     public function find($aOpt = array()){
 		$this->initOption($aOpt);
-		echo print_r($this->mSelectElement,true),'<br><br>';
+		echo print_r($this->mSelectElement,true),__METHOD__,'<br><br>';
         $this->Db->find($this->mSelectElement);
     }
 
@@ -144,7 +144,7 @@ class BaseModel extends \struggle\libraries\Object{
             }
         }
 
-		$this->mSelectElement['limit'] = 'limit 1';
+		$this->mSelectElement['limit'] = '1';
 	}
 
 	/**

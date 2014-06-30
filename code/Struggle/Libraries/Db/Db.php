@@ -12,3 +12,10 @@ abstract class Db extends \struggle\libraries\Object{
 	//abstract public function findBySql();
 	//abstract public function findAllSql();
 }
+/*
+1、sql语句拼接
+2、prepare
+3、bindvalue
+4、execute
+5、fetch
+*/

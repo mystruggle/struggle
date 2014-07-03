@@ -68,18 +68,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 
     public function find($aOpt = array()){
         $this->parseOpt($aOpt);
-		$sField = $this->mSelectInfo['field'];
-		$sWhere = $this->mSelectInfo['where'];
-		$sTable = $this->mTableFullName;
-		$sAlias = $this->mAlias;
-		$sJoin  = $this->mSelectInfo['join'];
-		$sGroupby = $this->mSelectInfo['groupby'];
-		$sHaving  = $this->mSelectInfo['having'];
-		$sOrderby = $this->mSelectInfo['orderby'];
-		$sLimit   = $this->mSelectInfo['limit'];
-		$sSelectSql = "SELECT {$sField} FROM {$sTable} AS {$sAlias} {$sJoin} {$sWhere} {$sGroupby} {$sHaving} {$sOrderby} {$sLimit}";
-		$this->debug("SQL statement:{$sSelectSql}",E_USER_NOTICE,sle\Sle::SLE_SYS);
-		$this->prepare($sSelectSql);
+		$this->prepare($this->buildSelect());
 		$this->_beginBind();
 		$this->execute();
 		//$this->fetchAll();
@@ -89,12 +78,37 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 
 	private function _beginBind(){
 		foreach($this->mBindParam as $name=>$value){
-			$this->mPdoStatement->bindValue($name,$value);
+			$sField = substr(str_replace('`','',$name),1);
+			if(!isset($this->mTableInfo[$this->mTableFullName][$sField]['Type'])){
+				throw new \Exception("字段{$sField}不存在!");
+			}
+			$sFieldType = $this->mTableInfo[$this->mTableFullName][$sField]['Type'];
+			$sFieldType = strtolower(substr($sFieldType,0,strpos($sFieldType,'(')));
+			$aIntegerType = array('tinyint','smallint','mediumint','int','integer','bigint','float','double','decimal','numeric','bit');
+			$iDataType = \PDO::PARAM_STR;
+			if(in_array($sFieldType,$aIntegerType)){
+				$iDataType = \PDO::	PARAM_INT;
+			}
+			$this->mPdoStatement->bindValue($name,$value,$iDataType);
 		}
-		$this->debug("SQL param:".print_r($this->mBindParam,true),E_USER_NOTICE,sle\Sle::SLE_SYS);
+		$this->debug("SQL绑定参数:".print_r($this->mBindParam,true),E_USER_NOTICE,sle\Sle::SLE_SYS);
+		//每次查询后清空绑定的参数
+		$this->mBindParam = array();
 	}
 
-	private function buildSql(){
+	private function buildSelect(){
+		$sField = $this->mSelectInfo['field'];
+		$sWhere = $this->mSelectInfo['where'];
+		$sTable = $this->mTableFullName;
+		$sAlias = $this->mAlias;
+		$sJoin  = $this->mSelectInfo['join'];
+		$sGroupby = $this->mSelectInfo['groupby'];
+		$sHaving  = $this->mSelectInfo['having'];
+		$sOrderby = $this->mSelectInfo['orderby'];
+		$sLimit   = $this->mSelectInfo['limit'];
+		$sSql = "SELECT {$sField} FROM {$sTable} AS {$sAlias} {$sJoin} {$sWhere} {$sGroupby} {$sHaving} {$sOrderby} {$sLimit}";
+		$this->debug("SQL语句拼接:{$sSql}",E_USER_NOTICE,sle\Sle::SLE_SYS);
+		return $sSql;
 	}
 
 
@@ -165,7 +179,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 						$sepa = strtoupper($p);
 						continue;
 					}
-					$sParamKey = ":{$name}";
+					$sParamKey = ":".str_replace('`','',$name);
 					$aSql[] = "{$this->mAlias}.{$name}={$sParamKey}";
 					$this->mBindParam[$sParamKey] = $p;
 				}
@@ -247,12 +261,25 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 		return $this->mLink->rollBack();
 	}
 
+	/**
+	 * 返回具体驱动错误码
+	 */
 	public function getErrorCode(){
-		return $this->mPdoStatement->errorCode();
+		return $this->mErrorInfo[1];
+	}
+
+	/**
+	 * 返回具体驱动错误信息
+	 */
+	public function getErrorInfo(){
+		return $this->mErrorInfo[2];
 	}
 
 	public function execute($param = array()){
-		$this->mPdoStatement->execute($param);
+		if(!$this->mPdoStatement->execute()){
+		    $this->mErrorInfo = $this->mPdoStatement->errorInfo();
+			$this->mErrorCode = $this->mPdoStatement->errorCode();
+		}
 	}
 
 	public function bindValue($name,$value){

@@ -100,6 +100,10 @@ class BaseModel extends \struggle\libraries\Object{
         return $this->Db->setAttr($name,$value);
     }
 
+    public function bindValue($name,$value = null){
+        $this->Db->bindValue($name,$value);
+    }
+
     public function find($aOpt = array()){
 		$this->initOption($aOpt);
 		$this->mSelectElement['limit'] = '1';		
@@ -109,13 +113,15 @@ class BaseModel extends \struggle\libraries\Object{
 
 
 	public function where($condition){
+        $where = '';
 		if(is_array($condition)){
-            $aWhere = array();
 			foreach($condition as $name=>$value){
-				$aWhere[$name] = $value;
+				$where[$name] = $value;
 			}
-		}
-        $this->mSelectElement['where']=$aWhere;
+		}else{
+            $where = $condition;
+        }
+        $this->mSelectElement['where']=$where;
 	}
 
     //获取列处理

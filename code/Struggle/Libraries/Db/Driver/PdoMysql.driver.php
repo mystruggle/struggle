@@ -72,15 +72,18 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 		$this->_beginBind();
 		$this->execute();
 		//$this->fetchAll();
-		var_dump($this->fetch());
+		var_dump($this->fetch(),$this->mErrorInfo);
 		//return $this->fetch();
     }
 
 	private function _beginBind(){
 		foreach($this->mBindParam as $name=>$value){
-			$sField = substr(str_replace('`','',$name),1);
+            $sField = substr(str_replace('`','',$name),1);
 			if(!isset($this->mTableInfo[$this->mTableFullName][$sField]['Type'])){
-				throw new \Exception("字段{$sField}不存在!");
+                preg_match('#`([^`]+?)`[^`]+?(?='.$name.')#',$this->mSelectInfo['where'],$arr);
+                $sField = $arr[1];
+                if(!isset($this->mTableInfo[$this->mTableFullName][$sField]['Type']))
+				    throw new \Exception("字段{$sField}不存在!");
 			}
 			$sFieldType = $this->mTableInfo[$this->mTableFullName][$sField]['Type'];
 			$sFieldType = strtolower(substr($sFieldType,0,strpos($sFieldType,'(')));
@@ -188,6 +191,9 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 				$this->mSelectInfo['where'] = 'WHERE '.implode(" {$sepa} ",$aSql);
 			}
         }//end array
+        else{
+            $this->mSelectInfo['where'] = "WHERE {$param}";
+        }
 
     }
 
@@ -286,7 +292,12 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 		if(is_string($name)){
 		    $this->mBindParam[$name] = $value;
 			return true;
-		}
+		}elseif(is_array($name)){
+            foreach($name as $key=>$val){
+                $this->mBindParam[$key] = $val;
+            }
+            return true;
+        }
 		return false;
 	}
 

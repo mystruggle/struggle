@@ -16,8 +16,13 @@ class IndexController extends Controller{
 //select feild join where groupby   having orderby limit
 //echo $c->alias,'end';
 //(a=1 and b=2) or (c>=3 and d<4)
-$c->bindValue(array(':a'=>'sys',':1'=>10,':2'=>20,':p'=>'123456'));
-$c->find(array('field'=>'name,pwd','where'=>'`name`=:a and `desc` in (:1,:2) and `pwd`>=:p','orderby'=>'name desc','limit'=>"0,2"));//array('`name`'=>'sys')
+//$c->bindValue(array(':a'=>'sys',':1'=>10,':2'=>20,':p'=>'123456'));
+$a='sys';
+$b=1;
+$d=2;
+$e=4;
+$f=5;
+$c->find(array('field'=>'name,pwd','where'=>"`name`={{$a}} and `pwd` in({{$b}},{{$d}},{{$e}},{{$f}}) ",'orderby'=>'name desc','limit'=>"0,2"));//array('`name`'=>'sys')
 
 
 //$c->find(array('field'=>'id,name,name   AS n,pwd','join'=>'belong_to_role','where'=>array('id'=>2),'groupby'=>'id','having'=>'','orderby'=>'id','limit'=>""));

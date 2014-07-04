@@ -190,12 +190,17 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 			if($aSql){
 				$this->mSelectInfo['where'] = 'WHERE '.implode(" {$sepa} ",$aSql);
 			}
-        }//end array
-        else{
+        }//end array  
+        else{//(?:[^`{]+\{([^}])+\})     `([^`{]+)`(?:[^{`]+\{[^}`]+\})*
+			$param = preg_replace_callback('#(\{([^}]+)\})+#',array($this,'fetchFieldValue'),$param,-1);
             $this->mSelectInfo['where'] = "WHERE {$param}";
         }
 
     }
+
+	private function fetchFieldValue($matchs){
+		print_r($matchs);
+	}
 
 	private function _groupby($param){
 		$sGroupby = '';

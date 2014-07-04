@@ -118,9 +118,11 @@ class BaseModel extends \struggle\libraries\Object{
 			foreach($condition as $name=>$value){
 				$where[$name] = $value;
 			}
-		}else{
+		}elseif(is_string($condition)){
             $where = $condition;
-        }
+        }else{
+			$this->debug("WHERE参数只能为数组或字符串类型".__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+		}
         $this->mSelectElement['where']=$where;
 	}
 

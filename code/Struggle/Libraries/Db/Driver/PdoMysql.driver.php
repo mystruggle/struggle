@@ -191,15 +191,41 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 				$this->mSelectInfo['where'] = 'WHERE '.implode(" {$sepa} ",$aSql);
 			}
         }//end array  
-        else{//(?:[^`{]+\{([^}])+\})     `([^`{]+)`(?:[^{`]+\{[^}`]+\})*
-			$param = preg_replace_callback('#(\{([^}]+)\})+#',array($this,'fetchFieldValue'),$param,-1);
+        else{
+			$param = preg_replace_callback('#`([^`{]+)`(?:[^{`]+\{[^}`]+\})+#',array($this,'fetchFieldValue'),$param,-1);
             $this->mSelectInfo['where'] = "WHERE {$param}";
         }
 
     }
 
 	private function fetchFieldValue($matchs){
-		print_r($matchs);
+		$aStr = array();
+		$sField = $matchs[1];
+		$iValStartPos = strpos($matchs[0],'{');
+		$sPreVal = substr($matchs[0],0,$iValStartPos);
+		$aStr[] = $sPreVal;
+		$sVal = substr($matchs[0],$iValStartPos,strrpos($matchs[0],'}'));
+		$iLeftSepPos = 0;
+		$iRightSepPos = 0;
+		$i = 1;
+		while(true){
+			$iLeftSepPos = strpos($sVal,'{',$iRightSepPos);
+			if($iLeftSepPos === false)
+				break;
+			if($i>1){
+				$aStr[] = substr($sVal,$iRightSepPos+1,$iLeftSepPos-$iRightSepPos-1);
+			}
+			$iRightSepPos = strpos($sVal,'}',$iLeftSepPos);
+			if($i === 1)
+			    $sKey = ":{$sField}";
+			else
+				$sKey = ":{$sField}".($i-1);
+			$aStr[] = $sKey;
+			$sValue = substr($sVal,$iLeftSepPos+1,$iRightSepPos-$iLeftSepPos-1);
+			$this->mBindParam[$sKey] =$sValue;
+			$i++;
+		}
+		return implode('',$aStr);
 	}
 
 	private function _groupby($param){

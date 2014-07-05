@@ -22,7 +22,8 @@ $b=1;
 $d=2;
 $e=4;
 $f=5;
-$c->find(array('field'=>'name,pwd','where'=>"`name`={{$a}} and `pwd` in({{$b}},{{$d}},{{$e}},{{$f}}) ",'orderby'=>'name desc','limit'=>"0,2"));//array('`name`'=>'sys')
+$g=11;
+$c->find(array('field'=>'name,pwd','where'=>"`name`={{$a}} and `pwd` in({{$b}},{{$d}},{{$e}},{{$f}}) or `desc`>{{$g}} and `create_time`=1",'orderby'=>'name desc','limit'=>"0,2"));//array('`name`'=>'sys')
 
 
 //$c->find(array('field'=>'id,name,name   AS n,pwd','join'=>'belong_to_role','where'=>array('id'=>2),'groupby'=>'id','having'=>'','orderby'=>'id','limit'=>""));

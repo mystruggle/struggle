@@ -224,7 +224,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
                     $this->$sMethod($p);
                     continue;
                 }
-				if(is_numeric($name) && is_array($p)){echo $name,'|',print_r($p,true),' line '.__LINE__,'<br><br>';
+				if(is_numeric($name) && is_array($p)){
 					$aSql[]=$this->traversalArr($p,true);
 					$this->debug("解析where数组参数后=>".print_r(end($aSql),true).__METHOD__.' line '.__LINE__,E_USER_NOTICE,sle\Sle::SLE_SYS);
 				}else{
@@ -232,9 +232,12 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 						$sepa = strtoupper($p);
 						continue;
 					}
-					$sParamKey = ":".str_replace('`','',$name);
-					$aSql[] = "{$this->mAlias}.{$name}={$sParamKey}";
-					$this->mBindParam[$sParamKey] = $p;
+                    //过滤array('value')这种情况
+                    if(is_numeric($name) && is_string($p)){
+                        $this->debug("错误的WHERE参数=> {$name}=>{$p}".print_r($param,true).__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+                    }else{
+					    $aSql[] = $this->reassoc($name,$p);
+                    }
 				}
             }//end foreach
 			if($aSql){
@@ -246,6 +249,58 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
             $this->mSelectInfo['where'] = "WHERE {$param}";
         }
 
+    }
+
+
+    /**
+     * 把占位符统一改成“:表字段”，绑定参数数组的键名也统一替换成表字段，如“array(':表字段'=>value)”
+     * 替换键名中.ge、.gt、.le等特殊符号
+     * @param string $key   数组键名
+     * @param mixed  $val   数组值
+     * @return void
+     * @author luguo<luguo@139.com>
+     * @date 2014/7/7
+     */
+    private function reassoc($key,$val){
+        $sField = $key;
+        $sOp    = 'eq';
+        $sBindField = ":{$sField}";
+        $aBindValues = array();
+        preg_match($this->mFieldRegexp,$key,$arr);
+        if(isset($arr[1])){
+            $sField = $arr[1];
+            $sBindField = ":{$sField}";
+        }
+        if(isset($arr[2])){
+            $sOp = $arr[2];
+        }
+        //用表字段替换原绑定值的键
+        $aBindValues[$sBindField] = $val;
+
+        switch(strtolower($sOp)){
+            case 'in':
+            case 'notin':
+                if(is_array($val)){
+                   for($i=0;$i<count($val);$i++){
+                       if($i){
+                         $sTmpKey = ":{sField}{$i}";
+                         $aBindValues[$sTmpKey] = $val[$i];
+                         $sBindField .= ",:{$sTmpKey}";
+                       }else{
+                         $aBindValues[":{$sField}"] = $val[$i];
+                       }
+                   }
+                   $sBindField = "({$sBindField})";
+                }elseif(is_string($val)){
+                    $aBindValues[":{$sField}"] = $val[$i];
+                    $sBindField = "({$sBindField})";
+                }
+                break;
+            default:
+        }
+        isset($this->mFieldExpMap[$sOp]) && $sOp = $this->mFieldExpMap[$sOp];
+        $this->mBindParam = array_merge($this->mBindParam,$aBindValues);
+        return "{$this->mAlias}.`{$sField}` {$sOp} {$sBindField}";
     }
 
 	private function fetchFieldValue($matchs){
@@ -418,21 +473,21 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 		$this->mPdoStatement = $this->mLink->prepare($sSql);
 	}
 
-// a=1 or (b=2 and(c=3))
-//array('a'=>1,array('b'=>2,array('c'=>3,'_logic'=>'and'),'_logic'=>'and'),'_logic'=>'or')
-//array('a=1','or',)   (b=2 and e=4) and(
+    /**
+     * 实现用数组拼接SQL语句
+     * 如，WHERE条件里元素为一个索引数组，则用一个括号把该数组解析后的字符串括起来
+     */
 	private function traversalArr($aVal,$isNew = false){
 		uasort($aVal,array($this,'btosSort'));
 		static $sSql = '';
-		if($isNew)
-			$sSql = '';
+		$isNew && $sSql = '';
 		$sSql .= '(';
 		$sepa = 'AND';
-		isset($aVal['_logic']) && $sepa = strtoupper($aVal['_logic']);
+		if(isset($aVal['_logic'])){
+            $sepa = strtoupper($aVal['_logic']);
+            unset($aVal['_logic']);
+        }
 		foreach($aVal as $key=>$value){
-			if(strtolower($key) === '_logic'){
-				continue;
-			}
 			if(is_numeric($key) && is_array($value)){
 				$this->traversalArr($value);
 			}elseif(is_string($key)){

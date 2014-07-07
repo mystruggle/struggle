@@ -24,7 +24,7 @@ class Exception extends Object{
     
     public function exceptionHandle($e){
         $iCode = $e->getCode()?$e->getCode():E_USER_ERROR;
-        $sMsg="exception message: {$e->getMessage()}  {$e->getFile()} 第{$e->getLine()}行";
+        $sMsg="异常错误信息: {$e->getMessage()}  {$e->getFile()} 第{$e->getLine()}行";
         $this->registInfo($sMsg, $iCode);
     } 
     

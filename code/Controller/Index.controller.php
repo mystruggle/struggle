@@ -45,7 +45,7 @@ $this->bindParam(array('sys',1,'2{',2,3));
 
 */
 
-$c->find(array('field'=>'name,pwd','where'=>array(array('name'=>'sys','`pwd`.ge'=>1),'_logic'=>'or',array('`desc`.le'=>2,'`create_time`.in'=>array(2,3))),'orderby'=>'name desc','limit'=>"0,2"));
+$c->find(array('field'=>'name,pwd','where'=>array('`name`'=>'sys'),'orderby'=>'name desc','limit'=>"0,2"));
 
 
 //$c->find(array('field'=>'id,name,name   AS n,pwd','join'=>'belong_to_role','where'=>array('id'=>2),'groupby'=>'id','having'=>'','orderby'=>'id','limit'=>""));

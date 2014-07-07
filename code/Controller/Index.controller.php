@@ -17,13 +17,35 @@ class IndexController extends Controller{
 //echo $c->alias,'end';
 //(a=1 and b=2) or (c>=3 and d<4)
 //$c->bindValue(array(':a'=>'sys',':1'=>10,':2'=>20,':p'=>'123456'));
-$a='sys';
-$b=1;
-$d=2;
-$e=4;
-$f=5;
-$g=11;
-$c->find(array('field'=>'name,pwd','where'=>"`name`={{$a}} and `pwd` in({{$b}},{{$d}},{{$e}},{{$f}}) or `desc`>{{$g}} and `create_time`=1",'orderby'=>'name desc','limit'=>"0,2"));//array('`name`'=>'sys')
+/*
+name='sys'
+array('name'=>'sys')
+
+name>'sys'
+array('`name`.gt'=>'sys')
+
+(name='sys' and pwd>=1) or (desc<=2 and create_time in(2,3) )
+array(array('name'=>'sys','`pwd`.ge'=>1),'_logic'=>'or',array('`desc`.le'=>2,'`create_time`.in'=>array(2,3)))
+----------- end array --------------
+$this->bindValue(array('name'=>'sys','pwd'=>1,':a'=>'2{',':b'=>2,':c'=>3));
+(name='sys' and pwd>=1) or (desc<='2{' and create_time in(2,3) )
+(name=:name and pwd >=:pwd) or (desc<=:a and create_time in(:b,:c))
+
+$sys='sys';
+$pwd=1;
+$desc='2&#123;';
+$create_time=array(2,3);
+(name='sys' and pwd>=1) or (desc<='2{' and create_time in(2,3) )
+(`name`={{$sys}} and pwd>={{$pwd}}) or(`desc`<={{$desc}} and create_time in ({{$create_time}}))
+
+
+$this->bindParam(array('sys',1,'2{',2,3));
+(name='sys' and pwd>=1) or (desc<='2{' and create_time in(2,3) )
+(name=? and pwd >=?) or (desc<=? and create_time in(?,?))
+
+*/
+
+$c->find(array('field'=>'name,pwd','where'=>array(array('name'=>'sys','`pwd`.ge'=>1),'_logic'=>'or',array('`desc`.le'=>2,'`create_time`.in'=>array(2,3))),'orderby'=>'name desc','limit'=>"0,2"));
 
 
 //$c->find(array('field'=>'id,name,name   AS n,pwd','join'=>'belong_to_role','where'=>array('id'=>2),'groupby'=>'id','having'=>'','orderby'=>'id','limit'=>""));

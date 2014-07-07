@@ -1,6 +1,35 @@
 <?php
 namespace struggle\libraries\db\driver;
 use struggle as sle;
+/**
+ * 模型运用例子
+ * name='sys'
+ * array('name'=>'sys')
+ *
+ * name>'sys'
+ * array('`name`.gt'=>'sys')
+ * 
+ * (name='sys' and pwd>=1) or (desc<=2 and create_time in(2,3) )
+ * array(array('name'=>'sys','`pwd`.ge'=>1),'_logic'=>'or',array('`desc`.le'=>2,'`create_time`.in'=>array(2,3)))
+ *
+ * $sys='sys';
+ * $pwd=1;
+ * $desc='2&#123;';
+ * $create_time=array(2,3);
+ * (name='sys' and pwd>=1) or (desc<='2{' and create_time in(2,3) )
+ * (`name`={{$sys}} and pwd>={{$pwd}}) or(`desc`<={{$desc}} and create_time in ({{$create_time}}))
+ *
+ * $this->bindValue(array('name'=>'sys','pwd'=>1,':a'=>'2{',':b'=>2,':c'=>3));
+ * (name='sys' and pwd>=1) or (desc<='2{' and create_time in(2,3) )
+ * (name=:name and pwd >=:pwd) or (desc<=:a and create_time in(:b,:c))
+ *
+ * $this->bindParam(array('sys',1,'2{',2,3));
+ * (name='sys' and pwd>=1) or (desc<='2{' and create_time in(2,3) )
+ * (name=? and pwd >=?) or (desc<=? and create_time in(?,?))
+ */
+
+
+
 class PdoMysqlDriver extends \struggle\libraries\db\Db{
 	protected $mLink = null;
     protected $mErrorInfo = '';
@@ -14,6 +43,8 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
     protected $mBindParam     = array();  //绑定的参数
 	private   $mPdoStatement  = null;
 	protected $mFetchMode     = \PDO::FETCH_BOTH;
+	private   $mFieldRegexp      = '/`([^`]+)`(?:\.(gt|lt|ge|le|eq|neq|in|link|notin)$)?/i';
+	private   $mFieldExpMap   = array("gt"=>">","lt"=>"<","ge"=>">=","le"=>"<=","eq"=>"=");
 
     public function __construct($aOpt){
         parent::__construct();
@@ -77,7 +108,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
     }
 
 	private function _beginBind(){
-		foreach($this->mBindParam as $name=>$value){
+		foreach($this->mBindParam as $name=>$value){echo $name.'|<br>';
             $sField = substr(str_replace('`','',$name),1);
 			if(!isset($this->mTableInfo[$this->mTableFullName][$sField]['Type'])){
                 preg_match('#`([^`]+?)`[^`]+?(?='.$name.')#',$this->mSelectInfo['where'],$arr);
@@ -115,7 +146,14 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 	}
 
 
-
+    /**
+	 * 解析查询语句各部分
+	 * 将会调用传递过来的参数以其键名命名的方法
+	 * 如，_field,_join,_where,_groupby,_having,_orderby,_limit
+	 * @param array $aOpt  传递的参数
+	 * @return void
+	 * @author luguo<luguo@139.com>
+	 */
     private function parseOpt($aOpt){
         if(is_array($aOpt)){
             foreach($aOpt as $name=>$param){
@@ -161,7 +199,19 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
         //print_r($param);
     }
 
-
+    /**
+	 * 解析WHERE条件语句参数，由parseOpt方法调用
+	 * 不需要bind(自动绑定类型)
+	 *   数组类型, 键名中使用``(标注表字段),ge(>=),in,like等等
+	 *   字符串类型，使用``标记表字段，{{}}标记值
+	 * 需要bind(自动判断类型绑定)
+	 *   数组类型，主要是``标记表字段，占位符不含有表字段时
+	 *   字符串类型，无
+	 * 最后把所有没有占位符的自动添加占位符，格式如:name，然后预处理再执行操作
+	 * @param mixed $param  传入的参数 
+	 * @return void
+	 * @author luguo<luguo@139.com>
+	 */
     private function _where($param){
         $aSql = array();
 		$sepa  = 'AND';
@@ -174,11 +224,11 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
                     $this->$sMethod($p);
                     continue;
                 }
-				if(is_array($p)){
+				if(is_numeric($name) && is_array($p)){echo $name,'|',print_r($p,true),' line '.__LINE__,'<br><br>';
 					$aSql[]=$this->traversalArr($p,true);
 					$this->debug("解析where数组参数后=>".print_r(end($aSql),true).__METHOD__.' line '.__LINE__,E_USER_NOTICE,sle\Sle::SLE_SYS);
 				}else{
-					if($name === '_logic'){
+					if(strtolower($name) === '_logic'){
 						$sepa = strtoupper($p);
 						continue;
 					}
@@ -222,7 +272,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 				$sKey = ":{$sField}".($i-1);
 			$aStr[] = $sKey;
 			$sValue = substr($sVal,$iLeftSepPos+1,$iRightSepPos-$iLeftSepPos-1);
-			$this->mBindParam[$sKey] =$sValue;
+			$this->mBindParam[$sKey] =str_replace(array('&#123;','&#125;'),array('{','}'),$sValue);
 			$i++;
 		}
 		return implode('',$aStr);
@@ -332,6 +382,23 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 		return false;
 	}
 
+    /**
+	 * 按索引绑定参数
+	 * @param mixed $value  需要绑定的参数，数组或字符串
+	 * @return void
+	 * @author luguo<luguo@139.com>
+	 */
+    public function bindParam($value){
+		if($this->mBindParam){
+			$this->mBindParam = array();
+		}
+		if(is_array($value)){
+			$this->mBindParam = array_merge($this->mBindParam,$value);
+		}else{
+			$this->mBindParam[] = $value;
+		}
+	}
+
 	public function fetch(){
 		return $this->mPdoStatement->fetch($this->mFetchMode);
 	}
@@ -363,23 +430,31 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 		$sepa = 'AND';
 		isset($aVal['_logic']) && $sepa = strtoupper($aVal['_logic']);
 		foreach($aVal as $key=>$value){
-			if($key === '_logic'){
+			if(strtolower($key) === '_logic'){
 				continue;
 			}
-			if(is_array($value)){
+			if(is_numeric($key) && is_array($value)){
 				$this->traversalArr($value);
-			}else{
+			}elseif(is_string($key)){
 				$sKey = $key;
-				if(preg_match('/(.*)\.(gt|lt|ge|le|eq)$/i',$sKey,$arr)){
-					$aMap = array("gt"=>">","lt"=>"<","ge"=>">=","le"=>"<=","eq"=>"=");
-					$k = ":{$arr[1]}";
-					$key = "{$arr[1]}{$aMap[$arr[2]]}";
-				}else{
-					$k = ":{$key}";
+				if(isset($this->mTableInfo[$this->mTableFullName][trim($key)])){
+					$sk = $k = ":{$key}";
 					$key = "{$key}=";
+			    }elseif(preg_match($this->mFieldRegexp,$sKey,$arr)){print_r($arr);//die('end');
+					$sk = $k = ":{$arr[1]}";
+					$sOp = $arr[2];
+					if(isset($this->mFieldExpMap[$sOp]))$sOp = $this->mFieldExpMap[$sOp];
+					if(in_array(trim($arr[2]),array('in','notin'))){
+				        $sk = "($k)";
+					}
+					$key = "{$arr[1]} {$sOp}";
+				}else{
+				    $this->debug("解析where参数错误=>{$key} ".print_r(end($aVal),true).__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
 				}
-				$sSql .="{$this->mAlias}.{$key}{$k} {$sepa} ";
+				$sSql .="{$this->mAlias}.{$key}{$sk} {$sepa} ";
 				$this->mBindParam[$k] = $value;
+			}else{
+				$this->debug("解析where参数错误=>{$key} ".print_r(end($aVal),true).__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
 			}
 		}
 		$sSql = substr($sSql,0,strrpos($sSql,$sepa));

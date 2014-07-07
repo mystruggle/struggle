@@ -104,6 +104,10 @@ class BaseModel extends \struggle\libraries\Object{
         $this->Db->bindValue($name,$value);
     }
 
+	public function bindParam($value){
+		$this->Db->bindParam($value);
+	}
+
     public function find($aOpt = array()){
 		$this->initOption($aOpt);
 		$this->mSelectElement['limit'] = '1';		
@@ -111,7 +115,14 @@ class BaseModel extends \struggle\libraries\Object{
         $this->Db->find($this->mSelectElement);
     }
 
-
+    /**
+	 * 查询条件解析
+	 * 当传入的参数为字符串类型，字符串中可以使用反引号``标记一个表字段，用{}字符包裹值，
+	   {}不能嵌套，如需要嵌套，则用&#123;表示{,&#125;表示}；数组的键名可以使用``标记表字段
+	 * @param mixed $condition 数组类型或字符类型
+	 * @return void
+	 * @author luguo<luguo@139.com>
+ 	 */
 	public function where($condition){
         $where = '';
 		if(is_array($condition)){

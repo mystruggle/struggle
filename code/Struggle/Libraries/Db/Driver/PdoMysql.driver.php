@@ -19,9 +19,9 @@ use struggle as sle;
  * (name='sys' and pwd>=1) or (desc<='2{' and create_time in(2,3) )
  * (`name`={{$sys}} and pwd>={{$pwd}}) or(`desc`<={{$desc}} and create_time in ({{$create_time}}))
  *
- * $this->bindValue(array('name'=>'sys','pwd'=>1,':a'=>'2{',':b'=>2,':c'=>3));
+ * $this->bindValue(array(':name'=>'sys',':pwd'=>1,':a'=>'2{',':b'=>2,':c'=>3));
  * (name='sys' and pwd>=1) or (desc<='2{' and create_time in(2,3) )
- * (name=:name and pwd >=:pwd) or (desc<=:a and create_time in(:b,:c))
+ * (`name`=:name and `pwd` >=:pwd) or (`desc`<=:a and `create_time` in(:b,:c))
  *
  * $this->bindParam(array('sys',1,'2{',2,3));
  * (name='sys' and pwd>=1) or (desc<='2{' and create_time in(2,3) )
@@ -108,22 +108,26 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
     }
 
 	private function _beginBind(){
-		foreach($this->mBindParam as $name=>$value){echo $name.'|<br>';
-            $sField = substr(str_replace('`','',$name),1);
-			if(!isset($this->mTableInfo[$this->mTableFullName][$sField]['Type'])){
-                preg_match('#`([^`]+?)`[^`]+?(?='.$name.')#',$this->mSelectInfo['where'],$arr);
-                $sField = $arr[1];
-                if(!isset($this->mTableInfo[$this->mTableFullName][$sField]['Type']))
-				    throw new \Exception("字段{$sField}不存在!");
+		foreach($this->mBindParam as $name=>$value){
+			if(preg_match('/:(.+?)(?:\_\d+)?$/i',$name,$arr)){
+				$sField = $arr[1];
+				if(!isset($this->mTableInfo[$this->mTableFullName][$sField]['Type'])){
+					//当绑定的参数数组的键名中不包含表字段时,即命名没有“:表字段”
+					if(preg_match('/`([^`]+)`[^`]+(?=:'.$sField.')/i',implode(' ',$this->mSelectInfo),$arr2)){
+						$sField = $arr2[1];print_r($arr2);
+					}
+					if(!isset($this->mTableInfo[$this->mTableFullName][$sField]['Type']))
+					    throw new \Exception("字段{$sField}不存在!");
+				}
+				$sFieldType = $this->mTableInfo[$this->mTableFullName][$sField]['Type'];
+				$sFieldType = strtolower(substr($sFieldType,0,strpos($sFieldType,'(')));
+				$aIntegerType = array('tinyint','smallint','mediumint','int','integer','bigint','float','double','decimal','numeric','bit');
+				$iDataType = \PDO::PARAM_STR;
+				if(in_array($sFieldType,$aIntegerType)){
+					$iDataType = \PDO::	PARAM_INT;
+				}
+				$this->mPdoStatement->bindValue($name,$value,$iDataType);
 			}
-			$sFieldType = $this->mTableInfo[$this->mTableFullName][$sField]['Type'];
-			$sFieldType = strtolower(substr($sFieldType,0,strpos($sFieldType,'(')));
-			$aIntegerType = array('tinyint','smallint','mediumint','int','integer','bigint','float','double','decimal','numeric','bit');
-			$iDataType = \PDO::PARAM_STR;
-			if(in_array($sFieldType,$aIntegerType)){
-				$iDataType = \PDO::	PARAM_INT;
-			}
-			$this->mPdoStatement->bindValue($name,$value,$iDataType);
 		}
 		$this->debug("SQL绑定参数:".print_r($this->mBindParam,true),E_USER_NOTICE,sle\Sle::SLE_SYS);
 		//每次查询后清空绑定的参数
@@ -245,7 +249,8 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 			}
         }//end array  
         else{
-			$param = preg_replace_callback('#`([^`{]+)`(?:[^{`]+\{[^}`]+\})+#',array($this,'fetchFieldValue'),$param,-1);
+			//没有`` [^`{] {}格式将不会调用fetchFieldValue函数
+			$param = preg_replace_callback('#`([^`{]+)`(?:[^{`]+\{[^}`]+\})+#',array($this,'fetchFieldValue'),$param);
             $this->mSelectInfo['where'] = "WHERE {$param}";
         }
 
@@ -283,9 +288,9 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
                 if(is_array($val)){
                    for($i=0;$i<count($val);$i++){
                        if($i){
-                         $sTmpKey = ":{sField}{$i}";
+                         $sTmpKey = ":{$sField}_{$i}";
                          $aBindValues[$sTmpKey] = $val[$i];
-                         $sBindField .= ",:{$sTmpKey}";
+                         $sBindField .= ",{$sTmpKey}";
                        }else{
                          $aBindValues[":{$sField}"] = $val[$i];
                        }
@@ -303,6 +308,15 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
         return "{$this->mAlias}.`{$sField}` {$sOp} {$sBindField}";
     }
 
+	/**
+	 * 在字符串SQL语句中使用特殊字符进行解析和绑定参数
+	 * 特殊符号反引号``用于界定表字段，大括号{}界定绑定参数的值
+	 * 如,`name`={{$name}}
+	 * @param array $matchs  提取含有特殊符号字符串片段，匹配格式如`name` like {{$name}}
+	 * @return void
+	 * @author luguo<luguo@139.com> 
+	 * @date 2014/7/8
+ 	 */
 	private function fetchFieldValue($matchs){
 		$aStr = array();
 		$sField = $matchs[1];
@@ -491,25 +505,9 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 			if(is_numeric($key) && is_array($value)){
 				$this->traversalArr($value);
 			}elseif(is_string($key)){
-				$sKey = $key;
-				if(isset($this->mTableInfo[$this->mTableFullName][trim($key)])){
-					$sk = $k = ":{$key}";
-					$key = "{$key}=";
-			    }elseif(preg_match($this->mFieldRegexp,$sKey,$arr)){print_r($arr);//die('end');
-					$sk = $k = ":{$arr[1]}";
-					$sOp = $arr[2];
-					if(isset($this->mFieldExpMap[$sOp]))$sOp = $this->mFieldExpMap[$sOp];
-					if(in_array(trim($arr[2]),array('in','notin'))){
-				        $sk = "($k)";
-					}
-					$key = "{$arr[1]} {$sOp}";
-				}else{
-				    $this->debug("解析where参数错误=>{$key} ".print_r(end($aVal),true).__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
-				}
-				$sSql .="{$this->mAlias}.{$key}{$sk} {$sepa} ";
-				$this->mBindParam[$k] = $value;
+				$sSql .="{$this->reassoc($key,$value)} {$sepa} ";
 			}else{
-				$this->debug("解析where参数错误=>{$key} ".print_r(end($aVal),true).__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+				$this->debug("解析where参数错误=> {$key}:{$value} in ".print_r($aVal,true).__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
 			}
 		}
 		$sSql = substr($sSql,0,strrpos($sSql,$sepa));

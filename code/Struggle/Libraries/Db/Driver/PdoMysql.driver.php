@@ -115,10 +115,23 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 			if(is_numeric($name)){
 				$iNum = count($this->mBindParam);
 				$sTmp = implode(' ',$this->mSelectInfo);
-				//
-				echo preg_match_all('#`([^`{]+)`(?:[^{`]+\?)+#i',$sTmp,$arr3);print_r($arr3);
-				if($iNum>0 && (preg_match_all('/`([^`]+)`/i',$sTmp,$arr3) === $iNum)){
-					foreach($arr3[1] as $index=>$val){
+                $aField = array();   //正则提取出来的字段
+                $aFieldStr = array();  //正则子模式匹配的字符串
+                $aValueNum = 0;  //值的个数
+				$iMatchNum = preg_match_all('#`([^`{]+)`(?:[^{`]+\?)+#i',$sTmp,$arr3);
+                if($iMatchNum && isset($arr3[0])){
+                    $aFieldStr = $arr3[0];
+                }
+
+                if($iMatchNum && isset($arr3[1])){
+                    $aField = $arr3[1];
+                    foreach($aFieldStr as $index=>$str){
+                        $aValueNum[$aField[$index]] = substr_count($str,'?');
+                    }
+                }
+
+				if($iNum>0 && (array_sum($aValueNum) === $iNum)){
+					for($i=0,$sKey=$aField[$i]; $i < $iNum; $i++){
 						if(!isset($this->mTableInfo[$this->mTableFullName][$val]['Type']))
 							throw new \Exception("字段{$val}不存在!");
 						$sFieldType = $this->mTableInfo[$this->mTableFullName][$val]['Type'];

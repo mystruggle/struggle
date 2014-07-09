@@ -17,7 +17,7 @@ use struggle as sle;
  * $desc='2&#123;';
  * $create_time=array(2,3);
  * (name='sys' and pwd>=1) or (desc<='2{' and create_time in(2,3) )
- * (`name`={{$sys}} and pwd>={{$pwd}}) or(`desc`<={{$desc}} and create_time in ({{$create_time}}))
+ * (`name`={{$sys}} and `pwd`>={{$pwd}}) or(`desc`<={{$desc}} and `create_time` in ({{$create_time}}))  注意，需用双引号括起来；注意用反引用号括住表字段
  *
  * $this->bindValue(array(':name'=>'sys',':pwd'=>1,':a'=>'2{',':b'=>2,':c'=>3));
  * (name='sys' and pwd>=1) or (desc<='2{' and create_time in(2,3) )
@@ -45,6 +45,8 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 	protected $mFetchMode     = \PDO::FETCH_BOTH;
 	private   $mFieldRegexp      = '/`([^`]+)`(?:\.(gt|lt|ge|le|eq|neq|in|link|notin)$)?/i';
 	private   $mFieldExpMap   = array("gt"=>">","lt"=>"<","ge"=>">=","le"=>"<=","eq"=>"=");
+	private   $mDbIntegerType = array('tinyint','smallint','mediumint','int','integer','bigint',
+		                              'float','double','decimal','numeric','bit');
 
     public function __construct($aOpt){
         parent::__construct();
@@ -109,21 +111,44 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 
 	private function _beginBind(){
 		foreach($this->mBindParam as $name=>$value){
+			//问号占位符绑定
+			if(is_numeric($name)){
+				$iNum = count($this->mBindParam);
+				$sTmp = implode(' ',$this->mSelectInfo);
+				//
+				echo preg_match_all('#`([^`{]+)`(?:[^{`]+\?)+#i',$sTmp,$arr3);print_r($arr3);
+				if($iNum>0 && (preg_match_all('/`([^`]+)`/i',$sTmp,$arr3) === $iNum)){
+					foreach($arr3[1] as $index=>$val){
+						if(!isset($this->mTableInfo[$this->mTableFullName][$val]['Type']))
+							throw new \Exception("字段{$val}不存在!");
+						$sFieldType = $this->mTableInfo[$this->mTableFullName][$val]['Type'];
+						$sFieldType = strtolower(substr($sFieldType,0,strpos($sFieldType,'(')));
+						$iDataType = \PDO::PARAM_STR;
+						if(in_array($sFieldType,$this->mDbIntegerType)){
+							$iDataType = \PDO::	PARAM_INT;
+						}
+						$this->mPdoStatement->bindParam(($index+1),$val,$iDataType);
+					}
+				}elseif($iNum>0){
+					$this->debug("SQL绑定参数个数错误:".print_r($this->mBindParam,true),E_USER_ERROR,sle\Sle::SLE_SYS);
+				}
+				break;
+			}
+			//其他占位符绑定
 			if(preg_match('/:(.+?)(?:\_\d+)?$/i',$name,$arr)){
 				$sField = $arr[1];
 				if(!isset($this->mTableInfo[$this->mTableFullName][$sField]['Type'])){
 					//当绑定的参数数组的键名中不包含表字段时,即命名没有“:表字段”
 					if(preg_match('/`([^`]+)`[^`]+(?=:'.$sField.')/i',implode(' ',$this->mSelectInfo),$arr2)){
-						$sField = $arr2[1];print_r($arr2);
-					}
+						$sField = $arr2[1];
+					}print_r($this->mBindParam);echo __METHOD__.' line '.__LINE__;
 					if(!isset($this->mTableInfo[$this->mTableFullName][$sField]['Type']))
 					    throw new \Exception("字段{$sField}不存在!");
 				}
 				$sFieldType = $this->mTableInfo[$this->mTableFullName][$sField]['Type'];
 				$sFieldType = strtolower(substr($sFieldType,0,strpos($sFieldType,'(')));
-				$aIntegerType = array('tinyint','smallint','mediumint','int','integer','bigint','float','double','decimal','numeric','bit');
 				$iDataType = \PDO::PARAM_STR;
-				if(in_array($sFieldType,$aIntegerType)){
+				if(in_array($sFieldType,$this->mDbIntegerType)){
 					$iDataType = \PDO::	PARAM_INT;
 				}
 				$this->mPdoStatement->bindValue($name,$value,$iDataType);
@@ -250,7 +275,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
         }//end array  
         else{
 			//没有`` [^`{] {}格式将不会调用fetchFieldValue函数
-			$param = preg_replace_callback('#`([^`{]+)`(?:[^{`]+\{[^}`]+\})+#',array($this,'fetchFieldValue'),$param);
+			$param = preg_replace_callback('#`([^`{]+)`(?:[^{`]+\{[^}`]+\})+#i',array($this,'fetchFieldValue'),$param);
             $this->mSelectInfo['where'] = "WHERE {$param}";
         }
 
@@ -338,7 +363,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 			if($i === 1)
 			    $sKey = ":{$sField}";
 			else
-				$sKey = ":{$sField}".($i-1);
+				$sKey = ":{$sField}_".($i-1);
 			$aStr[] = $sKey;
 			$sValue = substr($sVal,$iLeftSepPos+1,$iRightSepPos-$iLeftSepPos-1);
 			$this->mBindParam[$sKey] =str_replace(array('&#123;','&#125;'),array('{','}'),$sValue);

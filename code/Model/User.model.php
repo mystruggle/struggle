@@ -6,9 +6,18 @@ class UserModel extends Model{
     public $alias    = '';
     public $suffix   = '';
     public $prefix   = 'sle_';
+    public $prikey   = 'id';
+
     public $relation = array(
             'belong_to_role'=>array(
                     'model'=>'role',
+                    'type'=>'',
+                    'refer_key'=>'',
+                    'foreign_key'=>'',
+                    'middle_table'=>'',
+                    'reverse'=>'',
+                    'ext_limit'=>'',
+                    'dependent'=>'',
                 ),
         );
 

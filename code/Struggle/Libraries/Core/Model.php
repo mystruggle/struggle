@@ -137,6 +137,13 @@ class BaseModel extends \struggle\libraries\Object{
         $this->mSelectElement['where']=$where;
 	}
 
+
+    public function join($name){
+        $aRelation = $this->relation;
+        print_r($aRelation);
+        return $this;
+    }
+
     //获取列处理
 	public function field($sField){
 		$this->mSelectElement['field'] = $sField;

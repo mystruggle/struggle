@@ -33,6 +33,7 @@ class BaseController extends \struggle\libraries\Object{
 		if(is_array($item)){
 			array_walk($item,array($this,'stripSpecialChar'));
 		}else{
+            $item = htmlentities($item);
 			$item = str_replace(array('{','}'),array('&#123;','&#125;'),$item);
 		}
 	}

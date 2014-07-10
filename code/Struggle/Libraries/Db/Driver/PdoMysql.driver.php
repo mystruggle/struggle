@@ -117,7 +117,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 				$sTmp = implode(' ',$this->mSelectInfo);
                 $aField = array();   //正则提取出来的字段
                 $aFieldStr = array();  //正则子模式匹配的字符串
-                $aValueNum = 0;  //值的个数
+                $aValueNum = array();  //值的个数
 				$iMatchNum = preg_match_all('#`([^`{]+)`(?:[^{`]+\?)+#i',$sTmp,$arr3);
                 if($iMatchNum && isset($arr3[0])){
                     $aFieldStr = $arr3[0];
@@ -131,16 +131,21 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
                 }
 
 				if($iNum>0 && (array_sum($aValueNum) === $iNum)){
-					for($i=0,$sKey=$aField[$i]; $i < $iNum; $i++){
-						if(!isset($this->mTableInfo[$this->mTableFullName][$val]['Type']))
-							throw new \Exception("字段{$val}不存在!");
-						$sFieldType = $this->mTableInfo[$this->mTableFullName][$val]['Type'];
+					for($i=0,$sKey=current($aField); $i < $iNum; $i++){
+						if(!isset($this->mTableInfo[$this->mTableFullName][$sKey]['Type']))
+							throw new \Exception("字段{$sKey}不存在!");
+						$sFieldType = $this->mTableInfo[$this->mTableFullName][$sKey]['Type'];
 						$sFieldType = strtolower(substr($sFieldType,0,strpos($sFieldType,'(')));
 						$iDataType = \PDO::PARAM_STR;
 						if(in_array($sFieldType,$this->mDbIntegerType)){
 							$iDataType = \PDO::	PARAM_INT;
 						}
-						$this->mPdoStatement->bindParam(($index+1),$val,$iDataType);
+						$this->mPdoStatement->bindParam(($i+1),$sKey,$iDataType);
+						if($aValueNum[$sKey]>1){
+							$aValueNum[$sKey]--;
+						}else{
+							$sKey = next($aField);
+						}
 					}
 				}elseif($iNum>0){
 					$this->debug("SQL绑定参数个数错误:".print_r($this->mBindParam,true),E_USER_ERROR,sle\Sle::SLE_SYS);

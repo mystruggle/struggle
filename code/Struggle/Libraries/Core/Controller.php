@@ -22,6 +22,20 @@ class BaseController extends \struggle\libraries\Object{
         $this->mView = $oView;
         $this->mSle = \struggle\Sle::getInstance();
     }
+
+	public function _init(){
+		array_walk($_GET,array($this,'stripSpecialChar'));
+		array_walk($_POST,array($this,'stripSpecialChar'));
+		array_walk($_REQUEST,array($this,'stripSpecialChar'));
+	}
+
+	private function stripSpecialChar(&$item,$key){
+		if(is_array($item)){
+			array_walk($item,array($this,'stripSpecialChar'));
+		}else{
+			$item = str_replace(array('{','}'),array('&#123;','&#125;'),$item);
+		}
+	}
     
     
     public function display($sPath='', $aTplData = array()){

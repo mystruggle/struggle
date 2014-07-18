@@ -2,6 +2,9 @@
 namespace struggle\libraries\db;
 abstract class Db extends \struggle\libraries\Object{
 
+	public function handleFieldScope(){
+	}
+
 
 	abstract public function setAttr($name,$value);
 	abstract public function getAttr($name);

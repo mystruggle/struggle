@@ -6,7 +6,7 @@ class UserModel extends Model{
     public $alias    = '';
     public $suffix   = '';
     public $prefix   = 'sle_';
-    public $prikey   = 'id';
+    public $priKey   = 'id';
 
     public $relation = array(
             'belong_to_role'=>array(
@@ -21,5 +21,5 @@ class UserModel extends Model{
                 ),
         );
 
-	public function test(){}
+	public function test(){ die(__METHOD__);}
 }

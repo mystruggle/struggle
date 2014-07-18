@@ -218,29 +218,29 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
     }
 
 
-
+    /**
+	 * 选择列
+	*/
     private function _field($sField){
-		$aParams = array();
-        if(is_string($sField)){
-			$aField = explode(',',$sField);
-			foreach($aField as $index=>$field){
-				preg_match('/\s+as\s+/i',$field,$arr);
-				if(count($arr)){
-					$aField[$index] = "{$this->mSelectInfo['join']['alias']}.{$field}";
-				}else{
-					$aField[$index] = "{$this->mAlias}.{$field}";
-				}
-			}
-            $sField = implode(',',$aField);
-            $this->mSelectInfo['field'] = $sField;
-        }else
-            return false;
-
+		if(is_string($sField))
+		    return $sField;
+		return false;
     }
 
+
+	/**
+	 * 关联关系处理
+	*/
     private function _join($param){
-		$sJoin = '';
-		if($param){
+		$bRlt = false;
+		if(!$param){
+			return $bRlt;
+		}
+		$this->test();
+		//$aRelation = explode(',',$param[);
+		array_walk($aRelation ,create_function('&$item,$key','$item = trim($item);'));print_r($aRelation);die('end');
+		foreach($aRelation as $index=>$relation){
+			$this->test();
 		}
 		$this->mSelectInfo['join'] = $sJoin;
         //print_r($param);
@@ -255,6 +255,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 	 *   数组类型，主要是``标记表字段，占位符不含有表字段时
 	 *   字符串类型，无
 	 * 最后把所有没有占位符的自动添加占位符，格式如:name，然后预处理再执行操作
+	 * 会调用_Where开头函数
 	 * @param mixed $param  传入的参数 
 	 * @return void
 	 * @author luguo<luguo@139.com>
@@ -298,6 +299,8 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
         }
 
     }
+
+
 
 
     /**

@@ -120,7 +120,7 @@ class BaseModel extends \struggle\libraries\Object{
 	 * 当传入的参数为字符串类型，字符串中可以使用反引号``标记一个表字段，用{}字符包裹值，
 	   {}不能嵌套，如需要嵌套，则用&#123;表示{,&#125;表示}；数组的键名可以使用``标记表字段
 	 * @param mixed $condition 数组类型或字符类型
-	 * @return void
+	 * @return object
 	 * @author luguo<luguo@139.com>
  	 */
 	public function where($condition){
@@ -135,12 +135,13 @@ class BaseModel extends \struggle\libraries\Object{
 			$this->debug("WHERE参数只能为数组或字符串类型".__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
 		}
         $this->mSelectElement['where']=$where;
+		return $this;
 	}
 
 
     public function join($name){
         $aRelation = $this->relation;
-        print_r($aRelation);
+		$this->mSelectElement['join'] = $aRelation;
         return $this;
     }
 

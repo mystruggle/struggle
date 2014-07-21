@@ -233,14 +233,8 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 	*/
     private function _join($param){
 		$bRlt = false;
-		if(!$param){
-			return $bRlt;
-		}
-		$this->test();
-		//$aRelation = explode(',',$param[);
-		array_walk($aRelation ,create_function('&$item,$key','$item = trim($item);'));print_r($aRelation);die('end');
-		foreach($aRelation as $index=>$relation){
-			$this->test();
+		foreach($param as $index=>$relation){
+			print_r($relation);
 		}
 		$this->mSelectInfo['join'] = $sJoin;
         //print_r($param);

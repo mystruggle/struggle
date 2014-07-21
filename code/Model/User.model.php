@@ -11,13 +11,14 @@ class UserModel extends Model{
     public $relation = array(
             'belong_to_role'=>array(
                     'model'=>'role',
-                    'type'=>'',
-                    'refer_key'=>'',
+                    'type'=>MANY_TO_MANY,
+                    'refer_key'=>'id',
                     'foreign_key'=>'',
-                    'middle_table'=>'',
+                    'middle_table'=>'role_user',
                     'reverse'=>'',
                     'ext_limit'=>'',
                     'dependent'=>'',
+					'alias'=>'',
                 ),
         );
 

@@ -2,6 +2,10 @@
 namespace struggle\libraries\core;
 use struggle as sle;
 
+define('MANY_TO_MANY',1);
+define('HAS_ONE',2);
+define('BELONES_TO',3);
+
 class BaseModel extends \struggle\libraries\Object{
     /* 数据库连接 */
     protected $mDb  = null;
@@ -138,10 +142,20 @@ class BaseModel extends \struggle\libraries\Object{
 		return $this;
 	}
 
-
+    /**
+	 * 关联查询
+	 * @return boolean
+	*/
     public function join($name){
-        $aRelation = $this->relation;
-		$this->mSelectElement['join'] = $aRelation;
+		$aRelation = explode(',',$name);
+		array_walk($aRelation ,create_function('&$item,$key','$item=trim($item);'));
+		foreach($aRelation as $index=>$relation){
+			if(!isset($this->relation[$relation]) || empty($this->relation[$relation])){
+				$this->debug("关联关系不存在{$name} ".__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+				return null;
+			}
+			$this->mSelectElement['join'][] = $this->relation[$relation];
+		}
         return $this;
     }
 

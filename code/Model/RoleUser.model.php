@@ -18,18 +18,20 @@ namespace struggle\model;
 */
 
 
-class UserModel extends Model{
-    public $table    = 'user';
-    public $name     = 'User';  //模型名称
+class RoleUserModel extends Model{
+    public $table    = 'role_user';
+    public $name     = 'RoleUser';  //模型名称
     public $alias    = '';
-    public $suffix   = '';
-    public $prefix   = 'sle_';
-    public $priKey   = 'id';
+    public $priKey   = 'user_id,role_id';
 
 	public $relation = array(
 		       'role'=>array(
-		                   'middleTable'=>'role_user',
-		                   'type'=>HAS_AND_BELONG_TO_MANY,
+		                   'forginKey'=>'role_id',
+		                   'type'=>HAS_MANY,
+		               ),
+		       'user'=>array(
+		                   'forginKey'=>'user_id',
+		                   'type'=>HAS_MANY,
 		               ),
 		   );
 

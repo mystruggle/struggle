@@ -2,9 +2,10 @@
 namespace struggle\libraries\core;
 use struggle as sle;
 
-define('MANY_TO_MANY',1);
-define('HAS_ONE',2);
-define('BELONES_TO',3);
+define('HAS_ONE',1);
+define('BELONES_TO',2);
+define('HAS_MANY',3);
+define('HAS_AND BELONG_TO_MANY',4);
 
 class BaseModel extends \struggle\libraries\Object{
     /* 数据库连接 */

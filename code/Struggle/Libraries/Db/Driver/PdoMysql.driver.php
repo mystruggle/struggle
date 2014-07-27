@@ -234,6 +234,17 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
     private function _join($param){
 		$bRlt = false;
 		foreach($param as $index=>$relation){
+			if($relation['type'] == HAS_AND_BELONG_TO_MANY){
+				$sMiddleTable = sle\ctop($relation['middleTable']);
+				$oMiddleModel = sle\M($sMiddleTable);
+				if($oMiddleModel){
+					print_r($this);
+					echo $this->priKey;
+				}else{
+					$this->debug("模型不存在,请检查模型名称 :{$sMiddleTable} ".__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+				}
+				var_dump($oMiddleModel);die('end');
+			}
 			print_r($relation);
 		}
 		$this->mSelectInfo['join'] = $sJoin;

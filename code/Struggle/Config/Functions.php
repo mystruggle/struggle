@@ -80,6 +80,7 @@ function C($sName, $mVal = null){
                 return $aConfig[$sName];
             $aConfig[$sName] = $mVal;
         }else{
+			$sName = strtolower($sName);
             $mTmpRlt = strToArrElement($sName, $mVal, $aConfig);
             if (is_null($mVal))
                 return $mTmpRlt;
@@ -313,7 +314,10 @@ function getLibDir($sDir){
     return $aRlt;
 }
 
-
+/**
+ * 模型实例函数
+ * @return mixed 成功返回resource 或 失败 返回 null
+*/
 function M($sName = ''){
 	static $aModel = array();
 	$sModelClassSuffix = 'Model';

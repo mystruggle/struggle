@@ -39,6 +39,8 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
     protected $mTableInfo   = array(); //表结构信息
     protected $mTableFullName = '';
     protected $mAlias         = '';
+	private   $mReferKey      = ''; //参考表主键
+	private   $mReferModel    = ''; //参考模型
     protected $mSelectInfo    = array();
     protected $mBindParam     = array();  //绑定的参数
 	private   $mPdoStatement  = null;
@@ -47,14 +49,25 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 	private   $mFieldExpMap   = array("gt"=>">","lt"=>"<","ge"=>">=","le"=>"<=","eq"=>"=");
 	private   $mDbIntegerType = array('tinyint','smallint','mediumint','int','integer','bigint',
 		                              'float','double','decimal','numeric','bit');
+	private   $mTablePrefix = '';
+	private   $mTableSuffix = '';
+
 
     public function __construct($aOpt){
         parent::__construct();
+		$this->mAlias = $aOpt['alias'];
+		$this->mReferKey = $aOpt['referKey'];
+		$this->mTablePrefix = sle\C('DB_TABLE_PREFIX');
+		$this->mTableSuffix = sle\C('DB_TABLE_SUFFIX');
+		$this->mReferModel  = $aOpt['model'];
         $this->connect($aOpt);
+		$this->initTableMetadata($this->mTablePrefix.sle\ptoc($aOpt['model']).$this->mTableSuffix,$this->mAlias);
     }
 
     public function _init(){
     }
+
+
 	public function connect($aOpt){
 		static $oLink = null;
         if(!$oLink){
@@ -238,14 +251,14 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 				$sMiddleTable = sle\ctop($relation['middleTable']);
 				$oMiddleModel = sle\M($sMiddleTable);
 				if($oMiddleModel){
-					print_r($this);
-					echo $this->priKey;
+					echo '<br><br>',$index,'<br>',$this->mReferModel,'<br>'	;print_r($relation);
+					//echo '<br><br>',$this->mReferKey,'<br><br>';
 				}else{
 					$this->debug("模型不存在,请检查模型名称 :{$sMiddleTable} ".__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
 				}
-				var_dump($oMiddleModel);die('end');
+				//var_dump($oMiddleModel);die('end');
 			}
-			print_r($relation);
+			//print_r($relation);
 		}
 		$this->mSelectInfo['join'] = $sJoin;
         //print_r($param);

@@ -26,6 +26,9 @@ class BaseModel extends \struggle\libraries\Object{
 	private   $mDrvNameSpace = '\struggle\libraries\db\driver\\';
 	private   $mSelectElement = array('field'  =>'','join'=>'','where'=>'',
 		                              'groupby'=>'','having'=>'','orderby'=>'','limit'=>'');
+	private   $mAlias      = '';
+	private   $mReferKey   = '';
+	private   $mReferModel = '';
 
 
     public function __construct(){
@@ -46,18 +49,15 @@ class BaseModel extends \struggle\libraries\Object{
         $this->mCharset = sle\C('LANG_CHARACTER_SET')?sle\C('LANG_CHARACTER_SET'):'utf8';
         $this->mCharset = str_replace('-','',$this->mCharset);
 
-        $sModelName = str_replace(sle\C('MODEL.CLASS.SUFFIX'),'',basename(str_replace(array('/','\\'),'/',get_class($this))));
+        $sModelName = str_replace(sle\C('MODEL_CLASS_SUFFIX'),'',basename(str_replace(array('/','\\'),'/',get_class($this))));
         if($sModelName){
-            $sTableName = sle\ptoc($sModelName);
-            $sTablePrefix = sle\C('DB_TABLE_PREFIX');
-            $sTableSuffix = sle\C('DB_TABLE_SUFFIX');
-            $sTableName = $sTablePrefix.$sTableName.$sTableSuffix;
             if(property_exists($this,'alias') && $this->alias){
-                $this->mSelectElement['alias'] = $this->alias;
+                $this->mAlias = $this->alias;
             }else{
-                $this->mSelectElement['alias'] = strtolower($sModelName[0]);
+                $this->mAlias = $sModelName;
             }
-            $this->mSelectElement['table'] = $sTableName;
+            $this->mReferModel = $sModelName;
+			$this->mReferKey   = $this->priKey;
         }
     }
 
@@ -85,13 +85,16 @@ class BaseModel extends \struggle\libraries\Object{
                       'dbname'=>$this->mDbName,
                       'user'=>$this->mUser,
                       'pwd'=>$this->mPwd,
-                      'charset'=>$this->mCharset
+                      'charset'=>$this->mCharset,
+			          'alias'  =>$this->mAlias,
+			          'model'  =>$this->mReferModel,
+			          'referKey'=>$this->mReferKey,
                 );
         if(!isset($aDb[$sKey]))
 		    $aDb[$sKey] = new $sClassName($aOpt);
         //初始化表，读取表的元数据
-        if($this->mSelectElement['table'] && $this->mSelectElement['alias'])
-            $aDb[$sKey] ->initTableMetadata($this->mSelectElement['table'],$this->mSelectElement['alias']);
+        //if($this->mReferModel && $this->mAlias)
+            //$aDb[$sKey] ->initTableMetadata($this->mTablePrefix.sle\ptoc($this->mReferModel.$this->mTableSuffix),$this->mAlias);
         return $this->mDb = $aDb[$sKey];
 	}
 
@@ -145,7 +148,7 @@ class BaseModel extends \struggle\libraries\Object{
 
     /**
 	 * 关联查询
-	 * @return boolean
+	 * @return mixed 成功返回模型对象resource 失败返回false
 	*/
     public function join($name){
 		$aRelation = explode(',',$name);
@@ -153,9 +156,10 @@ class BaseModel extends \struggle\libraries\Object{
 		foreach($aRelation as $index=>$relation){
 			if(!isset($this->relation[$relation]) || empty($this->relation[$relation])){
 				$this->debug("关联关系不存在{$name} ".__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
-				return null;
+				return false;
 			}
-			$this->mSelectElement['join'][] = $this->relation[$relation];
+			//$this->relation[$relation]['table'] = $relation;
+			$this->mSelectElement['join'][$relation] = $this->relation[$relation];
 		}
         return $this;
     }

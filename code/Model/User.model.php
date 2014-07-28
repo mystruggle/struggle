@@ -27,7 +27,7 @@ class UserModel extends Model{
     public $priKey   = 'id';
 
 	public $relation = array(
-		       'role'=>array(
+		       'Role'=>array(
 		                   'middleTable'=>'role_user',
 		                   'type'=>HAS_AND_BELONG_TO_MANY,
 		               ),

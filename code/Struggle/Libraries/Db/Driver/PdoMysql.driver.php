@@ -29,7 +29,6 @@ use struggle as sle;
  */
 
 
-
 class PdoMysqlDriver extends \struggle\libraries\db\Db{
 	protected $mLink = null;
     protected $mErrorInfo = '';
@@ -246,12 +245,29 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 	*/
     private function _join($param){
 		$bRlt = false;
-		foreach($param as $index=>$relation){
+		$aJoin = array();
+		foreach($param as $model=>$relation){
 			if($relation['type'] == HAS_AND_BELONG_TO_MANY){
 				$sMiddleTable = sle\ctop($relation['middleTable']);
 				$oMiddleModel = sle\M($sMiddleTable);
 				if($oMiddleModel){
-					echo '<br><br>',$index,'<br>',$this->mReferModel,'<br>'	;print_r($relation);
+					if(isset($oMiddleModel->relation[$model]) && $oMiddleModel->relation[$model]){
+						if(isset($oMiddleModel->relation[$model]['forginKey']) && $oMiddleModel->relation[$model]['forginKey']){
+							$sJoinAlias = sle\M($model)->alias;
+							$sJoinPriKey   = sle\M($model)->priKey;
+						    $aJoin[] = "{$sJoinAlias}.{$sJoinPriKey} = {$oMiddleModel->alias}.{$oMiddleModel->relation[$model]['forginKey']}";
+						}
+					}
+
+                    $sReferModel = $this->mReferModel;
+					if(isset($oMiddleModel->relation[$sReferModel]) && $oMiddleModel->relation[$sReferModel]){
+						if(isset($oMiddleModel->relation[$sReferModel]['forginKey']) && $oMiddleModel->relation[$sReferModel]['forginKey']){
+						    $aJoin[] = "{$this->mAlias}.{$this->mReferKey} = {$oMiddleModel->alias}.{$oMiddleModel->relation[$sReferModel]['forginKey']}";
+						}
+					}
+
+
+					echo '<br><br>',$model,'<br>',$this->mReferModel,'<br>'	;print_r($aJoin);
 					//echo '<br><br>',$this->mReferKey,'<br><br>';
 				}else{
 					$this->debug("模型不存在,请检查模型名称 :{$sMiddleTable} ".__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);

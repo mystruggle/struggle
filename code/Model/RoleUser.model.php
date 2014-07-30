@@ -21,15 +21,15 @@ namespace struggle\model;
 class RoleUserModel extends Model{
     public $table    = 'role_user';
     public $name     = 'RoleUser';  //模型名称
-    public $alias    = '';
+    public $alias    = 'ru';
     public $priKey   = 'user_id,role_id';
 
 	public $relation = array(
-		       'role'=>array(
+		       'Role'=>array(
 		                   'forginKey'=>'role_id',
 		                   'type'=>HAS_MANY,
 		               ),
-		       'user'=>array(
+		       'User'=>array(
 		                   'forginKey'=>'user_id',
 		                   'type'=>HAS_MANY,
 		               ),

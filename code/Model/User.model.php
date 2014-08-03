@@ -26,12 +26,23 @@ class UserModel extends Model{
     public $prefix   = 'sle_';
     public $priKey   = 'id';
 
-	public $relation = array(
+	public $relation = array( 
 		       'Role'=>array(
 		                   'middleTable'=>'role_user',
 		                   'type'=>HAS_AND_BELONG_TO_MANY,
 		               ),
+		       'Menu'=>array(
+						   'type'=>HAS_MANY,
+		               ),
+		       'RoleUser'=>array(
+						   'type'=>HAS_MANY,
+		                   'forginKey'=>'user_id',
+		               ),
 		   );
+
+	public function getTableName(){
+		
+	}
 
 
 

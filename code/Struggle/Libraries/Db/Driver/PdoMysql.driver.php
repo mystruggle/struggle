@@ -244,40 +244,90 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 	 * 关联关系处理
 	*/
     private function _join($param){
-		$bRlt = false;
-		$aJoin = array();
+		$sJoin = '';
+		$xRlt = false;
 		foreach($param as $model=>$relation){
 			if($relation['type'] == HAS_AND_BELONG_TO_MANY){
 				$sMiddleTable = sle\ctop($relation['middleTable']);
 				$oMiddleModel = sle\M($sMiddleTable);
 				if($oMiddleModel){
-					if(isset($oMiddleModel->relation[$model]) && $oMiddleModel->relation[$model]){
-						if(isset($oMiddleModel->relation[$model]['forginKey']) && $oMiddleModel->relation[$model]['forginKey']){
-							$sJoinAlias = sle\M($model)->alias;
-							$sJoinPriKey   = sle\M($model)->priKey;
-						    $aJoin[] = "{$sJoinAlias}.{$sJoinPriKey} = {$oMiddleModel->alias}.{$oMiddleModel->relation[$model]['forginKey']}";
+					if(!property_exists($oMiddleModel,'alias') || empty($oMiddleModel->alias)){
+						$xRlt = "{$sMiddleTable} alias属性不存在或为空".__METHOD__.' line '.__LINE__;
+					}
+
+					if(!isset($oMiddleModel->relation[$this->mReferModel]['forginKey']) || empty($oMiddleModel->relation[$this->mReferModel]['forginKey'])){
+						$xRlt = "{$sMiddleTable} {$this->mReferModel}关系中forginKey不存在或为空 ".__METHOD__.' line '.__LINE__;
+					}
+					if(!$xRlt){
+					    $sMiddleAlias = $oMiddleModel->alias;
+						$sMiddleForginKey = $oMiddleModel->relation[$this->mReferModel]['forginKey'];
+					    $sJoin .= " INNER JOIN ".$oMiddleModel->getTableName()." AS {$sMiddleAlias} ON {$this->mAlias}.{$this->mReferKey} = {$sMiddleAlias}.{$sMiddleForginKey} ";
+						$oModel = sle\M($model);
+						if($oModel){
+							if(!property_exists($oModel,'alias') || empty($oModel->alias)){
+								$xRlt = "{$model} alias属性不存在或为空".__METHOD__.' line '.__LINE__;
+							}
+							if(!property_exists($oModel,'priKey') || empty($oModel->priKey)){
+								$xRlt = "{$model} priKey属性不存在或为空".__METHOD__.' line '.__LINE__;
+							}
+
+							if(!isset($oMiddleModel->relation[$model]['forginKey']) || empty($oMiddleModel->relation[$model]['forginKey'])){
+								$xRlt = "{$sMiddleTable} {$model}关系中forginKey不存在或为空 ".__METHOD__.' line '.__LINE__;
+							}
+
+							if(!$xRlt){
+								$sModelAlias = $oModel->alias;
+								$sModelPriKey = $oModel->priKey;
+								$sMiddleModelForginKey = $oMiddleModel->relation[$model]['forginKey'];
+								$sJoin .= strtoupper($relation['joinType'])." JOIN ".$oModel->getTableName()." AS {$sModelAlias} ON {$sModelAlias}.{$sModelPriKey}={$sMiddleAlias}.{$sMiddleModelForginKey} ";
+							}
+						}else{
+							$xRlt = "模型不存在{$model} ".__METHOD__.' line '.__LINE__;
 						}
 					}
 
-                    $sReferModel = $this->mReferModel;
-					if(isset($oMiddleModel->relation[$sReferModel]) && $oMiddleModel->relation[$sReferModel]){
-						if(isset($oMiddleModel->relation[$sReferModel]['forginKey']) && $oMiddleModel->relation[$sReferModel]['forginKey']){
-						    $aJoin[] = "{$this->mAlias}.{$this->mReferKey} = {$oMiddleModel->alias}.{$oMiddleModel->relation[$sReferModel]['forginKey']}";
-						}
-					}
-
-
-					echo '<br><br>',$model,'<br>',$this->mReferModel,'<br>'	;print_r($aJoin);
-					//echo '<br><br>',$this->mReferKey,'<br><br>';
 				}else{
-					$this->debug("模型不存在,请检查模型名称 :{$sMiddleTable} ".__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+					$xRlt = "模型不存在,请检查模型名称 :{$sMiddleTable} ".__METHOD__.' line '.__LINE__;
 				}
-				//var_dump($oMiddleModel);die('end');
+			}else{
+				//除了多对多关系的其他关系处理
+				$oModel = sle\M($model);
+				if($oModel){
+					if(!property_exists($oModel,'alias') || empty($oModel->alias)){
+						$xRlt = "{$model} alias属性不存在或为空".__METHOD__.' line '.__LINE__;
+					}
+					/*
+					if(!property_exists($oModel,'priKey') || empty($oModel->priKey)){
+						$xRlt = "{$model} priKey属性不存在或为空".__METHOD__.' line '.__LINE__;
+					}
+					*/
+
+					if(!isset($relation['joinType']) || empty($relation['joinType'])){
+						$xRlt = "{$model} 连接类型(joinType)不存在或为空".__METHOD__.' line '.__LINE__;
+					}
+
+					if(!isset($relation['forginKey']) || empty($relation['forginKey'])){
+						$xRlt = "{$model} 外键(forginKey)不存在或为空".__METHOD__.' line '.__LINE__;
+					}
+
+					if(!$xRlt){
+						$sModelAlias = $oModel->alias;
+						//$sModelPriKey = $oModel->priKey;
+						$sModelForginKey = $relation['forginKey'];
+						$sJoin .= strtoupper($relation['joinType'])." JOIN ".$oModel->getTableName()." AS {$sModelAlias} ON {$sModelAlias}.{$sModelForginKey} = {$this->mAlias}.{$this->mReferKey} ";
+				    }
+				}else{
+				    $xRlt = "模型不存在,请检查模型名称 :{$model} ".__METHOD__.' line '.__LINE__;
+			    }
 			}
-			//print_r($relation);
-		}
+			//#TODO  HAS_MANY BELONGS_TO HAS_ONE关系的细分处理
+
+
+
+		}//end foreach
+		if($xRlt)
+	      $this->debug($xRlt,E_USER_ERROR,sle\Sle::SLE_SYS);
 		$this->mSelectInfo['join'] = $sJoin;
-        //print_r($param);
     }
 
     /**

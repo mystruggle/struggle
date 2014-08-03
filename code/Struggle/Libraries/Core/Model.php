@@ -151,16 +151,24 @@ class BaseModel extends \struggle\libraries\Object{
 	 * @return mixed 成功返回模型对象resource 失败返回false
 	*/
     public function join($name){
-		$aRelation = explode(',',$name);
+		$name = str_replace(',',' inner ',$name);
+		$aRelation = preg_split('/\s+/',$name);
 		array_walk($aRelation ,create_function('&$item,$key','$item=trim($item);'));
-		foreach($aRelation as $index=>$relation){
-			if(!isset($this->relation[$relation]) || empty($this->relation[$relation])){
-				$this->debug("关联关系不存在{$name} ".__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+		if(!in_array(strtolower($aRelation[0]),array('inner','full','left','right'))){
+			array_unshift($aRelation,'inner');
+		}
+//print_r($aRelation);die;
+		for($i=0; $i < count($aRelation); $i+=2){
+			if(!isset($this->relation[$aRelation[$i+1]]) || empty($this->relation[$aRelation[$i+1]])){
+				$this->debug("关联关系不存在{$aRelation[$i+1]} ".__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
 				return false;
 			}
-			//$this->relation[$relation]['table'] = $relation;
-			$this->mSelectElement['join'][$relation] = $this->relation[$relation];
+			$this->mSelectElement['join'][$aRelation[$i+1]] = $this->relation[$aRelation[$i+1]];
+			$this->mSelectElement['join'][$aRelation[$i+1]]['table'] = $aRelation[$i+1];
+			$this->mSelectElement['join'][$aRelation[$i+1]]['joinType'] = $aRelation[$i];
+
 		}
+		//print_r($this->mSelectElement['join']);echo '<br><br>';
         return $this;
     }
 
@@ -205,6 +213,10 @@ class BaseModel extends \struggle\libraries\Object{
     //属性函数
 	protected function _mField($param){
 		$this->field($param);
+	}
+
+	public function getTableName(){
+		return sle\C('DB_TABLE_PREFIX').sle\ptoc($this->name).sle\C('DB_TABLE_SUFFIX');
 	}
 
 

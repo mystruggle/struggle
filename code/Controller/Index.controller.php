@@ -44,8 +44,11 @@ $this->bindParam(array('sys',1,'2{',2,3));
 (name=? and pwd >=?) or (desc<=? and create_time in(?,?))
 
 */
-$c->bindParam(array('sys',1,'2{',2,3));
-$c->join('RoleUser')->find(array('field'=>'name,pwd','where'=>'(`name`=? and `pwd` >=?) or (`create_time` in(?,?) and `desc`<=?)','orderby'=>'name desc','limit'=>"0,2"));
+//$c->bindParam(array('123455','sys'));
+//$c->where('`name`=?')->find();
+//$c->join('Role')->where(array('`pwd`'=>'123455','User.`name`'=>'sys'))->find();
+$c->bindValue(array('sys','111',1,2,'111'));
+$c->where("(`name`=? and `pwd`>=?) or ( `id` in (?,?) and `pwd`=?)")->find();
 
 
 //$c->find(array('field'=>'id,name,name   AS n,pwd','join'=>'belong_to_role','where'=>array('id'=>2),'groupby'=>'id','having'=>'','orderby'=>'id','limit'=>""));

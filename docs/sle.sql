@@ -1,6 +1,8 @@
 create database if not exists sle collate  utf8_general_ci default character set utf8;
 
 use sle;
+set names utf8;
+
 create table  if not exists  sle_user(
   id int auto_increment primary key,
   name varchar(50) not null collate utf8_general_ci  default '' comment '用户名',
@@ -39,5 +41,6 @@ create table  if not exists  sle_role_menu(
 
 
 INSERT INTO `sle_user` VALUES (1,'sys','123455','开发者用户',1404088414);
+INSERT INTO  sle_user values(null,'admin','111','管理员用户',unix_timestamp());
 INSERT INTO `sle_role` VALUES (1,'developer','开发组',1404099929);
 INSERT INTO `sle_role_user` VALUES (1,1);

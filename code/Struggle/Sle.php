@@ -1,7 +1,7 @@
 <?php
 namespace struggle;
 
-defined('CORE_PATH') or die('Access Forbidden');
+defined('SLE_PATH') or die('Access Forbidden');
 
 header('Content-type:text/html;charset=utf-8');
 error_reporting(E_ALL | E_STRICT| E_NOTICE);
@@ -11,24 +11,33 @@ date_default_timezone_set('PRC');
 //系统运行时间
 define('BEGIN_TIME', microtime(true));
 
+//如果是后台必须设置该常量SLE_FRONTEND
+$sFrontend = '';
+if (defined('SLE_FRONTEND')){
+    $sFrontend = SLE_FRONTEND;
+}
 
 defined('APP_NAME') or define('APP_NAME', basename(dirname($_SERVER['SCRIPT_NAME'])));
 defined('APP_ROOT') or define('APP_ROOT',rtrim(dirname($_SERVER['SCRIPT_FILENAME']),'/').'/');
 
+
+
 defined('APP_PATH')      or define('APP_PATH','./');
-defined('APP_CACHE')     or define('APP_CACHE', 'Caches/');
-defined('APP_RUNTIME')   or define('APP_RUNTIME', 'Caches/Runtime/');
+defined('APP_CACHE')     or define('APP_CACHE', $sFrontend.'Caches/');
+defined('APP_RUNTIME')   or define('APP_RUNTIME', $sFrontend.'Caches/Runtime/');
 defined('APP_CONTROLLER') or define('APP_CONTROLLER', 'Controller/');
-defined('APP_MODEL')     or define('APP_MODEL', 'Model/');
+defined('APP_MODEL')     or define('APP_MODEL', $sFrontend.'Model/');
 defined('APP_THEME')     or define('APP_THEME','Themes/');
-defined('APP_PUBLIC')    or define('APP_PUBLIC','Public/');
+defined('APP_PUBLIC')    or define('APP_PUBLIC',$sFrontend.'Public/');
 defined('APP_LIB')       or define('APP_LIB','AddOnes/');
 defined('APP_CONF')      or define('APP_CONF','Config/');
 
 
-defined('LIB_PATH')       or define('LIB_PATH',CORE_PATH.'Libraries/');
-defined('CONF_PATH')      or define('CONF_PATH',CORE_PATH.'Config/');
-defined('PUBLIC_PATH')    or define('PUBLIC_PATH',CORE_PATH.'Public/');
+defined('LIB_PATH')       or define('LIB_PATH',SLE_PATH.'Libraries/');
+defined('CONF_PATH')      or define('CONF_PATH',SLE_PATH.'Config/');
+defined('PUBLIC_PATH')    or define('PUBLIC_PATH',SLE_PATH.'Public/');
+
+
 
 define('IS_WIN',PHP_OS == 'WINNT'?true:false);
 /*
@@ -195,7 +204,7 @@ class Sle{
     
     public function run(){
         static $bInit = false;
-        if(!$bInit){
+        if(!$bInit) {
             //加载核心函数文件
             $sFuncFile = CONF_PATH.'Functions.php';
             if (IS_WIN){
@@ -318,7 +327,6 @@ class Sle{
                     }
                 }
             }
-            
             
             //设置自动包含路径
             if (!$this->mLastError){

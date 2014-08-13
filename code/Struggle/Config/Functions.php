@@ -316,6 +316,7 @@ function getLibDir($sDir){
 
 /**
  * 模型实例函数
+ * @param string $sName 模型名称
  * @return mixed 成功返回resource 或 失败 返回 null
 */
 function M($sName = ''){

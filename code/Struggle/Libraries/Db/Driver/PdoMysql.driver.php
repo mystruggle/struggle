@@ -40,6 +40,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
     protected $mAlias         = '';
 	private   $mReferKey      = ''; //参考表主键
 	private   $mReferModel    = ''; //参考模型
+	//保存查询语句每个部分，如mSelectInfo['where']
     protected $mSelectInfo    = array();
     protected $mBindParam     = array();  //绑定的参数
 	private   $mPdoStatement  = null;
@@ -117,88 +118,118 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 		$this->_beginBind();
 		$this->execute();
 		//$this->fetchAll();
-		var_dump($this->fetch(),$this->mErrorInfo);
+		var_dump($this->fetchAll(),$this->mErrorInfo);
 		//return $this->fetch();
     }
 
+    /**
+     * 参数绑定(占位符不能混合使用)
+     * @throws \Exception
+     */
 	private function _beginBind(){
-		foreach($this->mBindParam as $name=>$value){
+		if (empty($this->mBindParam))
+		    return;
+		//$iMatchNum问号占位符对个数；$this->mSelectInfo存放查询语句各部分
+		if(is_numeric(key($this->mBindParam)) && ($iMatchNum = preg_match_all('#`([^`{]+)`(?:[^{`]+\?)+#i',implode(' ',$this->mSelectInfo),$arr3))){
 			//问号占位符绑定
-			if(is_numeric($name)){
-				$iNum = count($this->mBindParam);
-				$sTmp = implode(' ',$this->mSelectInfo);
-                $aField = array();   //正则提取出来的字段
-                $aFieldStr = array();  //正则子模式匹配的字符串
-                $aValueNum = array();  //值的个数
-				$iMatchNum = preg_match_all('#`([^`{]+)`(?:[^{`]+\?)+#i',$sTmp,$arr3);
-                if($iMatchNum && isset($arr3[0])){
-                    $aFieldStr = $arr3[0];
-                }
+			$iNum = count($this->mBindParam);
+            $aField = array();   //正则提取出来的字段
+            $aFieldStr = array();  //正则子模式匹配的字符串
+            $aValueNum = array();  //值的个数
+			
+            if($iMatchNum && isset($arr3[0])){
+                $aFieldStr = $arr3[0];
+            }
 
-                if($iMatchNum && isset($arr3[1])){
-                    $aField = $arr3[1];
-                    foreach($aFieldStr as $index=>$str){
-                        $aValueNum[$aField[$index]] = substr_count($str,'?');
+            if($iMatchNum && isset($arr3[1])){
+                $aField = $arr3[1];  //提取出来的表字段名
+                //计算每对占位符对中问号的个数
+                foreach($aFieldStr as $index=>$str){
+                    for ($ii=0;$ii<substr_count($str, '?');$ii++){
+                        $aValueNum[]=$aField[$index];
                     }
                 }
-
-				if($iNum>0 && (array_sum($aValueNum) === $iNum)){
-					for($i=0,$sKey=current($aField); $i < $iNum; $i++){
-						if(!isset($this->mTableInfo[$this->mTableFullName][$sKey]['Type']))
-							throw new \Exception("字段{$sKey}不存在!");
-						$sFieldType = $this->mTableInfo[$this->mTableFullName][$sKey]['Type'];
-						$sFieldType = strtolower(substr($sFieldType,0,strpos($sFieldType,'(')));
-						$iDataType = \PDO::PARAM_STR;
-						if(in_array($sFieldType,$this->mDbIntegerType)){
-							$iDataType = \PDO::	PARAM_INT;
-						}
-						$this->mPdoStatement->bindParam(($i+1),$sKey,$iDataType);
-						if($aValueNum[$sKey]>1){
-							$aValueNum[$sKey]--;
-						}else{
-							$sKey = next($aField);
-						}
+            }
+            
+			if($iNum>0 && (count($aValueNum) === $iNum)){
+				for($i=0; $i < $iNum; $i++){
+				    $sKey = $aValueNum[$i];
+					if(!isset($this->mTableInfo[$this->mTableFullName][$sKey]['Type']))
+						throw new \Exception("字段{$sKey}不存在!");
+					$sFieldType = $this->mTableInfo[$this->mTableFullName][$sKey]['Type'];
+					$sFieldType = strtolower(substr($sFieldType,0,strpos($sFieldType,'(')));
+					$iDataType = \PDO::PARAM_STR;
+					if(in_array($sFieldType,$this->mDbIntegerType)){
+						$iDataType = \PDO::PARAM_INT;
 					}
-				}elseif($iNum>0){
-					$this->debug("SQL绑定参数个数错误:".print_r($this->mBindParam,true),E_USER_ERROR,sle\Sle::SLE_SYS);
+					$this->mPdoStatement->bindParam(($i+1),$this->mBindParam[$i],$iDataType);
 				}
-				break;
+			}elseif($iNum>0){
+				$this->debug("SQL绑定参数个数错误:".print_r($this->mBindParam,true),E_USER_ERROR,sle\Sle::SLE_SYS);
 			}
+		}else{
 			//其他占位符绑定
-			if(preg_match('/:(.+?)(?:\_\d+)?$/i',$name,$arr)){
-				$sField = $arr[1];
-				if(!isset($this->mTableInfo[$this->mTableFullName][$sField]['Type'])){
-					//当绑定的参数数组的键名中不包含表字段时,即命名没有“:表字段”
-					if(preg_match('/`([^`]+)`[^`]+(?=:'.$sField.')/i',implode(' ',$this->mSelectInfo),$arr2)){
-						$sField = $arr2[1];
-					}print_r($this->mBindParam);echo __METHOD__.' line '.__LINE__;
-					if(!isset($this->mTableInfo[$this->mTableFullName][$sField]['Type']))
-					    throw new \Exception("字段{$sField}不存在!");
-				}
-				$sFieldType = $this->mTableInfo[$this->mTableFullName][$sField]['Type'];
-				$sFieldType = strtolower(substr($sFieldType,0,strpos($sFieldType,'(')));
-				$iDataType = \PDO::PARAM_STR;
-				if(in_array($sFieldType,$this->mDbIntegerType)){
-					$iDataType = \PDO::	PARAM_INT;
-				}
-				$this->mPdoStatement->bindValue($name,$value,$iDataType);
-			}
+		    foreach($this->mBindParam as $name=>$value){
+    			if(preg_match('/:(.+?)(?:\_\d+)?$/i',$name,$arr)){
+    				$sField = $arr[1];
+    				if(!isset($this->mTableInfo[$this->mTableFullName][$sField]['Type'])){
+    					//当绑定的参数数组的键名中不包含表字段时,即命名没有“:表字段”
+    					if(preg_match('/`([^`]+)`[^`]+(?=:'.$sField.')/i',implode(' ',$this->mSelectInfo),$arr2)){
+    						$sField = $arr2[1];
+    					}
+    					if(!isset($this->mTableInfo[$this->mTableFullName][$sField]['Type']))
+    					    throw new \Exception("字段{$sField}不存在!");
+    				}
+    				$sFieldType = $this->mTableInfo[$this->mTableFullName][$sField]['Type'];
+    				$sFieldType = strtolower(substr($sFieldType,0,strpos($sFieldType,'(')));
+    				$iDataType = \PDO::PARAM_STR;
+    				if(in_array($sFieldType,$this->mDbIntegerType)){
+    					$iDataType = \PDO::	PARAM_INT;
+    				}
+    				$this->mPdoStatement->bindValue($name,$value,$iDataType);
+    			}
+		    }
 		}
 		$this->debug("SQL绑定参数:".print_r($this->mBindParam,true),E_USER_NOTICE,sle\Sle::SLE_SYS);
 		//每次查询后清空绑定的参数
 		$this->mBindParam = array();
 	}
+	
+	/**
+	 * 替换别名
+	 * @param array $matchs  匹配数组
+	 * @return string
+	 * @author luguo@139.com
+	 */
+	private function tAlias($matchs){
+	    $xRlt = array('status'=>true,'msg'=>'');
+	    $sOrgi = $matchs[0];
+	    $sSearch = $matchs[1];
+	    $sReplace = $sSearch;
+	    if($oModel = sle\M(sle\ctop($sSearch))){
+	        if(property_exists($oModel, 'alias')){
+	            $sReplace = $oModel->alias;
+	        }else{
+	            $xRlt['status'] = false;
+	            $xRlt['msg'] = "模型{$sSearch}属性alias 不存在 ".__METHOD__.' line '.__LINE__;
+	        }
+	    } 
+	    if (!$xRlt['status'])
+	        $this->debug($xRlt['msg'], E_USER_ERROR,sle\Sle::SLE_SYS);
+	    $sOrgi = str_replace($sSearch, $sReplace, $sOrgi);
+	    return $sOrgi;
+	}
 
 	private function buildSelect(){
-		$sField = $this->mSelectInfo['field'];
-		$sWhere = $this->mSelectInfo['where'];
+		$sField = isset($this->mSelectInfo['field'])?$this->mSelectInfo['field']:'';
+		$sWhere = isset($this->mSelectInfo['where'])?$this->mSelectInfo['where']:'';
 		$sTable = $this->mTableFullName;
 		$sAlias = $this->mAlias;
-		$sJoin  = $this->mSelectInfo['join'];
-		$sGroupby = $this->mSelectInfo['groupby'];
-		$sHaving  = $this->mSelectInfo['having'];
-		$sOrderby = $this->mSelectInfo['orderby'];
-		$sLimit   = $this->mSelectInfo['limit'];
+		$sJoin  = isset($this->mSelectInfo['join'])?$this->mSelectInfo['join']:'';
+		$sGroupby = isset($this->mSelectInfo['groupby'])?$this->mSelectInfo['groupby']:'';
+		$sHaving  = isset($this->mSelectInfo['having'])?$this->mSelectInfo['having']:'';
+		$sOrderby = isset($this->mSelectInfo['orderby'])?$this->mSelectInfo['orderby']:'';
+		$sLimit   = isset($this->mSelectInfo['limit'])?$this->mSelectInfo['limit']:'';
 		$sSql = "SELECT {$sField} FROM {$sTable} AS {$sAlias} {$sJoin} {$sWhere} {$sGroupby} {$sHaving} {$sOrderby} {$sLimit}";
 		$this->debug("SQL语句拼接:{$sSql}",E_USER_NOTICE,sle\Sle::SLE_SYS);
 		return $sSql;
@@ -235,13 +266,14 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 	*/
     private function _field($sField){
 		if(is_string($sField))
-		    return $sField;
+		    $this->mSelectInfo['field'] = $sField;
 		return false;
     }
 
 
 	/**
 	 * 关联关系处理
+	 * 只能关联查询跟参考模型的有关系的模型，即所有关联模型的外键都是与参考模型主键进行关联reference.key=join.key
 	*/
     private function _join($param){
 		$sJoin = '';
@@ -296,11 +328,6 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 					if(!property_exists($oModel,'alias') || empty($oModel->alias)){
 						$xRlt = "{$model} alias属性不存在或为空".__METHOD__.' line '.__LINE__;
 					}
-					/*
-					if(!property_exists($oModel,'priKey') || empty($oModel->priKey)){
-						$xRlt = "{$model} priKey属性不存在或为空".__METHOD__.' line '.__LINE__;
-					}
-					*/
 
 					if(!isset($relation['joinType']) || empty($relation['joinType'])){
 						$xRlt = "{$model} 连接类型(joinType)不存在或为空".__METHOD__.' line '.__LINE__;
@@ -312,7 +339,6 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 
 					if(!$xRlt){
 						$sModelAlias = $oModel->alias;
-						//$sModelPriKey = $oModel->priKey;
 						$sModelForginKey = $relation['forginKey'];
 						$sJoin .= strtoupper($relation['joinType'])." JOIN ".$oModel->getTableName()." AS {$sModelAlias} ON {$sModelAlias}.{$sModelForginKey} = {$this->mAlias}.{$this->mReferKey} ";
 				    }
@@ -381,7 +407,8 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 			$param = preg_replace_callback('#`([^`{]+)`(?:[^{`]+\{[^}`]+\})+#i',array($this,'fetchFieldValue'),$param);
             $this->mSelectInfo['where'] = "WHERE {$param}";
         }
-
+		//替换表别名
+		$this->mSelectInfo['where'] = preg_replace_callback('/([^\s]+)(?=\.`)/', array($this,'tAlias'), $this->mSelectInfo['where']); 
     }
 
 
@@ -394,21 +421,23 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
      * @param mixed  $val   数组值
      * @return void
      * @author luguo<luguo@139.com>
-     * @date 2014/7/7
      */
     private function reassoc($key,$val){
         $sField = $key;
         $sOp    = 'eq';
         $sBindField = ":{$sField}";
         $aBindValues = array();
+        //筛选操作符，替换操作符
         preg_match($this->mFieldRegexp,$key,$arr);
         if(isset($arr[1])){
             $sField = $arr[1];
             $sBindField = ":{$sField}";
         }
+        //提取出来的操作符
         if(isset($arr[2])){
             $sOp = $arr[2];
         }
+        
         //用表字段替换原绑定值的键
         $aBindValues[$sBindField] = $val;
 
@@ -444,8 +473,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 	 * 如,`name`={{$name}}
 	 * @param array $matchs  提取含有特殊符号字符串片段，匹配格式如`name` like {{$name}}
 	 * @return void
-	 * @author luguo<luguo@139.com> 
-	 * @date 2014/7/8
+	 * @author luguo@139.com
  	 */
 	private function fetchFieldValue($matchs){
 		$aStr = array();

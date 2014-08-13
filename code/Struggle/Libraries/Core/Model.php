@@ -1,6 +1,7 @@
 <?php
 namespace struggle\libraries\core;
 use struggle as sle;
+use struggle\ctop;
 
 define('HAS_ONE',1);
 define('BELONES_TO',2);
@@ -142,7 +143,7 @@ class BaseModel extends \struggle\libraries\Object{
         }else{
 			$this->debug("WHERE参数只能为数组或字符串类型".__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
 		}
-        $this->mSelectElement['where']=$where;
+		$this->mSelectElement['where']=$where;
 		return $this;
 	}
 
@@ -175,8 +176,33 @@ class BaseModel extends \struggle\libraries\Object{
 
 
     //获取列处理
-	public function field($sField){
-		$this->mSelectElement['field'] = $sField;
+	public function field($sField){echo $sField;
+	    $xRlt = array('status'=>true,'msg'=>'');
+	    $aField = explode(',', $sField);
+	    $aRlt   = array();
+	    $sAlias = '';
+	    foreach ($aField as $field){
+	        if ($iPos = strpos($field, '.')){
+	            $sModelName = substr($field, 0,$iPos);
+	            if(!$oModel = sle\M(sle\ctop($sModelName))){
+	                $xRlt = $xRlt['status'] = false;
+	                $xRlt = $xRlt['msg']    = "模型不存在{$sModelName}".__METHOD__.' line '.__LINE__;
+	            }
+	            if ($xRlt['status'] && property_exists($oModel, 'alias') && empty($oModel->alias)){
+	                $xRlt = $xRlt['status'] = false;
+	                $xRlt = $xRlt['msg']    = "模型{$sModelName}属性alias不存在或为空".__METHOD__.' line '.__LINE__;
+	            }
+	            if ($xRlt['status']){
+	                $aRlt[] = str_replace($sModelName, $oModel->alias, $field);
+	            }
+	        }else{
+	            $aRlt[] = $field;
+	        }
+	    }
+	    if ($xRlt['status'])
+		    $this->mSelectElement['field'] = implode(',', $aRlt);
+	    else 
+	        $this->debug($xRlt['msg'], E_USER_ERROR,sle\Sle::SLE_SYS);
 	}
 
 
@@ -199,6 +225,12 @@ class BaseModel extends \struggle\libraries\Object{
             if(isset($this->relation[$aOpt['join']]) && !empty($this->relation[$aOpt['join']])){
                 $this->mSelectElement['join'] = $this->relation[$aOpt['join']];
             }
+        }
+        
+        //如果条件空则从构造查询语句中去除
+        foreach ($aSqlElement as $cond){
+            if (!isset($this->mSelectElement[$cond]) || empty($this->mSelectElement[$cond]))
+                unset($this->mSelectElement[$cond]);
         }
 	}
 

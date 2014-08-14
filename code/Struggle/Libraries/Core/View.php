@@ -242,6 +242,20 @@ class View extends \struggle\libraries\Object{
     }
     
     
+    private function _css($params){
+        $aParam = explode('/', $params);
+        $sThemes = 'Default';
+        $sFile   = $aParam[0];
+        if (isset($aParam[1]) && $aParam[1]){
+            $sThemes = $aParam[0];
+            $sFile   = $aParam[1];
+        }
+        if (strtolower(substr($sFile, strrpos($sFile, '.')) != 'css')){
+            $sFile .= '.css';
+        }
+        return APP_PUBLIC."{$sThemes}/css/{$sFile}";
+    }
+    
     
 
 

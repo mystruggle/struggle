@@ -1,4 +1,4 @@
-{include backend_header}
+<?php echo $this->_include_tpl_('backend_header');?>
 
 <!-- BEGIN BODY -->
 
@@ -16,9 +16,9 @@
 
                 <!-- BEGIN LOGO -->
 
-                <a class="brand" href="{url index}">
+                <a class="brand" href="index.html">
 
-                <img src="{html image:logo.png}" alt="logo" />
+                <img src="../Public/Default/images/logo.png" alt="logo" />
 
                 </a>
 
@@ -28,7 +28,7 @@
 
                 <a href="javascript:;" class="btn-navbar collapsed" data-toggle="collapse" data-target=".nav-collapse">
 
-                <img src="{html image:menu-toggler.png}" alt="" />
+                <img src="media/image/menu-toggler.png" alt="" />
 
                 </a>          
 
@@ -1216,8 +1216,7 @@
 
                     <i class="icon-user"></i> 
 
-                    <span class="title">系统
-                    管理</span>
+                    <span class="title">Login Options</span>
 
                     <span class="arrow "></span>
 
@@ -3968,4 +3967,4 @@
 
 <!-- END BODY -->
 
-{include backend_footer}
+<?php echo $this->_include_tpl_('backend_footer');?>

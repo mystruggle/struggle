@@ -74,6 +74,17 @@ class BaseController extends \struggle\libraries\Object{
             }
         }
     }
+    
+    
+    /**
+     * 调用布局模板
+     * @param string $tpl   模板文件名，为空将渲染默认模板
+     * @param array  $data  传递的模板值
+     * @author luguo@139.com
+     */
+    public function layout($tpl = '', $data=array()){
+        //
+    }
 
     /**
      * 挂件处理函数
@@ -147,13 +158,16 @@ class BaseController extends \struggle\libraries\Object{
 
 
     public function _include_tpl_($sFile){
-        $aTmp = explode('/',trim($sFile));
         $sIncludeFile = $sFile;
-        if(isset($aTmp[0]) && isset($aTmp[1])){
-            $sIncludeFile = "{$this->mView->IncludeTplPath}{$aTmp[0]}/{$aTmp[1]}.{$this->mView->TplSuffix}";
+        if (strrpos($sIncludeFile, '.',strrpos($sIncludeFile, '/'))!==false){
+            if(substr($sIncludeFile, strrpos($sIncludeFile, '.',strrpos($sIncludeFile, '/'))+1) != $this->mView->TplSuffix)
+                $sIncludeFile .= ".{$this->mView->TplSuffix}";
+        }else{
+            $sIncludeFile .=".{$this->mView->TplSuffix}";
         }
-        if(!sle\fexists($sIncludeFile)){
-            $sIncludeFile = "{$sFile}.{$this->mView->TplSuffix}";
+        if (!realpath($sIncludeFile)){
+            $sIncludeFile = ltrim($sIncludeFile,'/');
+            $sIncludeFile = "{$this->mView->PublicTplPath}{$sIncludeFile}";
         }
         if(sle\fexists($sIncludeFile) && is_readable($sIncludeFile) && ($this->mCompiledTplFile = $this->mView->render($sIncludeFile)) ){
             ob_start();

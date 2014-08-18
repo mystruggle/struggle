@@ -1,4 +1,78 @@
-{include backend_header}
+<!DOCTYPE html>
+
+<!-- 
+
+Template Name: Metronic - Responsive Admin Dashboard Template build with Twitter Bootstrap 2.3.1
+
+Version: 1.3
+
+Author: KeenThemes
+
+Website: http://www.keenthemes.com/preview/?theme=metronic
+
+Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-template/4021469
+
+-->
+
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+
+<!--[if !IE]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
+
+<!-- BEGIN HEAD -->
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <title>Metronic | Admin Dashboard Template</title>
+
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+
+    <meta content="" name="description" />
+
+    <meta content="" name="author" />
+
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+
+    <link href="media/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+
+    <link href="media/css/bootstrap-responsive.min.css" rel="stylesheet" type="text/css"/>
+
+    <link href="media/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+
+    <link href="media/css/style-metro.css" rel="stylesheet" type="text/css"/>
+
+    <link href="media/css/style.css" rel="stylesheet" type="text/css"/>
+
+    <link href="media/css/style-responsive.css" rel="stylesheet" type="text/css"/>
+
+    <link href="media/css/default.css" rel="stylesheet" type="text/css" id="style_color"/>
+
+    <link href="media/css/uniform.default.css" rel="stylesheet" type="text/css"/>
+
+    <!-- END GLOBAL MANDATORY STYLES -->
+
+    <!-- BEGIN PAGE LEVEL STYLES --> 
+
+    <link href="media/css/jquery.gritter.css" rel="stylesheet" type="text/css"/>
+
+    <link href="media/css/daterangepicker.css" rel="stylesheet" type="text/css" />
+
+    <link href="media/css/fullcalendar.css" rel="stylesheet" type="text/css"/>
+
+    <link href="media/css/jqvmap.css" rel="stylesheet" type="text/css" media="screen"/>
+
+    <link href="media/css/jquery.easy-pie-chart.css" rel="stylesheet" type="text/css" media="screen"/>
+
+    <!-- END PAGE LEVEL STYLES -->
+
+    <link rel="shortcut icon" href="media/image/favicon.ico" />
+
+</head>
+
+<!-- END HEAD -->
 
 <!-- BEGIN BODY -->
 
@@ -16,9 +90,9 @@
 
                 <!-- BEGIN LOGO -->
 
-                <a class="brand" href="{url index}">
+                <a class="brand" href="index.html">
 
-                <img src="{html image:logo.png}" alt="logo" />
+                <img src="media/image/logo.png" alt="logo"/>
 
                 </a>
 
@@ -28,7 +102,7 @@
 
                 <a href="javascript:;" class="btn-navbar collapsed" data-toggle="collapse" data-target=".nav-collapse">
 
-                <img src="{html image:menu-toggler.png}" alt="" />
+                <img src="media/image/menu-toggler.png" alt="" />
 
                 </a>          
 
@@ -1216,8 +1290,7 @@
 
                     <i class="icon-user"></i> 
 
-                    <span class="title">系统
-                    管理</span>
+                    <span class="title">Login Options</span>
 
                     <span class="arrow "></span>
 
@@ -3968,4 +4041,109 @@
 
 <!-- END BODY -->
 
-{include backend_footer}
+
+
+ <!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
+
+    <!-- BEGIN CORE PLUGINS -->
+
+    <script src="{html js:jquery-1.10.1.min.js}" type="text/javascript"></script>
+
+    <script src="{html js:jquery-migrate-1.2.1.min.js}" type="text/javascript"></script>
+
+    <!-- IMPORTANT! Load jquery-ui-1.10.1.custom.min.js before bootstrap.min.js to fix bootstrap tooltip conflict with jquery ui tooltip -->
+
+    <script src="{html js:jquery-ui-1.10.1.custom.min.js}" type="text/javascript"></script>      
+
+    <script src="{html js:bootstrap.min.js}" type="text/javascript"></script>
+
+    <!--[if lt IE 9]>
+
+    <script src="{html js:excanvas.min.js}"></script>
+
+    <script src="{html js:respond.min.js}"></script>  
+
+    <![endif]-->   
+
+    <script src="{html js:jquery.slimscroll.min.js}" type="text/javascript"></script>
+
+    <script src="{html js:jquery.blockui.min.js}" type="text/javascript"></script>  
+
+    <script src="{html js:jquery.cookie.min.js}" type="text/javascript"></script>
+
+    <script src="{html js:jquery.uniform.min.js}" type="text/javascript" ></script>
+
+    <!-- END CORE PLUGINS -->
+
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+
+    <script src="{html js:jquery.vmap.js}" type="text/javascript"></script>   
+
+    <script src="{html js:jquery.vmap.russia.js}" type="text/javascript"></script>
+
+    <script src="{html js:jquery.vmap.world.js}" type="text/javascript"></script>
+
+    <script src="{html js:jquery.vmap.europe.js}" type="text/javascript"></script>
+
+    <script src="{html js:jquery.vmap.germany.js}" type="text/javascript"></script>
+
+    <script src="{html js:jquery.vmap.usa.js}" type="text/javascript"></script>
+
+    <script src="{html js:jquery.vmap.sampledata.js}" type="text/javascript"></script>  
+
+    <script src="{html js:jquery.flot.js}" type="text/javascript"></script>
+
+    <script src="{html js:jquery.flot.resize.js}" type="text/javascript"></script>
+
+    <script src="{html js:jquery.pulsate.min.js}" type="text/javascript"></script>
+
+    <script src="{html js:date.js}" type="text/javascript"></script>
+
+    <script src="{html js:daterangepicker.js}" type="text/javascript"></script>     
+
+    <script src="{html js:jquery.gritter.js}" type="text/javascript"></script>
+
+    <script src="{html js:fullcalendar.min.js}" type="text/javascript"></script>
+
+    <script src="{html js:jquery.easy-pie-chart.js}" type="text/javascript"></script>
+
+    <script src="{html js:jquery.sparkline.min.js}" type="text/javascript"></script>  
+
+    <!-- END PAGE LEVEL PLUGINS -->
+
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+
+    <script src="{html js:app.js}" type="text/javascript"></script>
+
+    <script src="{html js:index.js}" type="text/javascript"></script>        
+
+    <!-- END PAGE LEVEL SCRIPTS -->  
+
+    <script>
+
+        jQuery(document).ready(function() {    
+
+           App.init(); // initlayout and core plugins
+
+           Index.init();
+
+           Index.initJQVMAP(); // init index page's custom scripts
+
+           Index.initCalendar(); // init index page's custom scripts
+
+           Index.initCharts(); // init index page's custom scripts
+
+           Index.initChat();
+
+           Index.initMiniCharts();
+
+           Index.initDashboardDaterange();
+
+           Index.initIntro();
+
+        });
+
+    </script>
+
+    <!-- END JAVASCRIPTS -->
+</html>

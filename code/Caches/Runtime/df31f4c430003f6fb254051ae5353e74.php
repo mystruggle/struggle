@@ -10,7 +10,7 @@
 	<meta content="" name="description" />
 	<meta content="" name="author" />
 	<!-- BEGIN GLOBAL MANDATORY STYLES -->
-	<link href="{html css:/bootstrap.min.css}" rel="stylesheet" type="text/css"/><!-- ../Public/Default/css/bootstrap.min.css -->
+	<link href="../Public/Default/css/bootstrap.min.css" rel="stylesheet" type="text/css"/><!-- ../Public/Default/css/bootstrap.min.css -->
 	<link href="../Public/Default/css/bootstrap-responsive.min.css" rel="stylesheet" type="text/css"/>
 	<link href="../Public/Default/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
 	<link href="../Public/Default/css/style-metro.css" rel="stylesheet" type="text/css"/>
@@ -173,7 +173,7 @@
 	<!-- END COPYRIGHT -->
 	<!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
 	<!-- BEGIN CORE PLUGINS -->
-	<script src="{html js:jquery-1.10.1.min}" type="text/javascript"></script><!-- ../Public/Default/js/jquery-1.10.1.min.js-->
+	<script src="../Public/Default/js/jquery-1.10.1.min.js" type="text/javascript"></script>../Public/Default/js/jquery-1.10.1.min.js
 	<script src="../Public/Default/js/jquery-migrate-1.2.1.min.js" type="text/javascript"></script>
 	<!-- IMPORTANT! Load jquery-ui-1.10.1.custom.min.js before bootstrap.min.js to fix bootstrap tooltip conflict with jquery ui tooltip -->
 	<script src="../Public/Default/js/jquery-ui-1.10.1.custom.min.js" type="text/javascript"></script>      

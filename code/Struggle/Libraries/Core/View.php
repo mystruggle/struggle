@@ -11,7 +11,7 @@ class View extends \struggle\libraries\Object{
     protected $mCompileFileName = '';
     protected $mTplData = array();
     protected $mWidgetTplPath = '';
-    protected $mIncludeTplPath  = '';
+    protected $mPublicTplPath  = '';
     
     public function __construct(){
         parent::__construct();
@@ -19,7 +19,7 @@ class View extends \struggle\libraries\Object{
         sle\C('VIEW_THEME_PATH') && $this->mThemePath   = sle\C('VIEW_THEME_PATH');
         sle\C('VIEW_TPL_SUFFIX') && $this->mTplSuffix   = sle\C('VIEW_TPL_SUFFIX');
         sle\C('VIEW_THEME')      && $this->mTheme       = sle\C('VIEW_THEME');
-        $this->mIncludeTplPath = APP_PUBLIC."{$this->mTheme}/";
+        $this->mPublicTplPath = APP_PUBLIC."{$this->mTheme}/html/";
         
     }
     
@@ -173,10 +173,16 @@ class View extends \struggle\libraries\Object{
 
 
     private function _include_once($sFile){
-        $aTmp = explode('/',trim($sFile));
         $sIncludeFile = $sFile;
-        if(isset($aTmp[0]) && isset($aTmp[1])){
-            $sIncludeFile = "{$this->mIncludeTplPath}{$aTmp[0]}/{$aTmp[1]}.{$this->mTplSuffix}";
+        if (strrpos($sIncludeFile, '.',strrpos($sIncludeFile, '/'))!==false){
+            if(substr($sIncludeFile, strrpos($sIncludeFile, '.',strrpos($sIncludeFile, '/'))+1) != $this->mTplSuffix)
+                $sIncludeFile .= ".{$this->mTplSuffix}";
+        }else{
+            $sIncludeFile .=".{$this->mTplSuffix}";
+        }
+        if (!realpath($sIncludeFile)){
+            $sIncludeFile = ltrim($sIncludeFile,'/');
+            $sIncludeFile = "{$this->mPublicTplPath}{$sIncludeFile}";
         }
         if(sle\fexists($sIncludeFile) && is_readable($sIncludeFile)){
             ob_start();
@@ -193,9 +199,11 @@ class View extends \struggle\libraries\Object{
         return "<?php echo \$this->_include_tpl_('{$sFile}');?>";
     }
 
-
-
-
+    /**
+     * 动态生成链接
+     * @param unknown $path
+     * @return string
+     */
     private function _url($path){
         $sUrl = '';
         $aPath = parse_url($path);
@@ -211,7 +219,7 @@ class View extends \struggle\libraries\Object{
                 $aTmpUrlPath = explode('/',$aPath['path']);
                 if(count($aTmpUrlPath) === 1){
                     $sUrlModule = $oRoute->defaultModule;
-                    $surlAction = $aTmpUrlPath[0];
+                    $sUrlAction = $aTmpUrlPath[0];
                 }else{
                     $sUrlModule = $aTmpUrlPath[0];
                     $sUrlAction = $aTmpUrlPath[1];
@@ -242,18 +250,42 @@ class View extends \struggle\libraries\Object{
     }
     
     
-    private function _css($params){
-        $aParam = explode('/', $params);
+    private function _html($params){
+        $xRlt = array('status'=>true,'msg'=>'');
         $sThemes = 'Default';
-        $sFile   = $aParam[0];
-        if (isset($aParam[1]) && $aParam[1]){
-            $sThemes = $aParam[0];
-            $sFile   = $aParam[1];
+        $sPath   =  '';
+        $sType   =  '';
+        if ($iThemePos = strpos($params, ':')){
+            $sTmpThemes = substr($params, 0,$iThemePos);
+            $aThemes = explode('/', $sTmpThemes);
+            if (isset($aThemes[1]) && $aThemes[1]){
+                $sThemes = $aThemes[1];
+                $sType   = $aThemes[0];
+            }else {
+                $sType   = $aThemes[0];
+            }
+        }else {
+            $xRlt['status'] = false;
+            $xRlt['msg']    = "参数格式错误,{$params}".__METHOD__.' line '.__LINE__;
+            $this->debug($xRlt['msg'], E_USER_ERROR,sle\Sle::SLE_SYS);
         }
-        if (strtolower(substr($sFile, strrpos($sFile, '.')) != 'css')){
-            $sFile .= '.css';
+        $sPath = ltrim(substr($params, $iThemePos+1),'/');
+        switch (strtolower($sType)){
+            case 'css':
+                if (strtolower(substr($sPath, strrpos($sPath, '.')+1) != 'css')){
+                    $sPath .= '.css';
+                }
+                break;
+            case 'js':
+                if (strtolower(substr($sPath, strrpos($sPath, '.')+1) != 'js')){
+                    $sPath .= '.js';
+                }
+                break;
+            case 'image':
+                $sType = 'images';
+           default:
         }
-        return APP_PUBLIC."{$sThemes}/css/{$sFile}";
+        return APP_PUBLIC."{$sThemes}/{$sType}/{$sPath}";
     }
     
     

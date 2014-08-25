@@ -16,11 +16,7 @@ class IndexController extends Controller{
     
     
     public function actionUser(){
-        
-        
-        
-        
-        echo '这是用户管理处理程序';
+        $this->layout();
     }
 
 

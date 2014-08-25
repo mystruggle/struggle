@@ -403,6 +403,7 @@ class View extends \struggle\libraries\Object{
      */
     private function getHtmlElementPath($element,$path = '',$theme = 'Default'){
         $sElementPath = APP_PUBLIC;
+        $xRlt = array('status'=>true,'msg'=>'');
         if (empty($element)){
             $xRlt['status'] = false;
             $xRlt['msg']    = '元素不能为空 '.__METHOD__.' line '.__LINE__;

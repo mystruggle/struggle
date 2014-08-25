@@ -13,6 +13,7 @@ class BaseController extends \struggle\libraries\Object{
     private $mWidgetModuleSuffix = '.widget.php';
     private $widgetModule = '';
     private $widgetAction = '';
+    private $curTpl       = '';//当前模板文件
     
     public function __construct(){
         parent::__construct();
@@ -108,7 +109,8 @@ class BaseController extends \struggle\libraries\Object{
             $sLoyout = preg_replace('/\{content\}/i', $sTpl, $sLoyout);
             //把替换后的布局文件写一个文件
             $sFileKey = $this->mView->getFileKey($sFile);
-            $sFile = APP_RUNTIME.$sFileKey.'.'.$this->mView->TplSuffix;
+            $sContentKey = $this->mView->getFileKey($this->curTpl);
+            $sFile = APP_RUNTIME.$sFileKey.$sContentKey.'.'.$this->mView->TplSuffix;
             if (!file_exists($sFile)){
                 $oFile = new File(array('file'=>$sFile,'mode'=>'wb+'));
                 $oFile->write($sLoyout);
@@ -200,7 +202,8 @@ class BaseController extends \struggle\libraries\Object{
             $aRlt['msg']    = '模板文件不存在'.$sFile.' '.__METHOD__.' line '.__LINE__;
         }
         if ($aRlt['status']){
-            return file_get_contents($sFile);
+            $this->curTpl = $sFile;
+            return file_get_contents($this->curTpl);
         }else{
             $this->debug($aRlt['msg'],E_USER_ERROR,sle\Sle::SLE_SYS);
         }

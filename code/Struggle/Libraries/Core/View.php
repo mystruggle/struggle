@@ -24,6 +24,21 @@ class View extends \struggle\libraries\Object{
     }
     
     /**
+     * 返回文件的唯一键名
+     * @param string $file   文件(相对路径或绝对路径)
+     * @param string $type   用于处理文件名的方法
+     * @return string 返回字符串或空字符串
+     */
+    public function getFileKey($file,$type = 'md5'){
+        $sFile = realpath($file);
+        $sFileName = '';
+        if($sFile){
+            $sFileName = $type($sFile.filemtime($sFile));
+        }
+        return $sFileName;
+    }
+    
+    /**
      * 渲染模板
      * @param string $sRenderFile   模板路径.  format:   controller/action or 模板文件相对或绝对路径
      * @param array  $aParam        传递的参数
@@ -72,7 +87,13 @@ class View extends \struggle\libraries\Object{
         return sle\Sle::getInstance()->LastError?false:$aTpl[$sKey];
     }
     
-    
+    /**
+     * 匹配模板中特殊字符
+     * @param string $sTextCon    需要解析的文本内容
+     * @return string        返回解析后的模板内容;模板中没有特殊标签将直接返回模板内容
+     * @explain  只要模板存在一对大括号'{}'标签，该标签和标签里的内容将会被匹配，
+     *           匹配内容将集中调用replaceTag方法处理
+     */
     private function parse($sTextCon){
         if (!empty($sTextCon)){
             $sTextCon = preg_replace_callback('/[{]([^\s{][^}]*?)[}]/', array('struggle\\libraries\\core\\View','replaceTag'), $sTextCon);
@@ -80,6 +101,13 @@ class View extends \struggle\libraries\Object{
         return $sTextCon;
     }
     
+    
+    /**
+     * 调用方法替换特殊标签内容
+     * @param array $aMatch   正则匹配特殊标签后的数组
+     * @return string  返回替换字符
+     * @explain  匹配数组第二元素为方法名称或特殊字符串，如果存在'_方法名'的方法将被调用返回该函数的返回值
+     */
     private function replaceTag($aMatch){
         $mRlt = $aMatch[0];
         if (isset($aMatch[1])){
@@ -188,10 +216,20 @@ class View extends \struggle\libraries\Object{
             ob_start();
             include $sIncludeFile;
             $sIncludeCon = ob_get_clean();
+            $sFilterIncludeTag = preg_replace('/\{(include|include_once)\s+?[^}]+\}/i', '', $sIncludeCon);
+            $sIncludeCon = $this->parse($sFilterIncludeTag);
             return $sIncludeCon;
         }else{
             $this->debug(__METHOD__."文件不存在或不可读 {$sIncludeFile} line ".__LINE__, E_USER_ERROR,sle\Sle::SLE_SYS);
         }
+    }
+    
+    private function _foreach($params){
+        return '<?php foreach('.trim($params).'):?>';
+    }
+    
+    private function _close_foreach(){
+        return '<?php endforeach;?>';
     }
 
 
@@ -255,8 +293,11 @@ class View extends \struggle\libraries\Object{
         $sThemes = 'Default';
         $sPath   =  '';
         $sType   =  '';
+        $xReturn = '';
+        //截取冒号前面部分
         if ($iThemePos = strpos($params, ':')){
             $sTmpThemes = substr($params, 0,$iThemePos);
+            //冒号前面部分，多个元素，以'/'分开，第一个为元素类型，如，css、js第二个为主题，第三个及之后尚未定义
             $aThemes = explode('/', $sTmpThemes);
             if (isset($aThemes[1]) && $aThemes[1]){
                 $sThemes = $aThemes[1];
@@ -269,23 +310,159 @@ class View extends \struggle\libraries\Object{
             $xRlt['msg']    = "参数格式错误,{$params}".__METHOD__.' line '.__LINE__;
             $this->debug($xRlt['msg'], E_USER_ERROR,sle\Sle::SLE_SYS);
         }
-        $sPath = ltrim(substr($params, $iThemePos+1),'/');
+        //截取冒号后面的字符串
+        $sColonAfter = ltrim(substr($params, $iThemePos+1),'/');
         switch (strtolower($sType)){
             case 'css':
-                if (strtolower(substr($sPath, strrpos($sPath, '.')+1) != 'css')){
-                    $sPath .= '.css';
+                //判断是否包含存放路径
+                $sCssPath = dirname(trim($sColonAfter,'/'));
+                $sCssFile = '';
+                if ($sCssPath == '.'){
+                    $sCssFile = $sColonAfter;
+                    $sCssPath = '';
+                }else {
+                    $sCssFile = basename($sColonAfter);
+                }
+                $sCssPath && $sCssPath .= '/';
+                $sCssPath = $this->getHtmlElementPath($sType,$sCssPath,$sThemes);
+                if (strtolower(substr($sCssFile, strrpos($sCssFile, '.')+1) != 'css')){
+                    $sCssFile .= '.css';
+                }
+                $sCssFile = $sCssPath.$sCssFile;
+                if(!is_file($sCssFile)){
+                    $xRlt['status'] = false;
+                    $xRlt['msg']    = "文件不存在{$sCssFile}".__METHOD__.' line '.__LINE__;
+                    $xReturn = '';
+                }else {
+                    $xReturn = $sCssFile;
                 }
                 break;
             case 'js':
-                if (strtolower(substr($sPath, strrpos($sPath, '.')+1) != 'js')){
-                    $sPath .= '.js';
+                //判断是否包含存放路径
+                $sJsPath = dirname(trim($sColonAfter,'/'));
+                $sJsFile = '';
+                if ($sJsPath == '.'){
+                    $sJsFile = $sColonAfter;
+                    $sJsPath = '';
+                }else {
+                    $sJsFile = basename($sColonAfter);
+                }
+                $sJsPath && $sJsPath .= '/';
+                $sJsPath = $this->getHtmlElementPath($sType,$sJsPath,$sThemes);
+                if (strtolower(substr($sJsFile, strrpos($sJsFile, '.')+1) != 'js')){
+                    $sJsFile .= '.js';
+                }
+                $sJsFile = $sJsPath.$sJsFile;
+                if(!is_file($sJsFile)){
+                    $xRlt['status'] = false;
+                    $xRlt['msg']    = "文件不存在{$sJsFile}".__METHOD__.' line '.__LINE__;
+                    $xReturn = '';
+                }else {
+                    $xReturn = $sJsFile;
                 }
                 break;
             case 'image':
                 $sType = 'images';
+                //判断是否包含存放路径
+                $sImagePath = dirname(trim($sColonAfter,'/'));
+                $sImageFile = '';
+                if ($sImagePath == '.'){
+                    $sImageFile = $sColonAfter;
+                    $sImagePath = '';
+                }else {
+                    $sImageFile = basename($sColonAfter);
+                }
+                $sImagePath && $sImagePath .= '/';
+                $sImagePath = $this->getHtmlElementPath($sType,$sImagePath,$sThemes);
+                $sImageFile = $sImagePath.$sImageFile;
+                if(!is_file($sImageFile)){
+                    $xRlt['status'] = false;
+                    $xRlt['msg']    = "文件不存在{$sImageFile}".__METHOD__.' line '.__LINE__;
+                    $xReturn = '';
+                }else {
+                    $xReturn = $sImageFile;
+                }
+                break;
+            case 'layout':
+                $xReturn = $this->doLayout($sType,$sThemes,$sColonAfter);
+                break;
            default:
         }
-        return APP_PUBLIC."{$sThemes}/{$sType}/{$sPath}";
+        if (!$xRlt['status']){
+            $this->debug($xRlt['msg'], E_USER_ERROR,sle\Sle::SLE_SYS);
+        }
+        return $xReturn;
+    }
+    
+    /**
+     * 组装html相关元素存放路径
+     * @param string $element  元素名称  ，如css，js
+     * @param string $path     存放的路径
+     * @param string $theme    所属主题
+     * @return string  成功返回元素路径，失败返回空字符串
+     */
+    private function getHtmlElementPath($element,$path = '',$theme = 'Default'){
+        $sElementPath = APP_PUBLIC;
+        if (empty($element)){
+            $xRlt['status'] = false;
+            $xRlt['msg']    = '元素不能为空 '.__METHOD__.' line '.__LINE__;
+        }
+        if ($xRlt['status']){
+            $sElementPath .= $theme.'/'.$element.'/'.$path;
+        }
+        if ($xRlt['status'] && !is_dir($sElementPath)){
+            $xRlt['status'] = false;
+            $xRlt['msg']    = '元素路径不正确{$sElementPath} '.__METHOD__.' line '.__LINE__;
+        }
+        
+        if ($xRlt['status']){
+            return $sElementPath;
+        }else{
+            $this->debug($xRlt['msg'], E_USER_ERROR,sle\Sle::SLE_SYS);
+            return '';
+        }
+    }
+    
+    /**
+     * 处理布局相关标签
+     * @param string  $type   元素类型
+     * @param string  $theme  所属主题
+     * @param string  $params  参数，以'/'隔开
+     * @return string  mixed
+     * @author luguo@139.com
+     */
+    private function doLayout($type,$theme,$params){
+        $aParam = explode('/', $params);
+        $aData  = array();
+        $xReturn = '';
+        //把参数组装成关联数组形式
+        for ($i=0;$i<count($aParam);$i+=2){
+            $aData[$aParam[$i]] = isset($aParam[$i+1])?$aParam[$i+1]:'';
+        }
+        isset($aData['default']) && $xReturn = $aData['default'];
+        //处理参数，格式name=value;多个参数由'&'符号隔开
+        if (isset($aData['param']) && $aData['param']){
+            $aMethodParam = explode('&', $aData['param']);
+            $aData['param'] = array();
+            for ($i=0;$i<count($aMethodParam);$i++){
+                $aTmp = explode('=', $aMethodParam[$i]);
+                $aData['param'][$aTmp[0]] = isset($aTmp[1])?$aTmp[1]:'';
+            }
+        }
+        
+        //调用某个类的方法，如果有，否则返回默认值(default)
+        if (isset($aData['model'])){
+            if ($oModel = sle\M(sle\ctop($aData['model']))){
+                if (isset($aData['method']) && method_exists($oModel,$aData['method'])){
+                    $sMethodName =  $aData['method'];
+                    $aMethodParam = isset($aData['param'])?$aData['param']:array();
+                    $xReturn = $oModel->$sMethodName($aMethodParam);
+                }
+            }
+        }
+        return $xReturn;
+        
+        
     }
     
     

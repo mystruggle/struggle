@@ -1,6 +1,7 @@
 <?php
 namespace struggle\libraries\core;
 use struggle as sle;
+use struggle\libraries\cache\driver\File;
 
 class BaseController extends \struggle\libraries\Object{
     private $mView = '';
@@ -38,7 +39,13 @@ class BaseController extends \struggle\libraries\Object{
 		}
 	}
     
-    
+    /**
+     * 显示模板文件，不使用布局模板显示
+     * @param string $sPath 需要显示模板文件，当显示的模板不是当前默认模板时，传递该参数
+     * @param array $aTplData  传递给模板的参数，必须是关联数组
+     * @return void
+     * @author luguo@139.com
+     */
     public function display($sPath='', $aTplData = array()){
         $bFlag = true;
         if (!$sPath){
@@ -78,12 +85,125 @@ class BaseController extends \struggle\libraries\Object{
     
     /**
      * 调用布局模板
-     * @param string $tpl   模板文件名，为空将渲染默认模板
+     * @param string $tpl   布局模板文件名，为空将渲染默认布局模板
      * @param array  $data  传递的模板值
+     * @return boolean
      * @author luguo@139.com
      */
     public function layout($tpl = '', $data=array()){
-        //
+        $sLoyout = '';
+        $sTpl    = '';
+        $sFile = $tpl;
+        $aRlt  = array('status'=>true,'msg'=>'');
+        //检查布局文件
+        if ($tpl){
+            $sLoyout = $this->getCurTpl($tpl);
+        }else{
+            $sFile = APP_THEME.$this->mView->Theme.'/Layout/layout.'.$this->mView->TplSuffix;
+            $sLoyout = $this->getCurTpl($sFile);
+        }
+        $sTpl = $this->getCurTpl();
+        if ($sTpl && $sLoyout){
+            //替换布局文件中{content}标签，用当前控制器模板内容替换之
+            $sLoyout = preg_replace('/\{content\}/i', $sTpl, $sLoyout);
+            //把替换后的布局文件写一个文件
+            $sFileKey = $this->mView->getFileKey($sFile);
+            $sFile = APP_RUNTIME.$sFileKey.'.'.$this->mView->TplSuffix;
+            if (!file_exists($sFile)){
+                $oFile = new File(array('file'=>$sFile,'mode'=>'wb+'));
+                $oFile->write($sLoyout);
+            }
+            if ($this->mCompiledTplFile = $this->mView->render($sFile)){
+                return $this->outputComplieFile($this->mCompiledTplFile);
+            }
+        }
+        return false;
+    }
+    
+    
+    /**
+     * 输出编译后文件
+     * @param string $file   编译后的文件
+     * @return boolean
+     * @author luguo@139.com
+     */
+    private function outputComplieFile($file){
+        $aRlt = array('status'=>true,'msg'=>'');
+        if (empty($file)){
+            $aRlt['status'] = false;
+            $aRlt['msg']    = '编译文件不能为空 '.__METHOD__.' line '.__LINE__;
+        }
+        if ($aRlt['status'] && !file_exists($file)){
+            $aRlt['status'] = false;
+            $aRlt['msg']    = '编译文件不存在 '.__METHOD__.' line '.__LINE__;
+        }
+        if ($aRlt['status'] && !is_readable($file)){
+            $aRlt['status'] = false;
+            $aRlt['msg']    = '编译文件不可读 '.__METHOD__.' line '.__LINE__;
+        }
+        
+        if (!$aRlt['status']){
+            $this->debug($aRlt['msg'], E_USER_ERROR,sle\Sle::SLE_SYS);
+        }
+        if (sle\Sle::getInstance()->LastError){
+            $this->debug('由于存在致命错误，程序中止执行 '.__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+            return false;
+        }else{
+            //输出内容
+            header('Content-type:text/html;charset=utf-8');
+            ob_flush();
+            flush();
+            ob_start();
+            extract($this->mTplData);
+            include $file;
+            $sTxt=ob_get_clean();
+            echo $sTxt;
+            return true;
+        }
+    }
+    
+    
+    /**
+     * 获取模板内容
+     * @param string $tpl 模板文件
+     * @return string 返回模板内容
+     * @author luguo@139.com
+     * explain 当$tpl为空时，默认获取当前控制器模板；否则获取对应模板
+     */
+    private function getCurTpl($tpl = ''){
+        $sFile = '';
+        $aRlt = array('status'=>true,'msg'=>'');
+        if ($tpl){
+            if (file_exists($tpl)){
+                $sFile = $tpl;
+            }else{
+                //不是绝对路径，检查是否是控制器/动作 格式
+                $aTplInfo = explode('/', $tpl);
+                $sTplPath = sle\ctop($aTplInfo[0]).'/'.sle\ptoc($this->mSle->Route->action);
+                if (isset($aTplInfo[1]) && $aTplInfo[1]){
+                    $sTplPath = sle\ctop($aTplInfo[1]).'/'.sle\ptoc($aTplInfo[0]);
+                }
+                $sFile = $this->mView->ThemePath.$this->mView->Theme.'/'.$sTplPath.'.'.$this->mView->TplSuffix;
+                
+            }
+        }else{
+            $sFile = $this->mView->ThemePath.$this->mView->Theme.'/'.sle\ctop($this->mSle->Route->module).'/'.sle\ptoc($this->mSle->Route->action).'.'.$this->mView->TplSuffix;
+        }
+        //判断文件是否存在
+        if (file_exists($sFile)){
+            if (!is_readable($sFile)){
+                $aRlt['status'] = false;
+                $aRlt['msg']    = '模板文件不可读'.$sFile.' '.__METHOD__.' line '.__LINE__;
+            }
+        }else{
+            $aRlt['status'] = false;
+            $aRlt['msg']    = '模板文件不存在'.$sFile.' '.__METHOD__.' line '.__LINE__;
+        }
+        if ($aRlt['status']){
+            return file_get_contents($sFile);
+        }else{
+            $this->debug($aRlt['msg'],E_USER_ERROR,sle\Sle::SLE_SYS);
+        }
     }
 
     /**

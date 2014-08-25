@@ -79,6 +79,10 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 //            $oLink->exec('set names utf8');
             $this->mErrorInfo = $oLink->errorInfo();
             $this->mErrorCode = $oLink->errorCode();
+            if (!$this->mErrorCode){
+                //禁用模拟预处理语句
+                $oLink->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
+            }
         }
         return $this->mLink = $oLink;
 	}

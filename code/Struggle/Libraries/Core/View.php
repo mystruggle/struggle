@@ -9,7 +9,7 @@ class View extends \struggle\libraries\Object{
     protected $mTheme    = 'Default';
     protected $mCompilePath = '';
     protected $mCompileFileName = '';
-    protected $mTplData = array();
+    //protected $mTplData = array();
     protected $mWidgetTplPath = '';
     protected $mPublicTplPath  = '';
     
@@ -196,7 +196,7 @@ class View extends \struggle\libraries\Object{
     }
     
     private function _widget($sWidgetTpl){
-        return "<?php \$this->_widget_('{$sWidgetTpl}');?>";
+        return "<?php \$this->_widget_(\"{$sWidgetTpl}\");?>";
     }
 
 
@@ -224,12 +224,89 @@ class View extends \struggle\libraries\Object{
         }
     }
     
+    
+    
+    /**
+     * 模板foreach标签
+     * @param string $params   标签条件或参数
+     * @return string
+     */
     private function _foreach($params){
-        return '<?php foreach('.trim($params).'):?>';
+        $xRlt = array('status'=>true,'msg'=>'');
+        //数组变量名
+        $sData = '';
+        //数组列表名
+        $sList = '';
+        if ($aAttr = $this->parseTagAttr($params)){
+            if (isset($aAttr['sourceBySql']) && $aAttr['sourceBySql']){
+                $sEvel = "return {$aAttr['sourceBySql']};";
+                $xData = eval($sEvel);
+                if ($xData !== false){
+                    if (isset($aAttr['name']) && $aAttr['name']){
+                        $oCtl = sle\Sle::getInstance()->Controller;
+                        $oCtl->TplData = array_merge($oCtl->TplData,array($aAttr['name']=>$xData));
+                    }
+                }else{
+                    $xRlt['status'] = false;
+                    $xRlt['msg'] = 'sourceBySql语法有误'.$aAttr['sourceBySql'].' '.__METHOD__.' line '.__LINE__;
+                }
+            }
+            //数组名称
+            if ($xRlt['status'] && isset($aAttr['name']) && $aAttr['name']){
+                $sName = '$'.$aAttr['name'];
+            }elseif($xRlt['status']){
+                $xRlt['status'] = false;
+                $xRlt['msg'] = 'foreach数组名称有误'.var_export($aAttr['name'],true).' '.__METHOD__.' line '.__LINE__;
+            }
+            //数组索引名
+            if ($xRlt['status'] && isset($aAttr['list']) && $aAttr['list']){
+                $sList = '$'.str_replace(',', '=>$', $aAttr['list']);
+            }elseif($xRlt['status']){
+                $xRlt['status'] = false;
+                $xRlt['msg'] = 'foreach数组列表有误'.$aAttr['list'].' '.__METHOD__.' line '.__LINE__;
+            }
+        }else{
+            $xRlt['status'] = false;
+            $xRlt['msg'] = 'foreach参数有误'.$params.' '.__METHOD__.' line '.__LINE__;
+        }
+        if ($xRlt['status']){
+            return '<?php foreach('.$sName.' AS '.$sList.'):?>';
+        }else {
+            $this->debug($xRlt['msg'],E_USER_ERROR,sle\Sle::SLE_SYS);
+            return '';
+        }
     }
     
     private function _close_foreach(){
         return '<?php endforeach;?>';
+    }
+    
+    /**
+     * 解析标签属性，使其以数组形式存在
+     * @param string $attr
+     * @return array  如果发生错误返回空数组
+     * @author luguo@139.com
+     */
+    private function parseTagAttr($attr){
+        $xRlt = array('status'=>true,'msg'=>'');
+        $aAttr = preg_split('/\s+/i', trim($attr));
+        $aReturn = array();
+        if (is_array($aAttr) && $aAttr){
+            foreach ($aAttr as  $attr){
+                preg_match('/^([^=\'"]+)=(\'.+\'|".+")$/', $attr,$match);
+                if($xRlt['status'] && $match){
+                    $aReturn[$match[1]] = substr($match[2],1,strlen($match[2])-2);
+                }else{
+                    $xRlt['status'] = false;
+                    $xRlt['msg'] = 'foreach参数有误,参数中不能含有空格'.$params.' '.__METHOD__.' line '.__LINE__;
+                    $aReturn = array();
+                }
+            }
+        }else{
+            $xRlt['status'] = false;
+            $xRlt['msg'] = '标签属性有误'.print_r($aAttr,true).' '.__METHOD__.' line '.__LINE__;
+        }
+        return $aReturn;
     }
 
 

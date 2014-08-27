@@ -7,7 +7,7 @@ class BaseController extends \struggle\libraries\Object{
     private $mView = '';
     private $mSle  = '';
     private $msWidgetPath = '';
-    private $mTplData = array();
+    protected $mTplData = array();
     private $mCompiledTplFile = '';
     private $mWidgetThemePath = "Widget/";
     private $mWidgetModuleSuffix = '.widget.php';
@@ -110,7 +110,7 @@ class BaseController extends \struggle\libraries\Object{
             //把替换后的布局文件写一个文件
             $sFileKey = $this->mView->getFileKey($sFile);
             $sContentKey = $this->mView->getFileKey($this->curTpl);
-            $sFile = APP_RUNTIME.$sFileKey.$sContentKey.'.'.$this->mView->TplSuffix;
+            $sFile = APP_RUNTIME.md5($sFileKey.$sContentKey).'.'.$this->mView->TplSuffix;
             if (!file_exists($sFile)){
                 $oFile = new File(array('file'=>$sFile,'mode'=>'wb+'));
                 $oFile->write($sLoyout);

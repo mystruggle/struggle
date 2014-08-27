@@ -604,7 +604,15 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
                     <!-- END RESPONSIVE QUICK SEARCH FORM -->
 
                 </li>
-
+{foreach sourceBySql='\struggle\M('Menu')->getSidebarMenus()' name='menu' list='index,value'}
+<li>
+ <a href=''></a>
+ <i></i>
+ <span class='title'>{$value}</span>
+ <span class='arrow'></span>
+ {widget layout/sidebarMenu?title=$value}
+</li>
+{/foreach}
                 <li class="start active ">
 
                     <a href="index.html">

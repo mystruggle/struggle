@@ -99,6 +99,7 @@ class Sle{
     private $mDebug     = '';
     private $mLog       = '';
     private $mRoute     = '';
+    private $mController = '';
     const   SLE_NONE = 0;
     const   SLE_ALL  = 1;
     const   SLE_SYS  = 2;
@@ -121,7 +122,7 @@ class Sle{
     
     public function __get($sName){
         $sAttrName = "m{$sName}";
-        if (isset($this->$sAttrName)){
+        if (property_exists($this, $sAttrName)){
             if ($this->$sAttrName){
                 return $this->$sAttrName;
             }elseif (method_exists($this, $sName)){

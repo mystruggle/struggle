@@ -45,6 +45,7 @@ class Route extends Object{
                 $sClassName = $this->namespaceModule.$this->module.$this->moduleSuffix;
                 $sMethod = "{$this->methodPrefix}{$this->action}";
                 $oController = new $sClassName();
+                sle\Sle::getInstance()->Controller = $oController;
                 if(method_exists($oController,$sMethod)){
                     $oController->$sMethod();
                 }else{

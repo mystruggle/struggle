@@ -47,6 +47,7 @@ $this->bindParam(array('sys',1,'2{',2,3));
 //$c->bindParam(array('123455','sys'));
 //$c->where('`name`=?')->find();
 //$c->join('Role')->where(array('`pwd`'=>'123455','User.`name`'=>'sys'))->find();
+$this->assgin('test', array('fuck','shit'));
 $c->bindValue(array('sys','111',1,2,'111'));
 $c->where("(`name`=? and `pwd`>=?) or ( `id` in (?,?) and `pwd`=?)")->find();
 

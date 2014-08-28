@@ -56,4 +56,34 @@ class Route extends Object{
             }
         }
     }
+    
+    /**
+     * 把uri地址问号后面的参数注册成$_GET和$_REQUEST
+     * @param string $querystring
+     * @return  null
+     * @author luguo@139.com
+     */
+    public function registerGlobalVar($querystring){
+        $aQuery = explode('&', $querystring);
+        foreach ($aQuery as $pair){
+            $aPair = explode('=', $pair);
+            if (isset($aPair[1]) && $aPair[1]){
+                $_GET[trim($aPair[0])] = $_REQUEST[trim($aPair[0])] = $aPair[1];
+            }else {
+                $_GET[trim($aPair[0])] = $_REQUEST[trim($aPair[0])] = '';
+            }
+        }
+    }
+
+
+
+
 }
+
+
+
+
+
+
+
+

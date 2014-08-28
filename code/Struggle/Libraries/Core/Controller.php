@@ -48,39 +48,20 @@ class BaseController extends \struggle\libraries\Object{
      * @author luguo@139.com
      */
     public function display($sPath='', $aTplData = array()){
-        $bFlag = true;
-        if (!$sPath){
-            $sPath = "{$this->mSle->Route->module}/{$this->mSle->Route->action}";
-        }else {
-            $aControlPart = explode('/',trim($aTmp['path'],'/'));
-             if (count($aControlPart) >= 2){
-                $sPath = "{$aControlPart[0]}/{$aControlPart[1]}";
-            }else{
-                $this->debug(__METHOD__."目标不存在或错误，请检查路径{$sPath} line ".__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
-            }
-            //传递的参数
-            if (!is_array($aTplData)){
-                $this->debug("传递参数不规范，传递给模板的参数不是数组".(is_string($aTplData)?$aTplData:print_r($aTplData,true)).'line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
-                $aTplData = array();
-            }
-            $this->mTplData = array_merge($this->mTplData,$aTplData);
+        $sTpl = $this->getCurTpl($sPath);
+
+        //传递的参数
+        if (!is_array($aTplData)){
+            $this->debug("传递参数不规范，传递给模板的参数不是数组".(is_string($aTplData)?$aTplData:print_r($aTplData,true)).'line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+            $aTplData = array();
         }
-        if (sle\Sle::getInstance()->LastError){
-            $this->debug(__METHOD__."由于存在致命错误，程序中止执行 line ".__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
-        }else{
-            if($this->mCompiledTplFile = $this->mView->render($sPath)){
-                header('Content-type:text/html;charset=utf-8');
-                ob_flush();
-                flush();
-                ob_start();
-                extract($this->mTplData);
-                include $this->mCompiledTplFile;
-                $sTxt=ob_get_clean();
-                echo $sTxt;
-            }else{
-                $this->debug(__METHOD__."模板渲染失败！ line ".__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+        $this->mTplData = array_merge($this->mTplData,$aTplData);
+        if ($this->getCurTpl($sPath)){
+            if ($this->mCompiledTplFile = $this->mView->render($this->curTpl)){
+                return $this->outputComplieFile($this->mCompiledTplFile);
             }
         }
+        return false;
     }
     
     
@@ -168,7 +149,7 @@ class BaseController extends \struggle\libraries\Object{
     /**
      * 获取模板内容
      * @param string $tpl 模板文件
-     * @return string 返回模板内容
+     * @return string 成功返回模板内容,否则返回空字符
      * @author luguo@139.com
      * explain 当$tpl为空时，默认获取当前控制器模板；否则获取对应模板
      */
@@ -206,6 +187,7 @@ class BaseController extends \struggle\libraries\Object{
             return file_get_contents($this->curTpl);
         }else{
             $this->debug($aRlt['msg'],E_USER_ERROR,sle\Sle::SLE_SYS);
+            return '';
         }
     }
 
@@ -213,6 +195,7 @@ class BaseController extends \struggle\libraries\Object{
      * 挂件处理函数
      * @param    string   $sPath    挂件目标地址，采用URI格式 module/action[?key1=value1&key2=value2]
      * @return   void
+     * @example $sPath  index.php?name=value&name2=value2 问号后面为传递的参数
      */
     public function _widget_($sPath){
         $aTmp = parse_url($sPath);
@@ -232,6 +215,10 @@ class BaseController extends \struggle\libraries\Object{
                     if(method_exists($oWidget,$sMethodName)){
                         $oWidget->widgetModule = $sModuleName;
                         $oWidget->widgetAction = $sActName;
+                        //解析参数
+                        if (isset($aTmp['query']) && $aTmp['query']){
+                            $this->mSle->Route->registerGlobalVar($aTmp['query']);
+                        }
                         $oWidget->$sMethodName();
                     }else{
                         $this->debug(__METHOD__."该方法不存在{$sClassName}::{$sMethodName} line ".__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);

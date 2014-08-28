@@ -239,6 +239,7 @@ class View extends \struggle\libraries\Object{
         $sList = '';
         if ($aAttr = $this->parseTagAttr($params)){
             if (isset($aAttr['sourceBySql']) && $aAttr['sourceBySql']){
+                //\struggle\M('Menu')->getSidebarMenus();eval返回null(没有return)，语法错误返回false
                 $sEvel = "return {$aAttr['sourceBySql']};";
                 $xData = eval($sEvel);
                 if ($xData !== false){
@@ -295,7 +296,13 @@ class View extends \struggle\libraries\Object{
             foreach ($aAttr as  $attr){
                 preg_match('/^([^=\'"]+)=(\'.+\'|".+")$/', $attr,$match);
                 if($xRlt['status'] && $match){
-                    $aReturn[$match[1]] = substr($match[2],1,strlen($match[2])-2);
+                    $sAttrVal = $match[2];
+                    if ($sAttrVal[0] =="'"){
+                        $sAttrVal = trim($sAttrVal,"'");
+                    }elseif ($sAttrVal[0] == '"'){
+                        $sAttrVal = trim($sAttrVal,'"');
+                    }
+                    $aReturn[$match[1]] = $sAttrVal;
                 }else{
                     $xRlt['status'] = false;
                     $xRlt['msg'] = 'foreach参数有误,参数中不能含有空格'.$params.' '.__METHOD__.' line '.__LINE__;

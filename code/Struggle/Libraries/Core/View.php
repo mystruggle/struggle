@@ -366,7 +366,7 @@ class View extends \struggle\libraries\Object{
 
                 }
             }
-            $sUrl = "?{$oRoute->moduleTag}={$sUrlModule}&{$oRoute->actionTag}={$sUrlAction}".($sQuery[0] != '&'?'&'.substr($sQuery,1):$sQuery);
+            $sUrl = "?{$oRoute->moduleTag}={$sUrlModule}&{$oRoute->actionTag}={$sUrlAction}".((isset($sQuery[0]) && $sQuery[0]) != '&'?'&'.substr($sQuery,1):$sQuery);
         }
         return $sUrl;
     }

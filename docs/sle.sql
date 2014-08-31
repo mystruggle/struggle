@@ -1,3 +1,4 @@
+drop database if exists sle;
 create database if not exists sle collate  utf8_general_ci default character set utf8;
 
 use sle;
@@ -9,7 +10,7 @@ create table  if not exists  sle_user(
   pwd varchar(255) not null  collate utf8_general_ci default '' comment '密码',
   `desc` varchar(255) collate utf8_general_ci default '' comment '简介',
   create_time int unsigned default 0 comment '创建时间'
-  )engine=innodb default character set utf8  collate utf8_general_ci;
+  )engine=innodb default character set utf8  collate utf8_general_ci comment '用户表';
 
 
 create table  if not exists  sle_role(
@@ -17,28 +18,57 @@ create table  if not exists  sle_role(
   name varchar(50) not null collate utf8_general_ci  default '' comment '角色名称',
   `desc` varchar(255) collate utf8_general_ci default '' comment '简介',
   create_time int unsigned default 0 comment '创建时间'
-  )engine=innodb default character set utf8  collate utf8_general_ci;
+  )engine=innodb default character set utf8  collate utf8_general_ci comment '角色表';
+
 
 create table  if not exists  sle_menu(
   id int auto_increment primary key,
   name varchar(50) not null collate utf8_general_ci  default '' comment '菜单名称',
-  parent_id int not null default 0 comment '父id',
+  icon    varchar(20) default '' comment '菜单图标',
   `desc` varchar(255) collate utf8_general_ci default '' comment '简介',
+  ctl_id int default 0 comment '模块id', 
+  act_id int default 0 comment '动作id', 
+  parent_id int not null default 0 comment '父id',
+  orderby  int default 0 comment '排序',
   create_time int unsigned default 0 comment '创建时间'
-  )engine=innodb default character set utf8  collate utf8_general_ci;
+  )engine=innodb default character set utf8  collate utf8_general_ci comment '菜单表';
+
+
+create table if not exists sle_controller(
+  id int auto_increment primary key,
+  name varchar(100) default '' collate utf8_general_ci comment '控制器名称',
+  `desc` varchar(255) default '' comment '控制器简单描述'
+)engine=innodb default character set utf8 collate utf8_general_ci comment '控制器表';
+
+
+
+create table if not exists sle_action(
+  id int auto_increment primary key,
+  name varchar(100) default '' collate utf8_general_ci comment '动作名称',
+  `desc` varchar(255) default '' comment '动作简单描述'
+)engine=innodb default character set utf8 collate utf8_general_ci comment '动作表';
+
+
+
+create table if not exists sle_controller_action(
+  id     int  auto_increment primary key,
+  ctl_id int not null comment '控制器id',
+  act_id int not null comment '动作id'
+)engine=innodb default character set utf8 collate utf8_general_ci comment '控制器动作中间表';
+
+
 
 create table  if not exists  sle_role_user(
   user_id int not null comment '用户id',
-  role_id int not null comment '角色id'
-  )engine=innodb default character set utf8  collate utf8_general_ci;
-
-create table  if not exists  sle_role_menu(
-  role_id int not null comment '用户id',
-  menu_id int not null comment '菜单id'
-  )engine=innodb default character set utf8  collate utf8_general_ci;
+  role_id int not null comment '角色id',
+  primary key(user_id,role_id)
+)engine=innodb default character set utf8  collate utf8_general_ci comment '角色用户中间表';
 
 
 
+INSERT INTO `sle_menu` VALUES (null,'首页','icon-home','后台首页',0,0,0,0,unix_timestamp());
+INSERT INTO `sle_menu` VALUES (null,'系统管理','icon-cogs','系统管理',0,0,0,10,unix_timestamp());
+INSERT INTO `sle_menu` VALUES (null,'菜单管理','icon-cog','菜单管理',0,0,2,101,unix_timestamp());
 
 INSERT INTO `sle_user` VALUES (1,'sys','123455','开发者用户',1404088414);
 INSERT INTO  sle_user values(null,'admin','111','管理员用户',unix_timestamp());

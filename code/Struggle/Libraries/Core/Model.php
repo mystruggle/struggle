@@ -149,34 +149,60 @@ class BaseModel extends \struggle\libraries\Object{
 
     /**
 	 * 关联查询
+	 * @param string $name 关联名称  ($relation属性下的键名，该键名为关联模型名称)
+	 * @param string $on   关联额外条件(用模型名称指明字段归属)
 	 * @return mixed 成功返回模型对象resource 失败返回false
+	 * @author luguo@139.com
+	 * @example join('User')
+	 *          join('LEFT User RIGHT Role','User.id = Role.user_id')
+	 *          join('User,Role')
+	 * explain  relation属性中的设置只保证表之间关联的条件成立，至于left join 还是right join 抑或 full join
+	 *          等可在join表达式中(relation 中的名称)加入关键字如，LEFT、RIGHT、FULL,如join('LEFT User')默认INNER
+	 *          $on 变量针对每个表达式添加额外的关联条件
+	 *          中间表也为一个类，外键为相对于对应的类，当前relation所属类的外键，所有的描述都应当是描述参考类的情况的
+	 *          
 	*/
-    public function join($name){
+    public function join($name, $on = ''){
+        $xRlt = array('status'=>true,'msg'=>'join方法');
 		$name = str_replace(',',' inner ',$name);
 		$aRelation = preg_split('/\s+/',$name);
 		array_walk($aRelation ,create_function('&$item,$key','$item=trim($item);'));
 		if(!in_array(strtolower($aRelation[0]),array('inner','full','left','right'))){
 			array_unshift($aRelation,'inner');
 		}
-//print_r($aRelation);die;
 		for($i=0; $i < count($aRelation); $i+=2){
 			if(!isset($this->relation[$aRelation[$i+1]]) || empty($this->relation[$aRelation[$i+1]])){
-				$this->debug("关联关系不存在{$aRelation[$i+1]} ".__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
-				return false;
+			    $xRlt['status'] = false;
+			    $xRlt['msg']    = "关联关系不存在或为空{$aRelation[$i+1]} ".__METHOD__.' line '.__LINE__;
+			    break;
 			}
 			$this->mSelectElement['join'][$aRelation[$i+1]] = $this->relation[$aRelation[$i+1]];
 			$this->mSelectElement['join'][$aRelation[$i+1]]['table'] = $aRelation[$i+1];
 			$this->mSelectElement['join'][$aRelation[$i+1]]['joinType'] = $aRelation[$i];
 
 		}
-		//print_r($this->mSelectElement['join']);echo '<br><br>';
+		//on条件
+		if ($xRlt['status'] && $on){
+		    if (is_string($on)){
+		        $this->mSelectElement['join']['on'] = $on;
+		    }else{
+		        $xRlt['status'] = false;
+		        $xRlt['msg']    = 'on条件参数只能传递字符串形式 '.var_export($on,true).' '.__METHOD__.' line '.__LINE__;
+		    }
+		}
+		
+		if (!$xRlt['status']){
+		    $this->debug($xRlt['msg'], E_USER_ERROR,sle\Sle::SLE_SYS);
+		}else{
+		    $this->debug('join参数 '.print_r($this->mSelectElement,true).' '.__METHOD__.' line '.__LINE__, E_USER_NOTICE,sle\Sle::SLE_SYS);
+		}
         return $this;
     }
 
 
 
     //获取列处理
-	public function field($sField){echo $sField;
+	public function field($sField){
 	    $xRlt = array('status'=>true,'msg'=>'');
 	    $aField = explode(',', $sField);
 	    $aRlt   = array();
@@ -210,6 +236,10 @@ class BaseModel extends \struggle\libraries\Object{
 	}
 
 
+	/**
+	 * 解析以数组形式查询语句各部分
+	 * @param array $aOpt
+	 */
 	private function initOption($aOpt){
         static $aSqlElement = null;
 		if(!$aSqlElement)
@@ -254,12 +284,20 @@ class BaseModel extends \struggle\libraries\Object{
 
 
 
-
-
-
-
-
-    public function findAll(){}
+	/**
+	 * 获取全部结果集
+	 * @param array $options
+	 * @return array
+	 * @author luguo@139.com
+	 */
+    public function findAll($options = array()){
+        $aResult = array();
+        $this->initOption($options);
+        $aResult = $this->Db->findAll($this->mSelectElement);
+        return $aResult;
+    }
+    
+    
     public function findBySql(){}
     public function findAllBySql(){}
 

@@ -1,6 +1,7 @@
 <?php
 namespace struggle\libraries\db\driver;
 use struggle as sle;
+use struggle\ctop;
 /**
  * 模型运用例子
  * name='sys'
@@ -121,9 +122,15 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 		$this->prepare($this->buildSelect());
 		$this->_beginBind();
 		$this->execute();
-		//$this->fetchAll();
-		var_dump($this->fetchAll(),$this->mErrorInfo);
-		//return $this->fetch();
+		return $this->fetch();
+    }
+    
+    public function findAll($options = array()){
+        $this->parseOpt($options);
+        $this->prepare($this->buildSelect());
+        $this->_beginBind();
+        $this->execute();
+        return $this->fetchAll();
     }
 
     /**
@@ -278,37 +285,51 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 	/**
 	 * 关联关系处理
 	 * 只能关联查询跟参考模型的有关系的模型，即所有关联模型的外键都是与参考模型主键进行关联reference.key=join.key
+	 * @param array $param
+	 * @return
+	 * @author luguo@139.com
 	*/
     private function _join($param){
 		$sJoin = '';
-		$xRlt = false;
+		$sOn = '';
+		$sJoinOn = '';
+		$xRlt = array('status'=>true,'msg'=>'执行'.__METHOD__);
+		if (isset($param['on']) && $param['on']){
+		    $sOn = $param['on'];
+		    unset($param['on']);
+		}
 		foreach($param as $model=>$relation){
 			if($relation['type'] == HAS_AND_BELONG_TO_MANY){
 				$sMiddleTable = sle\ctop($relation['middleTable']);
 				$oMiddleModel = sle\M($sMiddleTable);
 				if($oMiddleModel){
 					if(!property_exists($oMiddleModel,'alias') || empty($oMiddleModel->alias)){
-						$xRlt = "{$sMiddleTable} alias属性不存在或为空".__METHOD__.' line '.__LINE__;
+					    $xRlt['status'] = false;
+					    $xRlt['msg']    = "{$sMiddleTable} alias属性不存在或为空".__METHOD__.' line '.__LINE__;
 					}
 
 					if(!isset($oMiddleModel->relation[$this->mReferModel]['forginKey']) || empty($oMiddleModel->relation[$this->mReferModel]['forginKey'])){
-						$xRlt = "{$sMiddleTable} {$this->mReferModel}关系中forginKey不存在或为空 ".__METHOD__.' line '.__LINE__;
+					    $xRlt['status'] = false;
+					    $xRlt['msg']    = "{$sMiddleTable} {$this->mReferModel}关系中forginKey不存在或为空 ".__METHOD__.' line '.__LINE__;
 					}
-					if(!$xRlt){
+					if($xRlt['status']){
 					    $sMiddleAlias = $oMiddleModel->alias;
 						$sMiddleForginKey = $oMiddleModel->relation[$this->mReferModel]['forginKey'];
 					    $sJoin .= " INNER JOIN ".$oMiddleModel->getTableName()." AS {$sMiddleAlias} ON {$this->mAlias}.{$this->mReferKey} = {$sMiddleAlias}.{$sMiddleForginKey} ";
 						$oModel = sle\M($model);
 						if($oModel){
 							if(!property_exists($oModel,'alias') || empty($oModel->alias)){
-								$xRlt = "{$model} alias属性不存在或为空".__METHOD__.' line '.__LINE__;
+        					    $xRlt['status'] = false;
+        					    $xRlt['msg']    = "{$model} alias属性不存在或为空".__METHOD__.' line '.__LINE__;
 							}
 							if(!property_exists($oModel,'priKey') || empty($oModel->priKey)){
-								$xRlt = "{$model} priKey属性不存在或为空".__METHOD__.' line '.__LINE__;
+        					    $xRlt['status'] = false;
+        					    $xRlt['msg']    = "{$model} priKey属性不存在或为空".__METHOD__.' line '.__LINE__;
 							}
 
 							if(!isset($oMiddleModel->relation[$model]['forginKey']) || empty($oMiddleModel->relation[$model]['forginKey'])){
-								$xRlt = "{$sMiddleTable} {$model}关系中forginKey不存在或为空 ".__METHOD__.' line '.__LINE__;
+        					    $xRlt['status'] = false;
+        					    $xRlt['msg']    = "{$sMiddleTable} {$model}关系中forginKey不存在或为空 ".__METHOD__.' line '.__LINE__;
 							}
 
 							if(!$xRlt){
@@ -318,36 +339,43 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 								$sJoin .= strtoupper($relation['joinType'])." JOIN ".$oModel->getTableName()." AS {$sModelAlias} ON {$sModelAlias}.{$sModelPriKey}={$sMiddleAlias}.{$sMiddleModelForginKey} ";
 							}
 						}else{
-							$xRlt = "模型不存在{$model} ".__METHOD__.' line '.__LINE__;
+    					    $xRlt['status'] = false;
+    					    $xRlt['msg']    = "模型不存在{$model} ".__METHOD__.' line '.__LINE__;
 						}
 					}
 
 				}else{
-					$xRlt = "模型不存在,请检查模型名称 :{$sMiddleTable} ".__METHOD__.' line '.__LINE__;
+				    $xRlt['status'] = false;
+				    $xRlt['msg']    = "模型不存在,请检查模型名称 :{$sMiddleTable} ".__METHOD__.' line '.__LINE__;
 				}
 			}else{
 				//除了多对多关系的其他关系处理
-				$oModel = sle\M($model);
+				$oModel = sle\M(sle\ctop($model));
 				if($oModel){
 					if(!property_exists($oModel,'alias') || empty($oModel->alias)){
-						$xRlt = "{$model} alias属性不存在或为空".__METHOD__.' line '.__LINE__;
+    				    $xRlt['status'] = false;
+    				    $xRlt['msg']    = "{$model} alias属性不存在或为空".__METHOD__.' line '.__LINE__;
 					}
 
 					if(!isset($relation['joinType']) || empty($relation['joinType'])){
-						$xRlt = "{$model} 连接类型(joinType)不存在或为空".__METHOD__.' line '.__LINE__;
+    				    $xRlt['status'] = false;
+    				    $xRlt['msg']    = "{$model} 连接类型(joinType)不存在或为空".__METHOD__.' line '.__LINE__;
 					}
 
 					if(!isset($relation['forginKey']) || empty($relation['forginKey'])){
-						$xRlt = "{$model} 外键(forginKey)不存在或为空".__METHOD__.' line '.__LINE__;
+    				    $xRlt['status'] = false;
+    				    $xRlt['msg']    = "{$model} 外键(forginKey)不存在或为空".__METHOD__.' line '.__LINE__;
 					}
+					$sOn = str_replace($model, $oModel->alias, $sOn);
 
-					if(!$xRlt){
+					if($xRlt['status']){
 						$sModelAlias = $oModel->alias;
 						$sModelForginKey = $relation['forginKey'];
 						$sJoin .= strtoupper($relation['joinType'])." JOIN ".$oModel->getTableName()." AS {$sModelAlias} ON {$sModelAlias}.{$sModelForginKey} = {$this->mAlias}.{$this->mReferKey} ";
 				    }
 				}else{
-				    $xRlt = "模型不存在,请检查模型名称 :{$model} ".__METHOD__.' line '.__LINE__;
+				    $xRlt['status'] = false;
+				    $xRlt['msg']    = "模型不存在,请检查模型名称 {$model} ".__METHOD__.' line '.__LINE__;
 			    }
 			}
 			//#TODO  HAS_MANY BELONGS_TO HAS_ONE关系的细分处理
@@ -355,8 +383,14 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 
 
 		}//end foreach
-		if($xRlt)
-	      $this->debug($xRlt,E_USER_ERROR,sle\Sle::SLE_SYS);
+		if($xRlt['status']){
+		    if ($sOn){
+		        $sJoin = " {$sJoin} AND ({$sOn}) ";
+		    }
+		    $this->debug('join拼接后的字符串 '.$sJoin.' '.__METHOD__.' line '.__LINE__, E_USER_NOTICE,sle\Sle::SLE_SYS);
+		}else{
+	        $this->debug($xRlt['msg'],E_USER_ERROR,sle\Sle::SLE_SYS);
+		}
 		$this->mSelectInfo['join'] = $sJoin;
     }
 

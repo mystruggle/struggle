@@ -7,6 +7,7 @@ define('HAS_ONE',1);
 define('BELONES_TO',2);
 define('HAS_MANY',3);
 define('HAS_AND_BELONG_TO_MANY',4);
+define('MYSELF',10);
 
 class BaseModel extends \struggle\libraries\Object{
     /* 数据库连接 */
@@ -156,10 +157,12 @@ class BaseModel extends \struggle\libraries\Object{
 	 * @example join('User')
 	 *          join('LEFT User RIGHT Role','User.id = Role.user_id')
 	 *          join('User,Role')
-	 * explain  relation属性中的设置只保证表之间关联的条件成立，至于left join 还是right join 抑或 full join
+	 * explain  - relation属性中的设置只保证表之间关联的条件成立，至于left join 还是right join 抑或 full join
 	 *          等可在join表达式中(relation 中的名称)加入关键字如，LEFT、RIGHT、FULL,如join('LEFT User')默认INNER
-	 *          $on 变量针对每个表达式添加额外的关联条件
-	 *          中间表也为一个类，外键为相对于对应的类，当前relation所属类的外键，所有的描述都应当是描述参考类的情况的
+	 *          - $on 变量针对每个表达式添加额外的关联条件
+	 *          - 中间表也为一个类，外键为相对于对应的类，当前relation所属类的外键，所有的描述都应当是描述参考类的情况的
+	 *          - 类属性都是针对本类描述，如，relation 中关联模型中forginKey描述的是相对于关联模型本类的外键，即该外键
+	 *          为本类(参考类)所映射的模型的外键
 	 *          
 	*/
     public function join($name, $on = ''){

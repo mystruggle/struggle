@@ -1,0 +1,42 @@
+1、
+php_screw下载，http://sourceforge.net/projects/php-screw/?source=navbar
+2、
+php_screw.c
+把CG(extended_info) = 1;
+修改为：
+CG(compiler_options) |= ZEND_COMPILE_EXTENDED_INFO;
+
+php_screw.h
+#define PM9SCREW        "\tRzxCo.\t"
+#define PM9SCREW_LEN     8
+
+my_screw.h
+short pm9screw_mycryptkey[] = {
+  11152, 368, 192, 1281, 62, 21715
+};
+数组元素里的数字大小不能大于5位数，来自网络
+
+3、
+yum install gcc gcc-c++ zlib zlib-devel php-devel(phpize 在php-devel中)
+
+
+4、
+cp modules/php_screw.so  /usr/lib[64]/php/modules/
+
+cd tools/
+make
+cp screw /usr/bin/
+
+5.
+vi /etc/php.d/screw.ini
+extension=php_screw.so
+
+6.
+service httpd restart
+
+7.
+screw test.php
+
+
+
+威盾codelock   需要插件，需要购买，15天试用

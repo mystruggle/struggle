@@ -1,0 +1,97 @@
+2014-09-03 23:26:46/0.0062909126281738s[E_USER_NOTICE 1024]加载核心函数文件Struggle/Config/Functions.php
+2014-09-03 23:26:46/0.015877962112427s[E_USER_NOTICE 1024]加载核心配置文件Struggle/Config/Config.php
+2014-09-03 23:26:46/0.017685890197754s[E_USER_NOTICE 1024]加载项目配置文件Config/Config.php
+2014-09-03 23:26:46/0.018773078918457s[E_USER_NOTICE 1024]所有配置参数值Array
+(
+    [CACHE_ENGINE] => file
+    [CACHE_DIR] => 
+    [LOG_TYPE] => file
+    [LOG_BASE_PATH] => Caches/
+    [LOG_PATH] => Runtime/
+    [LOG_NAME] => application
+    [LOG_EXT] => log
+    [LOG_MAX_SIZE] => 2000
+    [VIEW_THEME_PATH] => Themes/
+    [VIEW_THEME] => Default
+    [VIEW_TPL_SUFFIX] => html
+    [LANG_NAME] => zh-cn
+    [DEBUG_RECORD_TYPE] => file
+    [DEBUG_RECORD_FILE_NAME] => application
+    [DEBUG_RECORD_FILE_PATH] => Caches/Runtime/
+    [DEBUG_RECORD_FILE_EXT] => log
+    [DEBUG_RECORD_FILE_MODE] => ab
+    [DEBUG_RECORD_FILE_SIZE] => 2000
+    [DEBUG_RECORD_FILE_NUM] => 3
+    [DEBUG_LEVEL] => all
+    [ROUTE_MODE] => 0
+    [ROUTE_DEFAULT_MODULE] => index
+    [ROUTE_DEFAULT_ACTION] => index
+    [ROUTE_MODULE_TAG] => m
+    [ROUTE_ACTION_TAG] => a
+    [AUTOLOAD_DIR] => AddOnes/,Struggle/Libraries/,Struggle/Libraries/Cache/Driver/,Controller/
+    [LANG_CHARACTER_SET] => utf-8
+    [DB_TYPE] => pdo
+    [DB_DRIVER] => mysql
+    [DB_NAME] => sle
+    [DB_USER] => root
+    [DB_PWD] => 
+    [DB_HOST] => 127.0.0.1
+    [DB_PORT] => 3306
+    [DB_DNS] => 
+    [DB_TABLE_SUFFIX] => 
+    [DB_TABLE_PREFIX] => sle_
+)
+
+2014-09-03 23:26:46/0.019257068634033s[E_USER_NOTICE 1024]语言配置文件Struggle/Config/zh-cn.php处理
+2014-09-03 23:26:46/0.020364999771118s[E_USER_WARNING 512]语言文件不存在Config/zh-cn.php,文件名区分大小写
+2014-09-03 23:26:46/0.022291898727417s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Object.php
+2014-09-03 23:26:46/0.023910999298096s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Exception.php
+2014-09-03 23:26:46/0.025748014450073s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Route.php
+2014-09-03 23:26:46/0.030240058898926s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Controller.php
+2014-09-03 23:26:46/0.035325050354004s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/Model.php
+2014-09-03 23:26:46/0.037232875823975s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Db/Db.php
+2014-09-03 23:26:46/0.043839931488037s[E_USER_NOTICE 1024]加载核心文件Struggle/Libraries/Core/View.php
+2014-09-03 23:26:46/0.044302940368652s[E_USER_NOTICE 1024]设置/var/www/html/struggle/code/AddOnes/:/var/www/html/struggle/code/Struggle/Libraries/:/var/www/html/struggle/code/Struggle/Libraries/Cache/Driver/:/var/www/html/struggle/code/Controller/:自动包含目录
+2014-09-03 23:26:46/0.04441499710083s[E_USER_NOTICE 1024]自定义自动包含处理函数\struggle\autoLoad
+2014-09-03 23:26:46/0.044487953186035s[E_USER_NOTICE 1024]自定义shutdown处理句柄\struggle\libraries\Exception::shutdownHandle
+2014-09-03 23:26:46/0.044575929641724s[E_USER_NOTICE 1024]自定义异常处理句柄\struggle\libraries\Exception::exceptionHandle
+2014-09-03 23:26:46/0.044620990753174s[E_USER_NOTICE 1024]自定义错误处理句柄\struggle\libraries\Exception::errorHandle
+2014-09-03 23:26:46/0.044771909713745s[E_USER_NOTICE 1024]初始化类Route
+2014-09-03 23:26:46/0.045058012008667s[E_USER_NOTICE 1024]初始化类Debug
+2014-09-03 23:26:46/0.045104026794434s[E_USER_NOTICE 1024]自动加载类struggle\libraries\Debug
+2014-09-03 23:26:46/0.051100969314575s[E_USER_NOTICE 1024]初始化类\struggle\libraries\cache\driver\File,初始化参数Array
+(
+    [file] => Caches/Runtime/application.log
+    [mode] => ab
+    [size] => 2000
+    [renum] => 3
+)
+
+2014-09-03 23:26:46/0.051168918609619s[E_USER_NOTICE 1024]自动加载类struggle\libraries\cache\driver\File
+2014-09-03 23:26:46/0.045026063919067s[E_USER_NOTICE 1024]路由模式0;url=>/struggle/code/
+2014-09-03 23:26:46/0.058276891708374s[E_USER_NOTICE 1024]模块标签=>m;方法标签=>a;模块=>Index;方法=>Index
+2014-09-03 23:26:46/0.10217189788818s[E_USER_NOTICE 1024]select 语句参数信息 : Array
+(
+    [where] => WHERE (`name`=? and `pwd`>=?) or ( `id` in (?,?) and `pwd`=?)
+    [limit] => LIMIT 1
+    [field] => *
+)
+struggle\libraries\db\driver\PdoMysqlDriver::parseOpt line 271
+2014-09-03 23:26:46/0.10257887840271s[E_USER_NOTICE 1024]SQL语句拼接:SELECT * FROM sle_user AS u  WHERE (`name`=? and `pwd`>=?) or ( `id` in (?,?) and `pwd`=?)    LIMIT 1
+2014-09-03 23:26:46/0.103355884552s[E_USER_NOTICE 1024]SQL绑定参数:Array
+(
+    [0] => sys
+    [1] => 111
+    [2] => 1
+    [3] => 2
+    [4] => 111
+)
+
+2014-09-03 23:26:46/0.11497092247009s[E_USER_NOTICE 1024]调用struggle\libraries\core\View::_include_once('header')方法
+2014-09-03 23:26:46/0.11717391014099s[E_USER_NOTICE 1024]调用struggle\libraries\core\View::_if('true')方法
+2014-09-03 23:26:46/0.11762499809265s[E_USER_NOTICE 1024]调用struggle\libraries\core\View::_close_if方法
+2014-09-03 23:26:46/0.1178240776062s[E_USER_NOTICE 1024]调用struggle\libraries\core\View::_foreach('name='test' list='index,val'')方法
+2014-09-03 23:26:46/0.11812996864319s[E_USER_NOTICE 1024]调用struggle\libraries\core\View::_close_foreach方法
+2014-09-03 23:26:46/0.11833000183105s[E_USER_NOTICE 1024]调用struggle\libraries\core\View::_url('show/shit?act=add&id=$id')方法
+2014-09-03 23:26:46/0.11875200271606s[E_USER_NOTICE 1024]调用struggle\libraries\core\View::_include_once('footer')方法
+2014-09-03 23:26:46/0.12152194976807s[E_USER_NOTICE 1024]把编译后内容写入编译文件Caches/Runtime/cf78b1f368808405623fc611cbce258d.php

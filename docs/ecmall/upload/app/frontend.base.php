@@ -400,7 +400,6 @@ class UserVisitor extends BaseVisitor
  */
 class MallbaseApp extends FrontendApp
 {
-	
     function _run_action()
     {
         /* 只有登录的用户才可访问 */

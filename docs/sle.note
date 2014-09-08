@@ -1,0 +1,9 @@
+日志处理设计思路
+  1)初始化set_error_handler,set_exception_handler,之前用if或try..catch判断、处理错误
+  2)初始化set_error_handler,set_exception_handler之后，由上述语句设置的句柄处理错误，或异常
+  3)之后在需要、关键部位添加日志语句，把调试信息添加到日志里，以便跟踪代码排除错误
+
+处理日志需要考虑的元素
+  1)设置一个常量，决定是否在页面显示，还是只在后台记录日志
+  2)日志分等级：系统：错误sys_error,警告sys_warning,提示sys_notice
+                应用：错误app_error,警告app_warning,提示app_notice

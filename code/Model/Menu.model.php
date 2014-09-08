@@ -7,12 +7,13 @@ class MenuModel extends Model{
     public $priKey = 'id';
     public $relation = array(
         'Controller'=>array( 
-           'forginKey'=>'id',
-                'type'=>BELONES_TO
+           'forginKey'=>'ctl_id',
+           'type'     =>BELONGS_TO,
+           'beReferKey'=>'test_id',
         ),
         'Action'=>array(
-            'forginKey'=>'id',
-                'type'=>BELONES_TO,
+            'forginKey'=>'act_id',
+            'type'     =>BELONES_TO,
         ),
     );
                     

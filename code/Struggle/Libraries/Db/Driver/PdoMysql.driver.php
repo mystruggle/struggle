@@ -38,9 +38,9 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
     protected $mConnErrMode = \PDO::ERRMODE_WARNING;  //错误报告模式ERRMODE_EXCEPTION
     protected $mTableInfo   = array(); //表结构信息
     protected $mTableFullName = '';
-    protected $mAlias         = '';
-	private   $mReferKey      = ''; //参考表主键
-	private   $mReferModel    = ''; //参考模型
+    protected $mAlias         = '';  //别名
+	private   $mPriKey        = '';  //主键
+	private   $mModel         = '';  //模型名称(模型类名称)
 	//保存查询语句每个部分，如mSelectInfo['where']
     protected $mSelectInfo    = array();
     protected $mBindParam     = array();  //绑定的参数
@@ -57,10 +57,10 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
     public function __construct($aOpt){
         parent::__construct();
 		$this->mAlias = $aOpt['alias'];
-		$this->mReferKey = $aOpt['referKey'];
+		$this->mPriKey = $aOpt['priKey'];
 		$this->mTablePrefix = sle\C('DB_TABLE_PREFIX');
 		$this->mTableSuffix = sle\C('DB_TABLE_SUFFIX');
-		$this->mReferModel  = $aOpt['model'];
+		$this->mModel  = $aOpt['model'];
         $this->connect($aOpt);
 		$this->initTableMetadata($this->mTablePrefix.sle\ptoc($aOpt['model']).$this->mTableSuffix,$this->mAlias);
     }
@@ -285,7 +285,8 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 	/**
 	 * 关联关系处理
 	 * 只能关联查询跟参考模型的有关系的模型，即所有关联模型的外键都是与参考模型主键进行关联reference.key=join.key
-	 * @param array $param
+	 * @param array $param  
+	 *        array('model_name'=>array('table'=>'','joinType'=>'','forginKey'=>'','beReferKey'=>'','midModel'=>'','extOn'=>''),'on'=>'')
 	 * @return
 	 * @author luguo@139.com
 	*/
@@ -293,13 +294,17 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 		$sJoin = '';
 		$sOn = '';
 		$sJoinOn = '';
+		$sKey  = '';
+		$sForginKey   = '';
+		$sAlias= '';
+		$sJoinAlias = '';
 		$xRlt = array('status'=>true,'msg'=>'执行'.__METHOD__);
 		if (isset($param['on']) && $param['on']){
 		    $sOn = $param['on'];
 		    unset($param['on']);
 		}
 		foreach($param as $model=>$relation){
-			if($relation['type'] == HAS_AND_BELONG_TO_MANY){
+			if($relation['type'] == HAS_AND_BELONGS_TO_MANY){
 				$sMiddleTable = sle\ctop($relation['middleTable']);
 				$oMiddleModel = sle\M($sMiddleTable);
 				if($oMiddleModel){
@@ -308,14 +313,14 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 					    $xRlt['msg']    = "{$sMiddleTable} alias属性不存在或为空".__METHOD__.' line '.__LINE__;
 					}
 
-					if(!isset($oMiddleModel->relation[$this->mReferModel]['forginKey']) || empty($oMiddleModel->relation[$this->mReferModel]['forginKey'])){
+					if(!isset($oMiddleModel->relation[$this->mBeReferModel]['forginKey']) || empty($oMiddleModel->relation[$this->mBeReferModel]['forginKey'])){
 					    $xRlt['status'] = false;
-					    $xRlt['msg']    = "{$sMiddleTable} {$this->mReferModel}关系中forginKey不存在或为空 ".__METHOD__.' line '.__LINE__;
+					    $xRlt['msg']    = "{$sMiddleTable} {$this->mBeReferModel}关系中forginKey不存在或为空 ".__METHOD__.' line '.__LINE__;
 					}
 					if($xRlt['status']){
 					    $sMiddleAlias = $oMiddleModel->alias;
-						$sMiddleForginKey = $oMiddleModel->relation[$this->mReferModel]['forginKey'];
-					    $sJoin .= " INNER JOIN ".$oMiddleModel->getTableName()." AS {$sMiddleAlias} ON {$this->mAlias}.{$this->mReferKey} = {$sMiddleAlias}.{$sMiddleForginKey} ";
+						$sMiddleForginKey = $oMiddleModel->relation[$this->mBeReferModel]['forginKey'];
+					    $sJoin .= " INNER JOIN ".$oMiddleModel->getTableName()." AS {$sMiddleAlias} ON {$this->mAlias}.{$this->mBeReferKey} = {$sMiddleAlias}.{$sMiddleForginKey} ";
 						$oModel = sle\M($model);
 						if($oModel){
 							if(!property_exists($oModel,'alias') || empty($oModel->alias)){
@@ -351,6 +356,28 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 			}else{
 				//除了多对多关系的其他关系处理
 				$oModel = sle\M(sle\ctop($model));
+				//判断联系类型
+				if ($relation['type'] == HAS_MANY || $relation['type'] == HAS_ONE){
+				    //被参照表键赋值
+				    $sKey = isset($relation['beReferKey'])?$relation['beReferKey']:$this->mPriKey;
+				    
+				    //被参照表别名赋值
+				    if (isset($relation['alias']) && $relation['alias']){
+				        $sJoinAlias = $relation['alias'];
+				    }else {
+				        $sJoinAlias =$oModel->alias;
+				    }
+				}elseif ($relation['type'] == BELONGS_TO){
+				    $sKey = $oModel->priKey;
+				}else{
+				    $xRlt['status'] = false;
+				    $sRlt['msg']    = '联系类型不存在('.$model.') '.__METHOD__.' line '.__LINE__;
+				}
+				
+				//给被参照表的别名赋值
+				if ($xRlt['status'] && isset($relation['alias'] && $relation['alias'])
+				
+				var_dump($relation,$sKey,$this->mBeReferKey);die('end');
 				if($oModel){
 					if(!property_exists($oModel,'alias') || empty($oModel->alias)){
     				    $xRlt['status'] = false;
@@ -371,14 +398,13 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 					if($xRlt['status']){
 						$sModelAlias = $oModel->alias;
 						$sModelForginKey = $relation['forginKey'];
-						$sJoin .= strtoupper($relation['joinType'])." JOIN ".$oModel->getTableName()." AS {$sModelAlias} ON {$sModelAlias}.{$sModelForginKey} = {$this->mAlias}.{$this->mReferKey} ";
+						$sJoin .= strtoupper($relation['joinType'])." JOIN ".$oModel->getTableName()." AS {$sModelAlias} ON {$sModelAlias}.{$sModelForginKey} = {$this->mAlias}.{$this->mBeReferKey} ";
 				    }
 				}else{
 				    $xRlt['status'] = false;
 				    $xRlt['msg']    = "模型不存在,请检查模型名称 {$model} ".__METHOD__.' line '.__LINE__;
 			    }
 			}
-			//#TODO  HAS_MANY BELONGS_TO HAS_ONE关系的细分处理
 
 
 

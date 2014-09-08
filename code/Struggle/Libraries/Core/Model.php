@@ -1,12 +1,21 @@
 <?php
+/**
+ * 模型的基类
+ * 
+ * @author luguo <luguo@139.com>
+ * 
+ * @note
+ * - 主键所在的表叫被参照表(被引用表、主表)，主键在另一表中做外键时所在的表叫做参照表(引用表、子表)。在参照完整性中有描述
+ *
+ */
 namespace struggle\libraries\core;
 use struggle as sle;
 use struggle\ctop;
 
 define('HAS_ONE',1);
-define('BELONES_TO',2);
+define('BELONGS_TO',2);
 define('HAS_MANY',3);
-define('HAS_AND_BELONG_TO_MANY',4);
+define('HAS_AND_BELONGS_TO_MANY',4);
 define('MYSELF',10);
 
 class BaseModel extends \struggle\libraries\Object{
@@ -28,9 +37,9 @@ class BaseModel extends \struggle\libraries\Object{
 	private   $mDrvNameSpace = '\struggle\libraries\db\driver\\';
 	private   $mSelectElement = array('field'  =>'','join'=>'','where'=>'',
 		                              'groupby'=>'','having'=>'','orderby'=>'','limit'=>'');
-	private   $mAlias      = '';
-	private   $mReferKey   = '';
-	private   $mReferModel = '';
+	private   $mAlias      = '';    //当前模型别名
+	private   $mPriKey     = '';   //当前模型的主键
+	private   $mCurModel = '';     //当前调用的模型
 
 
     public function __construct(){
@@ -58,8 +67,8 @@ class BaseModel extends \struggle\libraries\Object{
             }else{
                 $this->mAlias = $sModelName;
             }
-            $this->mReferModel = $sModelName;
-			$this->mReferKey   = $this->priKey;
+            $this->mCurModel = $sModelName;
+			$this->mPriKey   = $this->priKey;
         }
     }
 
@@ -89,8 +98,8 @@ class BaseModel extends \struggle\libraries\Object{
                       'pwd'=>$this->mPwd,
                       'charset'=>$this->mCharset,
 			          'alias'  =>$this->mAlias,
-			          'model'  =>$this->mReferModel,
-			          'referKey'=>$this->mReferKey,
+			          'model'  =>$this->mCurModel,
+			          'priKey'=>$this->mPriKey,
                 );
         if(!isset($aDb[$sKey]))
 		    $aDb[$sKey] = new $sClassName($aOpt);
@@ -152,7 +161,7 @@ class BaseModel extends \struggle\libraries\Object{
 	 * 关联查询
 	 * @param string $name 关联名称  ($relation属性下的键名，该键名为关联模型名称)
 	 * @param string $on   关联额外条件(用模型名称指明字段归属)
-	 * @return mixed 成功返回模型对象resource 失败返回false
+	 * @return mixed 成功返回模型对象resource 失败返回false 
 	 * @author luguo@139.com
 	 * @example join('User')
 	 *          join('LEFT User RIGHT Role','User.id = Role.user_id')
@@ -160,9 +169,30 @@ class BaseModel extends \struggle\libraries\Object{
 	 * explain  - relation属性中的设置只保证表之间关联的条件成立，至于left join 还是right join 抑或 full join
 	 *          等可在join表达式中(relation 中的名称)加入关键字如，LEFT、RIGHT、FULL,如join('LEFT User')默认INNER
 	 *          - $on 变量针对每个表达式添加额外的关联条件
-	 *          - 中间表也为一个类，外键为相对于对应的类，当前relation所属类的外键，所有的描述都应当是描述参考类的情况的
-	 *          - 类属性都是针对本类描述，如，relation 中关联模型中forginKey描述的是相对于关联模型本类的外键，即该外键
-	 *          为本类(参考类)所映射的模型的外键
+	 *          - 中间表也为一个类
+	 *          - 两个表之间的所有类型关系，都可以用一对多关系处理，如一对一为一对多的一个特例；多对一为一对多的反向关系，多对多可以拆分成两个一对多。
+	 *            一对一      一对多  的特列
+	 *            一对多      一对多
+	 *            多对一      一对多反向管理
+	 *            多对多      拆分成两个一对多关系
+	 *          - forginKey  两表之间只有一个表有forginKey，所以relation属性中forginKey都只表示HAS_MANY的forginKey
+	 *            如，user与class是一对多的关系，user为HAS_MANY；class为BELONGS_TO; 
+	 *            //这里的forginKey表示User中的class外键,beReferKey表示class中的id
+	 *            relation=array('User'=>array('type'=>HAS_MANY,'forginKey'=>'class_id','beReferKey'=>'id'))
+	 *            //这里的forginKey亦表示User中的class外键,beReferKey亦表示class中的id
+	 *            relation=array('Class'=>array('type'=>BELONGS_TO,'forginKey'=>'class_id','beReferKey'=>'id'))
+	 *          - 如果relation中的type为BELONGS_TO表明该表为被参考表，在上面所述中class为被参考表（即主表）
+	 *          - 关联属性包含的元素有mSelectElement['join'] = array(
+	 *                                                        'ModelName'=>array(
+	 *                                                            'table'=>'',
+	 *                                                            'type'=>,      //HAS_MANY,..
+	 *                                                            'beReferKey'=>'',
+	 *                                                            'forginKey'=>'',
+	 *                                                            'midModel'=>'',
+	 *                                                            'joinType'=>'',//INNER,..
+	 *                                                            'alias'=>'',
+	 *                                                            'extOn'=>'')
+	 *                                                    )
 	 *          
 	*/
     public function join($name, $on = ''){

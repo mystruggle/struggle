@@ -291,16 +291,16 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 	 * @author luguo@139.com
 	*/
     private function _join($param){
-		$sJoin = '';
-		$sOn = '';
-		$sJoinOn = '';
+		$aJoin = array();
+		$aJoinOn = array();
 		$sKey  = '';
 		$sForginKey   = '';
 		$sAlias= '';
 		$sJoinAlias = '';
+		$sJoinTable = '';
 		$xRlt = array('status'=>true,'msg'=>'执行'.__METHOD__);
 		if (isset($param['on']) && $param['on']){
-		    $sOn = $param['on'];
+		    $aJoinOn[] = $param['on'];
 		    unset($param['on']);
 		}
 		foreach($param as $model=>$relation){
@@ -360,50 +360,30 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 				if ($relation['type'] == HAS_MANY || $relation['type'] == HAS_ONE){
 				    //被参照表键赋值
 				    $sKey = isset($relation['beReferKey'])?$relation['beReferKey']:$this->mPriKey;
-				    
-				    //被参照表别名赋值
-				    if (isset($relation['alias']) && $relation['alias']){
-				        $sJoinAlias = $relation['alias'];
-				    }else {
-				        $sJoinAlias =$oModel->alias;
-				    }
+				    $sForginKey = $relation['forginKey'];
+				    $sAlias = $this->mAlias;
+				    $sJoinAlias = isset($relation['alias'])?$relation['alias']:$oModel->alias;
+				    $sJoinTable = $oModel->getTableName();
 				}elseif ($relation['type'] == BELONGS_TO){
-				    $sKey = $oModel->priKey;
+				    $sKey = isset($relation['beReferKey'])?$relation['beReferKey']:$oModel->priKey;
+				    $sForginKey = $relation['forginKey'];
+				    $sAlias = isset($relation['alias'])?$relation['alias']:$oModel->alias;
+				    $sJoinAlias = $this->mAlias;
+				    $sJoinTable = $this->mTableFullName;
 				}else{
 				    $xRlt['status'] = false;
 				    $sRlt['msg']    = '联系类型不存在('.$model.') '.__METHOD__.' line '.__LINE__;
 				}
 				
 				//给被参照表的别名赋值
-				if ($xRlt['status'] && isset($relation['alias'] && $relation['alias'])
-				
-				var_dump($relation,$sKey,$this->mBeReferKey);die('end');
-				if($oModel){
-					if(!property_exists($oModel,'alias') || empty($oModel->alias)){
-    				    $xRlt['status'] = false;
-    				    $xRlt['msg']    = "{$model} alias属性不存在或为空".__METHOD__.' line '.__LINE__;
-					}
-
-					if(!isset($relation['joinType']) || empty($relation['joinType'])){
-    				    $xRlt['status'] = false;
-    				    $xRlt['msg']    = "{$model} 连接类型(joinType)不存在或为空".__METHOD__.' line '.__LINE__;
-					}
-
-					if(!isset($relation['forginKey']) || empty($relation['forginKey'])){
-    				    $xRlt['status'] = false;
-    				    $xRlt['msg']    = "{$model} 外键(forginKey)不存在或为空".__METHOD__.' line '.__LINE__;
-					}
-					$sOn = str_replace($model, $oModel->alias, $sOn);
-
-					if($xRlt['status']){
-						$sModelAlias = $oModel->alias;
-						$sModelForginKey = $relation['forginKey'];
-						$sJoin .= strtoupper($relation['joinType'])." JOIN ".$oModel->getTableName()." AS {$sModelAlias} ON {$sModelAlias}.{$sModelForginKey} = {$this->mAlias}.{$this->mBeReferKey} ";
-				    }
-				}else{
-				    $xRlt['status'] = false;
-				    $xRlt['msg']    = "模型不存在,请检查模型名称 {$model} ".__METHOD__.' line '.__LINE__;
-			    }
+				//if ($xRlt['status'] && isset($relation['alias']) && $relation['alias'])
+				//echo $sAlias.'.'.$sKey.'='.$sJoinAlias.'.'.$sForginKey;
+			    $aJoinOn = str_replace(array($this->name,$model), array($this->mAlias,$oModel->alias), $sOn);
+                if($xRlt['status']){
+						$aJoin[] = strtoupper($relation['joinType'])." JOIN ".$sJoinTable." AS {$sJoinAlias} ON {$sAlias}.{$sKey} = {$sJoinAlias}.{$sForginKey}";
+				}
+			    $xRlt['status'] = false;
+			    $xRlt['msg']    = "模型不存在,请检查模型名称 {$model} ".__METHOD__.' line '.__LINE__;
 			}
 
 

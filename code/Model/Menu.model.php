@@ -9,7 +9,6 @@ class MenuModel extends Model{
         'Controller'=>array( 
            'forginKey'=>'ctl_id',
            'type'     =>BELONGS_TO,
-           'beReferKey'=>'test_id',
         ),
         'Action'=>array(
             'forginKey'=>'act_id',

@@ -297,7 +297,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 		$sForginKey   = '';
 		$sAlias= '';
 		$sJoinAlias = '';
-		$sJoinTable = '';
+		$aModelMapp = array();
 		$xRlt = array('status'=>true,'msg'=>'执行'.__METHOD__);
 		if (isset($param['on']) && $param['on']){
 		    $aJoinOn[] = $param['on'];
@@ -356,43 +356,51 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 			}else{
 				//除了多对多关系的其他关系处理
 				$oModel = sle\M(sle\ctop($model));
+				$aModelMapp[$model] = $oModel->alias;
+				if (isset($relation['on'])){
+				    $aJoinOn[] = $relation['on'];
+				}
+				//关联模型的别名
+				$sJoinModelAlias = isset($relation['alias'])?$relation['alias']:$oModel->alias;
 				//判断联系类型
 				if ($relation['type'] == HAS_MANY || $relation['type'] == HAS_ONE){
 				    //被参照表键赋值
 				    $sKey = isset($relation['beReferKey'])?$relation['beReferKey']:$this->mPriKey;
 				    $sForginKey = $relation['forginKey'];
 				    $sAlias = $this->mAlias;
-				    $sJoinAlias = isset($relation['alias'])?$relation['alias']:$oModel->alias;
-				    $sJoinTable = $oModel->getTableName();
+				    $sJoinAlias = $sJoinModelAlias;
 				}elseif ($relation['type'] == BELONGS_TO){
 				    $sKey = isset($relation['beReferKey'])?$relation['beReferKey']:$oModel->priKey;
 				    $sForginKey = $relation['forginKey'];
-				    $sAlias = isset($relation['alias'])?$relation['alias']:$oModel->alias;
+				    $sAlias = $sJoinModelAlias;
 				    $sJoinAlias = $this->mAlias;
-				    $sJoinTable = $this->mTableFullName;
 				}else{
 				    $xRlt['status'] = false;
 				    $sRlt['msg']    = '联系类型不存在('.$model.') '.__METHOD__.' line '.__LINE__;
 				}
 				
-				//给被参照表的别名赋值
-				//if ($xRlt['status'] && isset($relation['alias']) && $relation['alias'])
-				//echo $sAlias.'.'.$sKey.'='.$sJoinAlias.'.'.$sForginKey;
-			    $aJoinOn = str_replace(array($this->name,$model), array($this->mAlias,$oModel->alias), $sOn);
+				
                 if($xRlt['status']){
-						$aJoin[] = strtoupper($relation['joinType'])." JOIN ".$sJoinTable." AS {$sJoinAlias} ON {$sAlias}.{$sKey} = {$sJoinAlias}.{$sForginKey}";
+						$aJoin[] = strtoupper($relation['joinType'])." JOIN ".($this->mTablePrefix.sle\ptoc($model).$this->mTableSuffix)." AS {$sJoinModelAlias} ON {$sAlias}.{$sKey} = {$sJoinAlias}.{$sForginKey}";
 				}
-			    $xRlt['status'] = false;
-			    $xRlt['msg']    = "模型不存在,请检查模型名称 {$model} ".__METHOD__.' line '.__LINE__;
 			}
 
 
 
 		}//end foreach
+		
+
+		
+		
 		if($xRlt['status']){
-		    if ($sOn){
-		        $sJoin = " {$sJoin} AND ({$sOn}) ";
-		    }
+    		//去掉扩展on条件中的模型名称用模型的别名代替
+    		$aModelMapp[$this->mModel] = $this->mAlias;
+    		$sJoinOn = str_replace(array_keys($aModelMapp),array_values($aModelMapp), implode(' AND ', $aJoinOn));
+    		$sJoin = implode(' ', $aJoin);
+    		if ($sJoinOn){
+    		    $sJoin .= ' AND '.$sJoinOn;
+    		}
+    		
 		    $this->debug('join拼接后的字符串 '.$sJoin.' '.__METHOD__.' line '.__LINE__, E_USER_NOTICE,sle\Sle::SLE_SYS);
 		}else{
 	        $this->debug($xRlt['msg'],E_USER_ERROR,sle\Sle::SLE_SYS);

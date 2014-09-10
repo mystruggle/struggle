@@ -12,12 +12,12 @@ class MenuModel extends Model{
         ),
         'Action'=>array(
             'forginKey'=>'act_id',
-            'type'     =>BELONES_TO,
+            'type'     =>BELONGS_TO,
         ),
     );
                     
     public function getSidebarMenus(){
-        $aMenu = $this->join('Controller,Action','Controller.name=Action.name')->findAll();print_r($aMenu);
+        $aMenu = $this->join('LEFT Controller LEFT Action','Controller.name=Action.name')->findAll();print_r($aMenu);
         $aResult = array();
         foreach ($aMenu as $value){
             if (intval($value['parent_id']) === 0){

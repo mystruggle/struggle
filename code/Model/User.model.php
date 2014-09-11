@@ -29,7 +29,7 @@ class UserModel extends Model{
 	public $relation = array( 
 		       'Role'=>array(
 		                   'middleTable'=>'role_user',
-		                   'type'=>HAS_AND_BELONG_TO_MANY,
+		                   'type'=>HAS_AND_BELONGS_TO_MANY,
 		               ),
 		       'Menu'=>array(
 						   'type'=>HAS_MANY,

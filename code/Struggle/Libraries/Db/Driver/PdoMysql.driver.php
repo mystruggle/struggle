@@ -109,13 +109,21 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 	}
 
 
-	public function setAttr($sName,$mVal){
+	public function setAttr($sName,$mVal){echo $sName.'1';
 		return $this->mLink->setAttribute($sName,$mVal);
 	}
 
     public function getAttr($sName){
         return $this->mLink->getAttribute($sName);
     }
+
+	public function setFetchMode($mode){
+		if($mode){
+		    $this->mFetchMode = $mode;
+			return false;
+		}
+		return true;
+	}
 
     public function find($aOpt = array()){
         $this->parseOpt($aOpt);

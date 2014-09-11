@@ -115,9 +115,20 @@ class BaseModel extends \struggle\libraries\Object{
         return $this->Db->getAttr($name);
     }
 
+
+    /**
+	 */
     public function setAttr($name,$value){
         return $this->Db->setAttr($name,$value);
     }
+
+
+    /**
+	 * 设置获取模式
+	 */
+	public function setFetchMode($mode){
+		return $this->Db->setFetchMode($mode);
+	}
 
     public function bindValue($name,$value = null){
         $this->Db->bindValue($name,$value);
@@ -262,6 +273,7 @@ class BaseModel extends \struggle\libraries\Object{
 		    $this->mSelectElement['field'] = implode(',', $aRlt);
 	    else 
 	        $this->debug($xRlt['msg'], E_USER_ERROR,sle\Sle::SLE_SYS);
+		return $this;
 	}
 
 

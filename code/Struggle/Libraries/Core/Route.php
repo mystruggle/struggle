@@ -76,6 +76,86 @@ class Route extends Object{
     }
 
 
+    /**
+	 * 动态生成链接url
+     * @param  string $path
+     * @return string
+	 */
+	public function genUrl($path){
+		$xRlt = array('status'=>true,'msg'=>'执行'.__METHOD__);
+		$xRlt['msg'] = 'url参数'.$path.' line '.__LINE__;
+        $sUrl = '';
+		if(!$path){
+			$path = 'index/index';
+		}
+        $aPath = parse_url($path);
+		$xRlt['msg'] = 'url参数解析后'.print_r($aPath,true).' line '.__LINE__;
+        $sUrlModule = '';
+        $sUrlAction = '';
+        $sQuery     = '';
+        $aQuery     = array();
+		$aTmpUrlPath = explode('/',$aPath['path']);
+		if(count($aTmpUrlPath) === 1){
+			$sUrlModule = $oRoute->defaultModule;
+			$sUrlAction = $aTmpUrlPath[0];
+		}else{
+			$sUrlModule = $aTmpUrlPath[0];
+			$sUrlAction = $aTmpUrlPath[1];
+		}
+        //分析url中是否存在变量，如果存在则用{}包括起来，且把双引号替换成单引号
+		if($sUrlModule[0] =='$'){
+			$sUrlModule = '{'.str_replace('"',"'",$sUrlModule).'}';
+		}
+
+		if($sUrlAction[0] =='$'){
+			$sUrlAction = '{'.str_replace('"',"'",$sUrlAction).'}';
+		}
+
+		//解析参数
+		if(isset($aPath['query']) && !empty($aPath['query'])){
+			$aQuery = explode('&',trim($aPath['query'],'&'));
+			foreach($aQuery as $pair){
+				$aPair = explode('=',$pair);
+				if(count($aPair) == 2){
+					$sParamKey = $aPair[0];
+					$sParamVal = $aPair[1];
+					//分析url的query部分中是否存在变量，如果存在则用{}包括起来，且把双引号替换成单引号
+					if($sParamKey[0] =='$'){
+						$sParamKey = '{'.str_replace('"',"'",$sParamKey).'}';
+					}
+					if($sParamVal[0] =='$'){
+						$sParamVal = '{'.str_replace('"',"'",$sParamVal).'}';
+					}
+					$aQuery[$sParamKey] = $sParamVal;
+				}else{
+					$xRlt['status'] = false;
+					$xRlt['msg']    = 'url参数不正确'.$path.' '.__METHOD__.' line '.__LINE__;
+					break;
+				}
+
+			}
+		}
+
+		//生成对应模式的url
+        if($xRlt['status'] && $this->mode === self::ROUTE_NORMAL){
+			if($aQuery){
+				$sQuery = http_build_query($aQuery);
+			}
+            $sUrl = "?{$this->moduleTag}={$sUrlModule}&{$this->actionTag}={$sUrlAction}".($sQuery?'&'.$sQuery:'');
+        }
+
+		if(!$xRlt['status']){
+			$this->debug($xRlt['msg'],E_USER_ERROR,sle\Sle::SLE_SYS);
+		}
+		return $sUrl;
+	}
+
+
+
+
+
+
+
 
 
 }

@@ -175,6 +175,8 @@ class View extends \struggle\libraries\Object{
     
     
     private function _if($sCondition){
+        $aCondition = $this->parseTagAttr($sCondition);
+        $sCondition = $aCondition['condition'];
         $sCondition = str_replace(array(' gt ',' ge ',' lt ',' le ',' eq '),array(' > ',' >= ',' < ',' <= ',' == '),$sCondition);
         return "<?php if({$sCondition}):?>";
     }
@@ -254,14 +256,14 @@ class View extends \struggle\libraries\Object{
             }
             //数组名称
             if ($xRlt['status'] && isset($aAttr['name']) && $aAttr['name']){
-                $sName = '$'.$aAttr['name'];
+                $sName = '$'.ltrim($aAttr['name'],'$');
             }elseif($xRlt['status']){
                 $xRlt['status'] = false;
                 $xRlt['msg'] = 'foreach数组名称有误'.var_export($aAttr['name'],true).' '.__METHOD__.' line '.__LINE__;
             }
             //数组索引名
             if ($xRlt['status'] && isset($aAttr['list']) && $aAttr['list']){
-                $sList = '$'.str_replace(',', '=>$', $aAttr['list']);
+                $sList = '$'.str_replace(',', '=>$', ltrim($aAttr['list'],'$'));
             }elseif($xRlt['status']){
                 $xRlt['status'] = false;
                 $xRlt['msg'] = 'foreach数组列表有误'.$aAttr['list'].' '.__METHOD__.' line '.__LINE__;

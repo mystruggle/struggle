@@ -609,8 +609,21 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
  <a href='{$value['link']}'>
  <i class='{$value['icon']}'></i>
  <span class='title'>{$value['name']}</span>
- <span class='arrow'></span>
+ {if condition='isset($value['submenu'])'}<span class='arrow'></span>{/if}
  </a>
+ {if condition='isset($value['submenu'])'}
+    {foreach name='$value['submenu']' list='index2,value2'}
+    <ul class='sub-menu'>
+      <li>
+        <a href='{$value2['link']}'>
+        <i class='{$value2['icon']}'></i>
+        <span class='title'>{$value2['name']}</span>
+        {if condition='isset($value2['submenu'])'}<span class='arrow'></span>{/if}
+        </a>
+      </li>
+    </ul>
+    {/foreach}
+ {/if}
 </li>
 {/foreach}
                 <li class="start active ">

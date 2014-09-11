@@ -26,25 +26,47 @@ class MenuModel extends Model{
                 if (empty($value['ctl_name']) || empty($value['act_name'])){
                     $value['link'] = 'javascript:;';
                 }else{
-					$value['link'] = $this->_genlink($value['ctl_name'],$value['act_name']);
+					$value['link'] = $this->_genLink($value['ctl_name'],$value['act_name']);
 				}
+				$value['selected'] = $this->_isSelected($value['ctl_name'], $value['act_name']);
                 $aResult[$value['id']] = $value;
 				unset($aMenu[$index]);
             }
         }
 		foreach($aMenu as $index=>$value){
 			if(in_array($value['parent_id'],array_keys($aResult))){
-				$aResult[$value['parent_id']]['submenu'] = $value;
+                if (empty($value['ctl_name']) || empty($value['act_name'])){
+                    $value['link'] = 'javascript:;';
+                }else{
+					$value['link'] = $this->_genLink($value['ctl_name'],$value['act_name']);
+				}
+				$value['selected'] = $this->_isSelected($value['ctl_name'], $value['act_name']);
+				$aResult[$value['parent_id']]['submenu'][] = $value;
 				unset($aMenu[$index]);
 			}
 		}
-		print_r($aResult);
         return $aResult;
     }
 
 
 	private function _genLink($ctlName,$actName){
-		return namespce\Sle::getInstance()->Route->genUrl("{$ctlName}/{$actName}");
+		return \struggle\Sle::getInstance()->Route->genUrl("{$ctlName}/{$actName}");
+    }
+    
+    
+    
+    /**
+     * 判断菜单是否是当前选中
+     * @param string $ctl
+     * @param string $act
+     * @return boolean
+     */
+    private function _isSelected($ctl,$act){
+        $oSle = \struggle\Sle::getInstance();
+        if ($ctl == $oSle->Route->module && $oSle->Route->action){
+            return true;
+        }
+        return false;
     }
 
 

@@ -605,7 +605,7 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 
                 </li>
 {foreach sourceBySql='\struggle\M('Menu')->getSidebarMenus()' name='menu' list='index,value'}
-<li class=''>
+<li class='{if condition='$menu['dep'][0] eq $index'}start active{/if}'>
  <a href='{$value['link']}'>
  <i class='{$value['icon']}'></i>
  <span class='title'>{$value['name']}</span>
@@ -614,7 +614,13 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
  {if condition='isset($value['submenu'])'}
     {foreach name='$value['submenu']' list='index2,value2'}
     <ul class='sub-menu'>
-      <li>
+	  {if condition='!isset($menu['dep'][2]) and isset($menu['dep'][1]) and ($menu['dep'][1] eq $index2)'}
+      <li class='active'>
+	  {elseif condition='isset($menu['dep'][2]) and isset($menu['dep'][1]) and ($menu['dep'][1] eq $index2)'}
+      <li class='open'>
+	  {else /}
+	  <li class=''>
+	  {/if}
         <a href='{$value2['link']}'>
         <i class='{$value2['icon']}'></i>
         <span class='title'>{$value2['name']}</span>
@@ -626,7 +632,7 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
  {/if}
 </li>
 {/foreach}
-                <li class="start active ">
+                <li class=" "><!--start active-->
 
                     <a href="index.html">
 

@@ -183,6 +183,8 @@ class View extends \struggle\libraries\Object{
 
 
     private function _elseif($sCondition){
+        $aCondition = $this->parseTagAttr($sCondition);
+        $sCondition = $aCondition['condition'];
         $sCondition = str_replace(array(' gt ',' ge ',' lt ',' le ',' eq '),array(' > ',' >= ',' < ',' <= ',' == '),$sCondition);
         return "<?php elseif({$sCondition}):?>";
     }
@@ -292,11 +294,11 @@ class View extends \struggle\libraries\Object{
      */
     private function parseTagAttr($attr){
         $xRlt = array('status'=>true,'msg'=>'');
-        $aAttr = preg_split('/\s+/i', trim($attr));
+        $aAttr = preg_split('/\s+(?=[^=]+?=\s*\'|".+\'|")/i', trim($attr));
         $aReturn = array();
         if (is_array($aAttr) && $aAttr){
             foreach ($aAttr as  $attr){
-                preg_match('/^([^=\'"]+)=(\'.+\'|".+")$/', $attr,$match);
+                preg_match('/^([^=]+)=\s*[\'|"](.+)[\'|"]$/s', $attr,$match);
                 if($xRlt['status'] && $match){
                     $sAttrVal = $match[2];
                     if ($sAttrVal[0] =="'"){

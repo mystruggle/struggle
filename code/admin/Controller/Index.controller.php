@@ -5,6 +5,7 @@ use struggle as sle;
 class IndexController extends Controller{
     public function actionIndex(){
         $d = sle\M('User');
+        sle\Sle::getInstance()->Client->registerClientJs('jquery.vmap.js');
         $this->layout();
     }
     

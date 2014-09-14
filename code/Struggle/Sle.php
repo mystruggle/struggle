@@ -100,6 +100,7 @@ class Sle{
     private $mLog       = '';
     private $mRoute     = '';
     private $mController = '';
+    private $mClient = null;
     const   SLE_NONE = 0;
     const   SLE_ALL  = 1;
     const   SLE_SYS  = 2;
@@ -162,6 +163,15 @@ class Sle{
             $this->Log = $oLog = new libraries\Log();
         }
         return $this->Log;
+    }
+    
+    private  function Client(){
+        static $oClient = null;
+        if (is_null($oClient)){
+            $this->hasInfo("初始化类".__FUNCTION__, E_USER_NOTICE, Sle::SLE_SYS);
+            $this->Client = $oClient = new libraries\Client();
+        }
+        return $this->Client;
     }
     
     /**

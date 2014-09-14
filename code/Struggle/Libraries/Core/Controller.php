@@ -117,7 +117,8 @@ class BaseController extends \struggle\libraries\Object{
             $aRlt['msg']    = '编译文件不能为空 '.__METHOD__.' line '.__LINE__;
         }
         if ($aRlt['status'] && !file_exists($file)){
-            $aRlt['status'] = false;
+            $aRlt['status']
+             = false;
             $aRlt['msg']    = '编译文件不存在 '.__METHOD__.' line '.__LINE__;
         }
         if ($aRlt['status'] && !is_readable($file)){
@@ -140,9 +141,15 @@ class BaseController extends \struggle\libraries\Object{
             extract($this->mTplData);
             include $file;
             $sTxt=ob_get_clean();
+            $this->_before($sTxt);
             echo $sTxt;
             return true;
         }
+    }
+    
+    private function _before(&$content){
+        //if ()
+        preg_replace('//', $replacement, $subject);
     }
     
     

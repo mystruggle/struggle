@@ -1,5 +1,6 @@
 <?php
 namespace struggle\model;
+use struggle\Sle;
 class MenuModel extends Model{
     public $name ='Menu';
     public $table = 'menu';
@@ -18,10 +19,10 @@ class MenuModel extends Model{
                     
     public function getSidebarMenus(){
 		$this->setFetchMode(\PDO::FETCH_ASSOC);
-        $aMenu = $this->field('Menu.id,Menu.name,icon,Controller.name as ctl_name,Action.name as act_name,parent_id')
+        $aMenu = $this->field('Menu.id,Menu.name,Controller.title as ctl_title,Action.title as act_title,icon,Controller.name as ctl_name,Action.name as act_name,parent_id')
 			          ->join('LEFT Controller LEFT Action')->findAll();
         $aResult = array();
-		$aResult['dep'] = '';   // 记录元素维度路径,每个路径用|分隔，节点之间用,分隔
+		$sDep = '';   // 记录菜单元素维度路径,每个路径用|分隔，节点之间用,分隔
 		$iSelectId = 0;
         foreach ($aMenu as $index=>$value){
             if (intval($value['parent_id']) === 0){
@@ -32,7 +33,7 @@ class MenuModel extends Model{
 				}
 				$this->_isSelected($value['ctl_name'], $value['act_name']) && $iSelectId = $value['id'];
                 $aResult[$value['id']] = $value;
-				$aResult['dep']        .= $value['id'].'|';
+				$sDep        .= $value['id'].'|';
 				unset($aMenu[$index]);
             }
         }
@@ -45,11 +46,24 @@ class MenuModel extends Model{
 				}
 				$this->_isSelected($value['ctl_name'], $value['act_name']) && $iSelectId = $value['id'];
 				$aResult[$value['parent_id']]['submenu'][$value['id']] = $value;
-				$aResult['dep']  = str_replace($value['parent_id'],"{$value['parent_id']},{$value['id']}",$aResult['dep']);
+				$sDep  = str_replace($value['parent_id'],"{$value['parent_id']},{$value['id']}",$sDep);
 				unset($aMenu[$index]);
 			}
 		}
-		$aResult['dep'] = explode(',',$this->_getMenuDep($iSelectId,$aResult['dep']));
+		//菜单链处理
+		$aMenuChain = explode(',',$this->_getMenuDep($iSelectId,$sDep));
+		Sle::getInstance()->Controller->assgin('menuChain',$aMenuChain);
+		$aMenuChainInfo = array();
+		$aNodeInfo = array();
+		foreach ($aMenuChain as $id){
+		    $aNodeInfo = empty($aNodeInfo)?$aResult[$id]:$aNodeInfo['submenu'][$id];
+		    if ($aNodeInfo['parent_id'])
+		      $aMenuChainInfo[$id]['name'] = $aNodeInfo['ctl_title'];
+		    else 
+		      $aMenuChainInfo[$id]['name'] = $aNodeInfo['name'];
+		    $aMenuChainInfo[$id]['link']   = $this->_genLink($aNodeInfo['ctl_name'], $aNodeInfo['act_name']);
+		}
+		Sle::getInstance()->Controller->assgin('menuChainInfo',$aMenuChainInfo);
         return $aResult;
     }
 
@@ -57,6 +71,8 @@ class MenuModel extends Model{
 	 * 依据控制器名称和动作名称生成链接
 	 */
 	private function _genLink($ctlName,$actName){
+	    if (empty($ctlName))
+	        return '';
 		return \struggle\Sle::getInstance()->Route->genUrl("{$ctlName}/{$actName}");
     }
 

@@ -31,22 +31,28 @@ create table  if not exists  sle_menu(
   parent_id int not null default 0 comment '父id',
   orderby  int default 0 comment '排序',
   create_time int unsigned default 0 comment '创建时间'
-  )engine=innodb default character set utf8  collate utf8_general_ci comment '菜单表';
-
+)engine=innodb default character set utf8  collate utf8_general_ci comment '菜单表';
+insert into  sle_menu values(null,'首页','icon-home','后台首页',1,1,0,0,unix_timestamp());
+insert into  sle_menu values(null,'系统管理','icon-cogs','系统管理',0,0,0,10,unix_timestamp());
+insert into  sle_menu values(null,'菜单管理','icon-cog','菜单管理',2,1,2,101,unix_timestamp());
 
 create table if not exists sle_controller(
   id int auto_increment primary key,
-  name varchar(100) default '' collate utf8_general_ci comment '控制器名称',
+  name varchar(100) default '' collate utf8_general_ci comment '控制器',
+  title varchar(200) default '' collate utf8_general_ci comment '控制器名称',
   `desc` varchar(255) default '' comment '控制器简单描述'
 )engine=innodb default character set utf8 collate utf8_general_ci comment '控制器表';
-
+insert into  sle_controller values(null,'Index','首页','首页');
+insert into  sle_controller values(null,'Menu','菜单管理','菜单管理');
 
 
 create table if not exists sle_action(
   id int auto_increment primary key,
-  name varchar(100) default '' collate utf8_general_ci comment '动作名称',
+  name varchar(100) default '' collate utf8_general_ci comment '动作',
+  title varchar(200) default '' collate utf8_general_ci comment '动作名称',
   `desc` varchar(255) default '' comment '动作简单描述'
 )engine=innodb default character set utf8 collate utf8_general_ci comment '动作表';
+insert into  sle_action values(null,'index','列表','列表');
 
 
 
@@ -66,9 +72,6 @@ create table  if not exists  sle_role_user(
 
 
 
-INSERT INTO `sle_menu` VALUES (null,'首页','icon-home','后台首页',0,0,0,0,unix_timestamp());
-INSERT INTO `sle_menu` VALUES (null,'系统管理','icon-cogs','系统管理',0,0,0,10,unix_timestamp());
-INSERT INTO `sle_menu` VALUES (null,'菜单管理','icon-cog','菜单管理',0,0,2,101,unix_timestamp());
 
 INSERT INTO `sle_user` VALUES (1,'sys','123455','开发者用户',1404088414);
 INSERT INTO  sle_user values(null,'admin','111','管理员用户',unix_timestamp());

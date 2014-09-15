@@ -101,6 +101,7 @@ class Sle{
     private $mRoute     = '';
     private $mController = '';
     private $mClient = null;
+    private $mView   = null;
     const   SLE_NONE = 0;
     const   SLE_ALL  = 1;
     const   SLE_SYS  = 2;
@@ -172,6 +173,15 @@ class Sle{
             $this->Client = $oClient = new libraries\Client();
         }
         return $this->Client;
+    }
+    
+    private function View(){
+        static $oView = null;
+        if (is_null($oView)){
+            $this->hasInfo("初始化类".__FUNCTION__, E_USER_NOTICE, Sle::SLE_SYS);
+            $this->View = $oView = new libraries\Core\View();
+        }
+        return $this->View;
     }
     
     /**

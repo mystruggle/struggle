@@ -2,6 +2,7 @@
 namespace struggle\libraries\core;
 use struggle as sle;
 use struggle\libraries\cache\driver\File;
+use struggle\libraries\Client;
 
 class BaseController extends \struggle\libraries\Object{
     private $mView = '';
@@ -148,8 +149,28 @@ class BaseController extends \struggle\libraries\Object{
     }
     
     private function _before(&$content){
-        //if ()
-        preg_replace('//', $replacement, $subject);
+        $aJs = \struggle\Sle::getInstance()->Client->Js;
+        foreach ($aJs as $pos=>$js){
+            switch ($pos){
+                case Client::POS_HEAD_TOP:
+                    $sJs = implode("\n", $aJs[Client::POS_HEAD_TOP]);
+                    $content = preg_replace('/(?<=\<head\>)/i', "\n{$sJs}", $content);
+                    break;
+                case Client::POS_HEAD_BOTTOM:
+                    $sJs = implode("\n", $aJs[Client::POS_HEAD_BOTTOM]);
+                    $content = preg_replace('/(?=\<\/head\>)/i', "{$sJs}\n", $content);
+                    break;
+                case Client::POS_BODY_BEFORE:
+                    $sJs = implode("\n", $aJs[Client::POS_BODY_BEFORE]);
+                    $content = preg_replace('/(?=\<\/body\>)/i', "{$sJs}\n", $content);
+                    break;
+                case Client::POS_BODY_AFTER:
+                    $sJs = implode("\n", $aJs[Client::POS_BODY_AFTER]);
+                    $content = preg_replace('/(?<=\<\/body\>)/i', "\n{$sJs}", $content);
+                    break;
+            }
+        }
+        
     }
     
     

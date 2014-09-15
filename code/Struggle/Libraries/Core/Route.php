@@ -83,20 +83,19 @@ class Route extends Object{
 	 */
 	public function genUrl($path){
 		$xRlt = array('status'=>true,'msg'=>'执行'.__METHOD__);
-		$xRlt['msg'] = 'url参数'.$path.' line '.__LINE__;
         $sUrl = '';
 		if(!$path){
 			$path = 'index/index';
 		}
         $aPath = parse_url($path);
-		$xRlt['msg'] = 'url参数解析后'.print_r($aPath,true).' line '.__LINE__;
+		$xRlt['msg'] = 'url参数'.$path.',参数解析后'.print_r($aPath,true).' line '.__LINE__;
         $sUrlModule = '';
         $sUrlAction = '';
         $sQuery     = '';
         $aQuery     = array();
 		$aTmpUrlPath = explode('/',$aPath['path']);
 		if(count($aTmpUrlPath) === 1){
-			$sUrlModule = $oRoute->defaultModule;
+			$sUrlModule = \struggle\Sle::getInstance()->Route->defaultModule;
 			$sUrlAction = $aTmpUrlPath[0];
 		}else{
 			$sUrlModule = $aTmpUrlPath[0];
@@ -143,10 +142,8 @@ class Route extends Object{
 			}
             $sUrl = "?{$this->moduleTag}={$sUrlModule}&{$this->actionTag}={$sUrlAction}".($sQuery?'&'.$sQuery:'');
         }
-
-		if(!$xRlt['status']){
-			$this->debug($xRlt['msg'],E_USER_ERROR,sle\Sle::SLE_SYS);
-		}
+        
+        $this->debug($xRlt['msg'],$xRlt['status']?E_USER_NOTICE:E_USER_ERROR,sle\Sle::SLE_SYS);
 		return $sUrl;
 	}
 

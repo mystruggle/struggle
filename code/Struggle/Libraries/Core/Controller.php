@@ -160,8 +160,8 @@ class BaseController extends \struggle\libraries\Object{
                     $sJs = implode("\n", $aJs[Client::POS_HEAD_BOTTOM]);
                     $content = preg_replace('/(?=\<\/head\>)/i', "{$sJs}\n", $content);
                     break;
-                case Client::POS_BODY_BEFORE:
-                    $sJs = implode("\n", $aJs[Client::POS_BODY_BEFORE]);
+                case Client::POS_BODY_BOTTOM:
+                    $sJs = implode("\n", $aJs[Client::POS_BODY_BOTTOM]);
                     $content = preg_replace('/(?=\<\/body\>)/i', "{$sJs}\n", $content);
                     break;
                 case Client::POS_BODY_AFTER:

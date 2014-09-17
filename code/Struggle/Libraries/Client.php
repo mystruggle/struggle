@@ -7,7 +7,7 @@ class Client extends Object{
     private $mJsBasePath = '';
     const POS_HEAD_TOP = 1;
     const POS_HEAD_BOTTOM = 2;
-    const POS_BODY_BEFORE = 3;
+    const POS_BODY_BOTTOM = 3;
     const POS_BODY_AFTER  = 4;
     
     public function __construct(){

@@ -258,45 +258,17 @@ class Sle{
             
             //加载配置文件
             $sConfFile = CONF_PATH.'Config.php';
-            $aConfig = array();
-            if (file_exists($sConfFile) && basename($sConfFile) == basename(realpath($sConfFile))){
-                if (is_readable($sConfFile)){
-                    $this->hasInfo("加载核心配置文件{$sConfFile}",E_USER_NOTICE, Sle::SLE_SYS);
-                    $aConfig = include $sConfFile;
-                }else{
-                    $this->hasInfo("文件不可读{$sConfFile}",E_USER_ERROR, Sle::SLE_SYS);
-                }
-                
-                
-            }else {
-                $this->hasInfo("文件不存在{$sConfFile},区分大小写",E_USER_ERROR, Sle::SLE_SYS);
-            }
-            
+			$this->hasInfo('加载配置文件'.$sConfFile,E_USER_NOTICE, Sle::SLE_SYS);
+			if(!setConfig($sConfFile)){
+			     $this->hasInfo("文件不存在或不可读，文件名区分大小{$sConfFile}",E_USER_ERROR, Sle::SLE_SYS);
+			}
+
+            //加载项目配置文件
             $sAppConfFile = APP_CONF.'Config.php';
-            if (file_exists($sAppConfFile) && basename($sAppConfFile) == basename(realpath($sAppConfFile)) ){
-                if (is_readable($sAppConfFile)){
-                        $this->hasInfo("加载项目配置文件{$sAppConfFile}",E_USER_NOTICE, Sle::SLE_SYS);
-                        $aConfig = array_merge($aConfig,include $sAppConfFile);
-                }else{
-                    $this->hasInfo("文件不可读{$sAppConfFile}",E_USER_ERROR, Sle::SLE_SYS);
-                }
-            }else{
-                $sAppConfDir = dirname($sAppConfFile);
-                if (is_writeable($sAppConfDir)){
-                    $hdFile = fopen($sAppConfFile, 'wb+');
-                    fwrite($hdFile, "<?php\r\n//项目配置文件\r\nreturn array(\r\n);");
-                    fclose($hdFile);
-                    $this->hasInfo("自动创建用户项目配置文件{$sAppConfFile}",E_USER_NOTICE, Sle::SLE_SYS);
-                }else{
-                    $this->hasInfo("当前目录不可写{$sAppConfDir}，请检查权限",E_USER_ERROR, Sle::SLE_SYS);
-                }
-            }
-            if (!$this->mLastError && is_array($aConfig) && $aConfig){
-                $this->hasInfo("所有配置参数值".print_r($aConfig,true),E_USER_NOTICE, Sle::SLE_SYS);
-                foreach ($aConfig as $sKey=>$mVal){
-                    C($sKey,$mVal);
-                }
-            }
+			$this->hasInfo('加载项目配置文件'.$sAppConfFile,E_USER_NOTICE, Sle::SLE_SYS);
+			if(!setConfig($sAppConfFile,true)){
+			     $this->hasInfo("文件不存在或不可读，文件名区分大小，检查目录是否可写{$sConfFile}",E_USER_ERROR, Sle::SLE_SYS);
+			}
             
             
             //加载语言配置文件

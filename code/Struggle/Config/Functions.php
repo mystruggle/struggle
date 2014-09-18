@@ -68,15 +68,30 @@ function buildDir($sDirPath, $iModel = 0755){
 /**
  * 设置配置文件
  * @param $file  配置文件
+ * @param $isBuild 如果配置文件不存在，是否建立
  */
- function setConfig($file){
-	 $bFlag = true;
+ function setConfig($file,$isBuild = false){
 	 if(!file_exists($file) || basename($file) != basename(realpath($file))){
+		 if($isBuild){
+			$sPath = dirname($file);
+			if (is_writeable($sPath)){
+				$hdFile = fopen($file, 'wb+');
+				fwrite($hdFile, "<?php\r\n//配置文件\r\nreturn array(\r\n);");
+				fclose($hdFile);
+				return true;
+			}
+		 }
 		 return false;
 	 }
-
-
-	 
+	 if(!is_readable($file)) return false;
+	 $aConfig = include_once($file);
+	 if(!is_array($aConfig)){
+		 return false;
+	 }
+	 foreach($aConfig as $key=>$value){
+		 C($key,$value);
+	 }
+	 return true;
  }
 
 
@@ -86,8 +101,13 @@ function buildDir($sDirPath, $iModel = 0755){
  * @param string $sName  配置名称
  * @param mix    $mVal    配置值
  */
-function C($sName, $mVal = null){
+function C($name, $value = null){
     static $aConfig=array();
+	if(is_null($value)){
+	    return $aConfig[strtolower($name)];
+	}
+	readConf($name, $value, $aConfig);
+	/*
     if (is_string($sName)){
         if (!strpos($sName, '.')){
             $sName = strtolower($sName);
@@ -101,11 +121,12 @@ function C($sName, $mVal = null){
                 return $mTmpRlt;
         }
     }
+	*/
 }
 
 
 /**
- * 言语配置函数
+ * 语言配置函数
  * @param string $sName  配置名称
  * @param mix    $mVal    配置值
  */
@@ -124,6 +145,29 @@ function L($sName, $mVal = null){
         }
     }
 }
+
+
+
+/**
+ * 读入配置函数
+ * @param string $sName  配置名称
+ * @param mix    $mVal    配置值
+ */
+function readConf($key, $value, & $var){
+	$sKey = $key;
+    if (is_string($sKey)){
+        $sKey = strtolower($sKey);
+        if (!strpos($sKey, '.')){
+            $var[$sKey] = $value;
+        }else{
+            $mTmpRlt = strToArrElement($sKey, $value, $var);
+        }
+    }
+}
+
+
+
+
 
 /**
  * 字符串点格式转换成数组元素

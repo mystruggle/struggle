@@ -149,6 +149,8 @@ class BaseController extends \struggle\libraries\Object{
     }
     
     private function _before(&$content){
+		//print_r(\struggle\C());
+		//echo '111';die('end');
         $aJs = \struggle\Sle::getInstance()->Client->Js;
         foreach ($aJs as $pos=>$js){
             switch ($pos){

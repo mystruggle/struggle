@@ -65,6 +65,21 @@ function buildDir($sDirPath, $iModel = 0755){
 }
 
 
+/**
+ * 设置配置文件
+ * @param $file  配置文件
+ */
+ function setConfig($file){
+	 $bFlag = true;
+	 if(!file_exists($file) || basename($file) != basename(realpath($file))){
+		 return false;
+	 }
+
+
+	 
+ }
+
+
 
 /**
  * 读入配置函数

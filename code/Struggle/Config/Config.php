@@ -29,7 +29,24 @@ return array(
     'DEBUG_RECORD_FILE_MODE' =>'ab',
     'DEBUG_RECORD_FILE_SIZE' =>2000,  //kb
     'DEBUG_RECORD_FILE_NUM'  =>3,
-    /* all显示和记录来自系统平台和应用的所有信息;sys只显示和记录来自系统平台信息;sys_err只显示和记录来自系统平台错误信息;sys_other只显示和记录来自系统平台除错误的其他信息;app只显示和记录来自应用信息;app_err只显示和记录来自应用错误信息;app_other只显示和记录来自应用除错误的其他信息     */
+    /* 是否启用调试日志 */
+    'DEBUG_ENABLED'          =>false,
+    /* 是否展示调试页面  */
+    'DEBUG_PAGE'             =>false,
+    /* 是否保存调试信息 */
+    'DEBUG_STORAGE'          =>false,
+    /* 性能调试，程序执行时间  */
+    'DEBUG_DISPLAY_TIME'     =>false,
+    /* 错误等级
+     * all 显示或记录来自系统平台和应用的所有信息;
+     * sys 显示或记录来自框架信息;
+     * app 显示或记录来自项目信息
+     * error 显示或记录错误信息;
+     * warning 显示或记录警告信息;
+     * notice  显示或记录通知信息
+     * other   显示或记录其他信息
+     * 可以组合使用如sys,error 
+     * */
     'DEBUG_LEVEL'            =>'all',
     //路由
     'ROUTE_MODE'             => 0 ,//0 普通模式、1 pathinfo模式、2 伪静态模式(rewrite) 、3 兼容模式(compat)/?s=/name/vlaue

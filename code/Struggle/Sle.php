@@ -17,26 +17,75 @@ if (defined('SLE_FRONTEND')){
     $sFrontend = SLE_FRONTEND;
 }
 
-defined('APP_NAME') or define('APP_NAME', basename(dirname($_SERVER['SCRIPT_NAME'])));
-defined('APP_ROOT') or define('APP_ROOT',rtrim(dirname($_SERVER['SCRIPT_FILENAME']),'/').'/');
+
+//加载定义常量文件
+require_once SLE_PATH.'Libraries/Define.inc.php';
+
+//加载全局核心函数
+require_once SLE_PATH.'Config/Sle.func.php';
+
+//部署项目目录
+$aBuildAppDir = array(APP_ROOT, APP_CACHE, APP_RUNTIME, APP_CONTROLLER,
+                      APP_MODEL, APP_CONF, APP_LIB, APP_THEME, APP_PUBLIC,
+                      APP_PUBLIC.'Default/',APP_PUBLIC.'Default/html/',
+                      APP_PUBLIC.'Default/js/',APP_PUBLIC.'Default/css/',
+                      APP_PUBLIC.'Default/images/', APP_THEME.'Default/');
+buildAppDir($aBuildAppDir);
 
 
 
-defined('APP_PATH')      or define('APP_PATH','./');
-defined('APP_CACHE')     or define('APP_CACHE', $sFrontend.'Caches/');
-defined('APP_RUNTIME')   or define('APP_RUNTIME', $sFrontend.'Caches/Runtime/');
-defined('APP_CONTROLLER') or define('APP_CONTROLLER', 'Controller/');
-defined('APP_MODEL')     or define('APP_MODEL', $sFrontend.'Model/');
-defined('APP_THEME')     or define('APP_THEME','Themes/');
-defined('APP_PUBLIC')    or define('APP_PUBLIC',$sFrontend.'Public/');
-defined('APP_LIB')       or define('APP_LIB','AddOnes/');
-defined('APP_CONF')      or define('APP_CONF','Config/');
+
+//加载处理配置文件
+$sConfFile = CONF_PATH.'Config.php';
+try {
+    if(!setConfig($sConfFile)){
+        throw new \Exception("文件不存在或不可读，文件名区分大小{$sConfFile}");
+    }
+}catch (\Exception $e){
+    halt("异常错误: {$e->getMessage()}  {$e->getFile()} 第{$e->getLine()}行");
+}
+
+//项目配置文件
+$sAppConfFile = APP_CONF.'Config.php';
+try {
+    if(!setConfig($sAppConfFile,true)){
+        throw new \Exception("文件不存在或不可读，文件名区分大小，检查目录是否可写{$sAppConfFile}");
+    }
+}catch (\Exception $e){
+    halt("异常错误: {$e->getMessage()}  {$e->getFile()} 第{$e->getLine()}行");
+}
 
 
-defined('LIB_PATH')       or define('LIB_PATH',SLE_PATH.'Libraries/');
-defined('CONF_PATH')      or define('CONF_PATH',SLE_PATH.'Config/');
-defined('PUBLIC_PATH')    or define('PUBLIC_PATH',SLE_PATH.'Public/');
 
+
+//加载语言配置文件
+$sLangFile = CONF_PATH.'zh-cn.php';
+try {
+    if(!setLangConfig($sLangFile)){
+        throw new \Exception("文件不存在或不可读，文件名区分大小{$sLangFile}");
+    }
+}catch (\Exception $e){
+    halt("异常错误: {$e->getMessage()}  {$e->getFile()} 第{$e->getLine()}行");
+}
+
+
+//加载项目语言文件
+$sAppLangName = C('LANG_NAME');
+$sAppLangFile = APP_CONF.$sAppLangName.'.php';
+try {
+    if(!setLangConfig($sAppLangFile,true)){
+        throw new \Exception("文件不存在或不可读，文件名区分大小，检查目录是否可写{$sAppLangFile}");
+    }
+}catch (\Exception $e){
+    halt("异常错误: {$e->getMessage()}  {$e->getFile()} 第{$e->getLine()}行");
+}
+
+
+
+//加载调试类文件
+require_once SLE_PATH.'Libraries/Debug.php';
+
+Debug::trace('ffff',Debug::ERROR);
 
 
 define('IS_WIN',PHP_OS == 'WINNT'?true:false);
@@ -256,48 +305,7 @@ class Sle{
                 }
             }
             
-            //加载配置文件
-            $sConfFile = CONF_PATH.'Config.php';
-			$this->hasInfo('加载配置文件'.$sConfFile,E_USER_NOTICE, Sle::SLE_SYS);
-			if(!setConfig($sConfFile)){
-			     $this->hasInfo("文件不存在或不可读，文件名区分大小{$sConfFile}",E_USER_ERROR, Sle::SLE_SYS);
-			}
 
-            //加载项目配置文件
-            $sAppConfFile = APP_CONF.'Config.php';
-			$this->hasInfo('加载项目配置文件'.$sAppConfFile,E_USER_NOTICE, Sle::SLE_SYS);
-			if(!setConfig($sAppConfFile,true)){
-			     $this->hasInfo("文件不存在或不可读，文件名区分大小，检查目录是否可写{$sConfFile}",E_USER_ERROR, Sle::SLE_SYS);
-			}
-            
-            
-            //加载语言配置文件
-            $sLangFile = CONF_PATH.'zh-cn.php';
-            $aLang = array();
-            if (file_exists($sLangFile) && basename($sLangFile) == basename(realpath($sLangFile)) && is_readable($sLangFile)){
-                    $this->hasInfo("语言配置文件{$sLangFile}处理",E_USER_NOTICE, Sle::SLE_SYS);
-                    $aLang = include_once $sLangFile;
-            }else{
-                $this->hasInfo("语言文件不存在{$sLangFile},文件名区分大小写",E_USER_ERROR, Sle::SLE_SYS);
-            }
-            if (!$this->mLastError){
-                $sAppLangName = C('LANG_NAME');
-                $sAppLangFile = APP_CONF.$sAppLangName.'.php';
-                if (file_exists($sAppLangFile) && basename($sAppLangFile) == basename(realpath($sAppLangFile)) && is_readable($sAppLangFile)){
-                    $this->hasInfo("用户语言配置文件{$sAppLangFile}处理",E_USER_NOTICE, Sle::SLE_SYS);
-                    $aLang = array_merge($aLang,include_once $sAppLangFile);
-                }else{
-                    $this->hasInfo("语言文件不存在{$sAppLangFile},文件名区分大小写",E_USER_WARNING, Sle::SLE_SYS);
-                }
-            }
-            
-            if (!empty($aLang) && !$this->mLastError){
-                foreach ($aLang as $key=>$val){
-                    L($key, $val);
-                }
-            }
-            
-            
             
             //加载核心文件
             if (!$this->mLastError){

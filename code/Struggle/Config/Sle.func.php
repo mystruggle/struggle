@@ -1,7 +1,7 @@
 <?php
 namespace struggle;
 /*
- * 全局函数
+ * 框架核心函数
  */
 
 /**
@@ -65,18 +65,96 @@ function buildDir($sDirPath, $iModel = 0755){
 }
 
 
+
+/**
+ * 部署项目目录
+ * @param array $dir
+ */
+function buildAppDir($dir){
+    try {
+        if (!is_array($dir))
+            throw new \Exception('参数不能为非数组形式'.print_r($dir,true));
+    }catch (\Exception $e){
+        halt("异常错误: {$e->getMessage()}  {$e->getFile()} 第{$e->getLine()}行");
+    }
+    foreach($dir as $value){
+        try {
+            if (!buildDir($value))
+                throw new \Exception('目录建立失败'.print_r($value,true));
+        }catch (\Exception $e){
+            halt("异常错误: {$e->getMessage()}  {$e->getFile()} 第{$e->getLine()}行");
+        }
+        
+    }
+    return true;
+}
+
+
+
+/**
+ * 停止执行
+ * @param string $message
+ */
+function halt($message){
+    echo $message;
+    exit;
+}
+
+
+
+
 /**
  * 设置配置文件
  * @param $file  配置文件
  * @param $isBuild 如果配置文件不存在，是否建立
+ * @return boolean
  */
  function setConfig($file,$isBuild = false){
+	 $aConfig = chkConfigFile($file,'config',$isBuild);
+	 if($aConfig !== false){
+		 foreach($aConfig as $key=>$value){
+			 C($key,$value);
+		 }
+		 return true;
+	 }
+	 return false;
+ }
+
+
+
+
+/**
+ * 设置语言配置
+ * @param $file  语言文件
+ * @param $isBuild 如果语言文件不存在，是否建立
+ * @return boolean
+ */
+ function setLangConfig($file,$isBuild = false){
+	 $aLang = chkConfigFile($file,'lang',$isBuild);
+	 if($aLang !== false){
+		 foreach($aLang as $key=>$value){
+			 L($key,$value);
+		 }
+		 return true;
+	 }
+	 return false;
+ }
+
+
+/**
+ * 检查配置文件
+ * @param $file  文件
+ * @param $type 文件类型，如，config或lang，扩展字段
+ * @param $isBuild 文件不存在是否建立
+ * @return array|boolean
+ */
+ function chkConfigFile($file,$type,$isBuild){
 	 if(!file_exists($file) || basename($file) != basename(realpath($file))){
 		 if($isBuild){
 			$sPath = dirname($file);
 			if (is_writeable($sPath)){
 				$hdFile = fopen($file, 'wb+');
-				fwrite($hdFile, "<?php\r\n//配置文件\r\nreturn array(\r\n);");
+				fwrite($hdFile, "<?php\r\n//".($type=='lang'?'语言':'')."配置文件\r\nreturn array(\r\n);");
 				fclose($hdFile);
 				return true;
 			}
@@ -84,22 +162,21 @@ function buildDir($sDirPath, $iModel = 0755){
 		 return false;
 	 }
 	 if(!is_readable($file)) return false;
-	 $aConfig = include_once($file);
+	 $aConfig = include $file;
 	 if(!is_array($aConfig)){
 		 return false;
 	 }
-	 foreach($aConfig as $key=>$value){
-		 C($key,$value);
-	 }
-	 return true;
+	 return $aConfig;
  }
 
 
 
+
 /**
- * 读入配置函数
- * @param string $sName  配置名称
- * @param mix    $mVal    配置值
+ * 设置/获取配置函数
+ * @param string $name     配置名称
+ * @param mix    $value    配置值
+ * @return mix|void
  */
 function C($name, $value = null){
     static $aConfig=array();
@@ -107,51 +184,35 @@ function C($name, $value = null){
 	    return $aConfig[strtolower($name)];
 	}
 	readConf($name, $value, $aConfig);
-	/*
-    if (is_string($sName)){
-        if (!strpos($sName, '.')){
-            $sName = strtolower($sName);
-            if (is_null($mVal)) //不能用empty,否则不能把值设为空
-                return $aConfig[$sName];
-            $aConfig[$sName] = $mVal;
-        }else{
-			$sName = strtolower($sName);
-            $mTmpRlt = strToArrElement($sName, $mVal, $aConfig);
-            if (is_null($mVal))
-                return $mTmpRlt;
-        }
-    }
-	*/
 }
 
 
+
+
+
+
 /**
- * 语言配置函数
- * @param string $sName  配置名称
- * @param mix    $mVal    配置值
+ * 设置/获取语言函数
+ * @param string $name    名称
+ * @param mix    $value    值
+ * @return mix|void
  */
-function L($sName, $mVal = null){
+function L($name, $value = null){
     static $aLang=array();
-    if (is_string($sName)){
-        if (!strpos($sName, '.')){
-            $sName = strtolower($sName);
-            if (is_null($mVal)) //不能用empty,否则不能把值设为空
-                return $aLang[$sName];
-            $aLang[$sName] = $mVal;
-        }else{
-            $mTmpRlt = strToArrElement($sName, $mVal, $aLang);
-            if (is_null($mVal))
-                return $mTmpRlt;
-        }
-    }
+	if(is_null($value)){
+	    return $aLang[strtolower($name)];
+	}
+	readConf($name, $value, $aLang);
 }
 
 
 
 /**
  * 读入配置函数
- * @param string $sName  配置名称
- * @param mix    $mVal    配置值
+ * @param string   $key    设置配置名称
+ * @param mix      $value  设置配置值
+ * @param array    $var    存放对象
+ * @param return    void
  */
 function readConf($key, $value, & $var){
 	$sKey = $key;
@@ -317,7 +378,7 @@ function import($sName){
         }
         $sName = substr($sName, $iPos+1);
         $sName = implode('/', explode('.', $sName));
-        $sName = $sBasePath.$sName.'.php';
+        //$sName = $sBasePath.$sName.'.php';
     }
     $sName = $sBasePath.$sName.'.php';
     $sKey = md5($sName);
@@ -327,7 +388,11 @@ function import($sName){
         if (file_exists($sName) && is_readable($sName)){
             $aInclude[$sKey] = include $sName;
         }else{
-            trace("文件不存在或该文件没有读权限,{$sName}", E_USER_ERROR);
+            try {
+                throw new \Exception("文件不存在或该文件没有读权限,{$sName}");
+            }catch (\Exception $e){
+                echo "异常错误: {$e->getMessage()}  {$e->getFile()} 第{$e->getLine()}行";
+            }
         }
     }
     return $aInclude[$sKey];

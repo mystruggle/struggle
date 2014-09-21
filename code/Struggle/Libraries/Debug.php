@@ -53,7 +53,7 @@ class Debug{
      * @tutorial 格式
      *           错误:[system error]0.001s 错误信息  文件     第几行
      */
-    public static function save($msg,$type,$time){//die('end');
+    public static function save($msg,$type,$time){
         $sMsgTypeTxt = self::getTypeText($type);
         import('@.Cache.Driver.File');
         $oLog = new File();die('end');

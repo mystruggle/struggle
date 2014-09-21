@@ -396,7 +396,7 @@ class Sle{
 }
 
 //系统开始运行
-Sle::app()->run();
+//Sle::app()->run();
 //Sle::app()->Debug->show();
 
 

@@ -6,7 +6,7 @@
 */
 namespace struggle\libraries\cache\driver;
 use \struggle\libraries\Object;
-use struggle as sle;
+//use struggle as sle;
 
 class File extends Object{
     public  $file    = '';
@@ -90,7 +90,7 @@ class File extends Object{
     
     
     public function __destruct(){
-        if (sle\isResource($this->moHandle))
+        if (\struggle\isResource($this->moHandle))
             @fclose($this->moHandle);
     }
 

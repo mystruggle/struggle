@@ -6,7 +6,8 @@
 */
 namespace struggle\libraries\cache\driver;
 use \struggle\libraries\Object;
-//use struggle as sle;
+use struggle\halt;
+use struggle\Sle;
 
 class File extends Object{
     public  $file    = '';
@@ -14,7 +15,7 @@ class File extends Object{
     public  $mode    = 'ab';
     public  $size    = 2000;  //kb
     public  $renum   = 3;     //超过文件设置的大小时重命名的数量
-    private $moHandle = null;
+    private $mHandle = null;
     
     public function __construct($aOpt = array()){
         if (!empty($aOpt)){
@@ -27,15 +28,12 @@ class File extends Object{
     }
     
     public function write($sContent){
-        $bRlt = false;
-        if (is_null($this->moHandle) && !$this->open()){
-            return $bRlt;
-        }
+        $this->mHandle = $this->open();
         if (!$this->chkFileSize())
             return $bRlt;
-        @flock($this->moHandle, LOCK_EX);
-        $mStat = @fwrite($this->moHandle, $sContent);
-        @flock($this->moHandle, LOCK_UN);
+        @flock($this->mHandle, LOCK_EX);
+        $mStat = @fwrite($this->mHandle, $sContent);
+        @flock($this->mHandle, LOCK_UN);
         if ($mStat === false)
             return false;
         return true;
@@ -46,7 +44,7 @@ class File extends Object{
         if ((filesize($this->file) / 1024) > $this->size){
             $bRlt = false;
             $max = $this->renum;
-            flock($this->moHandle, LOCK_EX);
+            flock($this->mHandle, LOCK_EX);
             for($i=$max;$i>0;$i--){
                 $sReName = $this->file.".{$i}";
                 if (is_file($sReName)){
@@ -58,40 +56,53 @@ class File extends Object{
             }
             if (is_file($this->file))
                 @rename($this->file, $this->file.'.1');   //会覆盖同名文件
-            flock($this->moHandle, LOCK_UN);
+            flock($this->mHandle, LOCK_UN);
             if (!is_file($this->file))
                 $bRlt = true;
         }
         return $bRlt;
     }
     
+    
+    /**
+     * 打开文件句柄
+     * @return resource
+     */
     private function open(){
-        $bRlt = false;
-        if (is_writable(dirname($this->file))){
-            if (is_null($this->moHandle) && ($this->moHandle = @fopen($this->file, $this->mode))){
-                $bRlt = true;
-            }elseif (sle\isResource($this->moHandle)){
-                $bRlt = true;
-            }
+        static $aHandle = array();
+        $sKey = md5($this->file);
+        if (isset($aHandle[$sKey]) && $aHandle[$sKey]){
+            return $aHandle[$sKey];
         }
-        return $bRlt;
+        $sWriteDir = dirname($this->file);
+        if (is_writeable($sWriteDir)){
+            halt("目录不可写{$sWriteDir}\t".__METHOD__."\tline\t".__LINE__);
+        }
+        
+        !isset($aHandle[$sKey]) && $aHandle[$sKey] = @fopen($this->file, $this->mode);
+        var_dump($aHandle[$sKey],$this->file);
+        if (!\struggle\isResource($aHandle[$sKey]))
+            \struggle\halt("文件打开失败{$this->file}\t".__METHOD__."\tline\t".__LINE__);
+        return $aHandle[$sKey];
     }
+    
+    
     
     public function read(){
         $sRlt = '';
-        if (is_null($this->moHandle) && !$this->open()){
+        if (is_null($this->mHandle) && !$this->open()){
             return false;
         }
-        while (!feof($this->moHandle)){
-            $sRlt .= fread($this->moHandle, $this->length);
+        while (!feof($this->mHandle)){
+            $sRlt .= fread($this->mHandle, $this->length);
         }
         return $sRlt;
     }
     
     
     public function __destruct(){
-        if (\struggle\isResource($this->moHandle))
-            @fclose($this->moHandle);
+        if (\struggle\isResource($this->mHandle))
+            @fclose($this->mHandle);
     }
 
 

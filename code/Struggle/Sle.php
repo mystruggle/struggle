@@ -173,18 +173,20 @@ class Sle{
     }
     */
     
-    public function __get($sName){
-        $sAttrName = "m{$sName}";
-        if (property_exists($this, $sAttrName)){
-            if ($this->$sAttrName){
-                return $this->$sAttrName;
-            }elseif (method_exists($this, $sName)){
-                return $this->$sName();
+    public function __get($name){
+        if (isset($this->mRegClass[$name])){
+            if (is_string($this->mRegClass[$name])){
+                $sClassName = $this->mRegClass[$name];
+                $this->mRegClass[$name] = new $sClassName;
             }
+            return $this->mRegClass[$name];
         }else{
-            $this->hasInfo("访问一个不存在的属性{$sName}", E_USER_ERROR, Sle::SLE_SYS);
+            try {
+                throw new \Exception("访问一个不存在的属性{$name}");
+            }catch (\Exception $e){
+                halt("异常错误: {$e->getMessage()}  {$e->getFile()} 第{$e->getLine()}行");
+            }
         }
-        return false;
     }
 
 
@@ -197,7 +199,7 @@ class Sle{
 	 */
 	public function registerClass($str,$ident = ''){
 		try{
-			if(!isFile($str) && !class_exists("{$str}"))throw new \Exception("文件不存在或不可读，文件名区分大小写,抑或是该类名不存在\t{$str}");
+			if(!isFile($str) && !class_exists($str))throw new \Exception("文件不存在或不可读，文件名区分大小写,抑或是该类名不存在\t{$str}");
 		}catch(\Exception $e){
 			 halt("异常错误: {$e->getMessage()}  {$e->getFile()} 第{$e->getLine()}行");
 		}

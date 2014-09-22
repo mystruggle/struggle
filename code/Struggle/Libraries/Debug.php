@@ -23,6 +23,32 @@ class Debug{
     
     
     
+    public function __construct(){
+        static $oReocrd = null;
+        $this->recordType     = sle\C('DEBUG_RECORD_TYPE');
+        $this->recordFileName = sle\C('DEBUG_RECORD_FILE_NAME');
+        $this->recordFilePath = sle\C('DEBUG_RECORD_FILE_PATH');
+        $this->recordFileExt  = sle\C('DEBUG_RECORD_FILE_EXT');
+        $this->recordFileMode = sle\C('DEBUG_RECORD_FILE_MODE');
+        $this->recordFileSize = sle\C('DEBUG_RECORD_FILE_SIZE');
+        $this->recordFileNum  = sle\C('DEBUG_RECORD_FILE_NUM');
+        $this->recordType     || $this->recordType     = 'file';
+        $this->recordFileName || $this->recordFileName = 'application';
+        $this->recordFilePath || $this->recordFilePath = APP_RUNTIME;
+        $this->recordFileExt  || $this->recordFileExt  = 'log';
+        $this->recordFileMode || $this->recordFileMode = 'ab';
+        $this->recordFileSize || $this->recordFileSize = 2000;
+        $this->recordFileNum  || $this->recordFileNum  = 3;
+        if (is_null($oReocrd)){
+            $sClassName = '\struggle\libraries\cache\driver\\'.sle\ctop($this->recordType);
+            $sRecordFile = rtrim($this->recordFilePath,'/').'/'.$this->recordFileName.'.'.$this->recordFileExt;
+            $aOpt = array('file'=>$sRecordFile,'mode'=>$this->recordFileMode,'size'=>$this->recordFileSize,'renum'=>$this->recordFileNum);
+            \struggle\Sle::app()->hasInfo("初始化类{$sClassName},初始化参数".print_r($aOpt,true),E_USER_NOTICE,\struggle\Sle::SLE_SYS,\microtime(true));
+            $oReocrd = new $sClassName($aOpt);
+        }
+        $this->hdRecord = $oReocrd;
+    }
+    
     /**
      * 追踪调试信息
      * @param unknown $message
@@ -54,13 +80,20 @@ class Debug{
      *           错误:[system error]0.001s 错误信息  文件     第几行
      */
     public static function save($msg,$type,$time){
-        $sMsgTypeTxt = self::getTypeText($type);
+        //Sle::app()->file
         import('@.Cache.Driver.File');
-        $oLog = new File();die('end');
-        echo $sMsgTypeTxt;die;
-        if(!$this->hdRecord->write($sTxt))
-            throw new \Exception('写入日志失败', E_USER_ERROR);
-        
+        $sTxt = '';
+        $sMsgTypeTxt = self::getTypeText($type);
+        $sTxt .= $sMsgTypeTxt;
+        //是否记录时间，调试性能
+        if(C('DEBUG_DISPLAY_TIME')){
+            $sTxt .= $time."s\t"; 
+        }
+        $sTxt .= $msg."\t";
+        if(!Sle::app()->file->write($sTxt)){
+            halt("写入日志失败\t".__METHOD__."\tline\t".__LINE__);
+        }
+        die('end');
         
         if ($this->decideDebug($iCode, $iType)){
             $sTxt = date('Y-m-d H:i:s')."/".($iExecTime-BEGIN_TIME)."s";

@@ -56,7 +56,9 @@ function import($name){
         if (isFile($sName)){
             $aInclude[$sKey] = require_cache($sName);
 			//把该文件注册到全局类Sle
-			Sle::app()->registerClass($sName,fetchClassName($sName,false));
+			$sClassName = fetchClassName($sName,false);
+			$sIdent = strtolower($sClassName[0]).substr($sClassName, 1);
+			Sle::app()->registerClass('\\'.fetchNamespace($sName).'\\'.$sClassName,$sIdent);
         }else{
             try {
                 throw new \Exception("文件不存在或该文件没有读权限,{$sName}");
@@ -72,7 +74,7 @@ function import($name){
 /**
  * 根据类文件获取类名，文件名严格按照文件起名规范命名(ClassName.suffix.php)
  * @param string $classFile  类文件
- * @param string $suffix     是否包含后缀，默认包含
+ * @param boolean $suffix     是否包含后缀，默认包含
  * @return string   返回类名或空字符串
  * @example 如果类文件名为ClassName.suffix.php ,则类名为ClassNameSuffix
  */
@@ -97,6 +99,29 @@ function fetchClassName($classFile,$suffix = true){
 }
 
 
+
+
+/**
+ * 获取文件中首次发现的命名空间，搜寻从上至下
+ * @param string $file
+ * @return string
+ */
+function fetchNamespace($file){
+    static $aNamespace = array();
+    $sKey = md5($file);
+    if(isset($aNamespace[$sKey]))
+        return $aNamespace[$sKey];
+    $sNamespace = '';
+    $hd = fopen($file, 'rb');
+    while ($row = fgets($hd)){
+        if (preg_match('/(?<=namespace)([^;]+)/i', $row,$matchs)){
+            $sNamespace = trim($matchs[1]);
+            break;
+        }
+    }
+    fclose($hd);
+    return $sNamespace;
+}
 
 
 
@@ -562,8 +587,8 @@ function isFile($file){
 }
 
 
-function isResource ($oRes) {
-    return !is_null(@get_resource_type($oRes)); 
+function isResource ($res) {
+    return !is_null(@get_resource_type($res)); 
 }
 
 

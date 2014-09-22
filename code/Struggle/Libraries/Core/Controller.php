@@ -23,7 +23,7 @@ class BaseController extends \struggle\libraries\Object{
             $oView = new View();
         }
         $this->mView = $oView;
-        $this->mSle = \struggle\Sle::getInstance();
+        $this->mSle = \struggle\Sle::app();
     }
 
 	public function _init(){
@@ -130,7 +130,7 @@ class BaseController extends \struggle\libraries\Object{
         if (!$aRlt['status']){
             $this->debug($aRlt['msg'], E_USER_ERROR,sle\Sle::SLE_SYS);
         }
-        if (sle\Sle::getInstance()->LastError){
+        if (sle\Sle::app()->LastError){
             $this->debug('由于存在致命错误，程序中止执行 '.__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
             return false;
         }else{
@@ -149,9 +149,7 @@ class BaseController extends \struggle\libraries\Object{
     }
     
     private function _before(&$content){
-		//print_r(\struggle\C());
-		//echo '111';die('end');
-        $aJs = \struggle\Sle::getInstance()->Client->Js;
+        $aJs = \struggle\Sle::app()->Client->Js;
         foreach ($aJs as $pos=>$js){
             switch ($pos){
                 case Client::POS_HEAD_TOP:
@@ -236,7 +234,7 @@ class BaseController extends \struggle\libraries\Object{
                 $sModuleName = sle\ctop($aControlPart[0]);
                 $sActName = sle\ctop($aControlPart[1]);
                 $sWidgetFile = APP_CONTROLLER."{$sModuleName}{$this->mWidgetModuleSuffix}";
-                if(sle\fexists($sWidgetFile) && is_readable($sWidgetFile)){
+                if(sle\isFile($sWidgetFile) && is_readable($sWidgetFile)){
 					sle\require_cache($sWidgetFile);
                     $sClassName = $this->mSle->Route->namespaceModule.$sModuleName.
 						          sle\ctop(dirname(trim(str_replace('.','/',$this->mWidgetModuleSuffix),'/')));
@@ -282,7 +280,7 @@ class BaseController extends \struggle\libraries\Object{
         }
         $this->mTplData = array_merge($this->mTplData,$aData);
 
-        if (sle\Sle::getInstance()->LastError){
+        if (sle\Sle::app()->LastError){
             $this->debug(__METHOD__."由于存在致命错误，程序中止执行 line ".__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
         }else{
             $this->mView->WidgetTplPath='Widget/';
@@ -309,7 +307,7 @@ class BaseController extends \struggle\libraries\Object{
             $sIncludeFile = ltrim($sIncludeFile,'/');
             $sIncludeFile = "{$this->mView->PublicTplPath}{$sIncludeFile}";
         }
-        if(sle\fexists($sIncludeFile) && is_readable($sIncludeFile) && ($this->mCompiledTplFile = $this->mView->render($sIncludeFile)) ){
+        if(sle\isFile($sIncludeFile) && is_readable($sIncludeFile) && ($this->mCompiledTplFile = $this->mView->render($sIncludeFile)) ){
             ob_start();
             include $this->mCompiledTplFile;
             $sIncludeCon = ob_get_clean();

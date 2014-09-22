@@ -32,7 +32,7 @@ class Exception extends Object{
         if (APP_DEBUG){
             $iFrom = \struggle\Sle::SLE_APP;
             $iTime = microtime(true);
-            $oSle = \struggle\Sle::getInstance();
+            $oSle = \struggle\Sle::app();
             $aRegInfo = array($sRegInfo,$sRegType,$iFrom,$iTime);
             $oSle->hasInfo($aRegInfo[0],$aRegInfo[1],$aRegInfo[2],$aRegInfo[3]);
         }

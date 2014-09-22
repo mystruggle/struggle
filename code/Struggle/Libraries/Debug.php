@@ -38,7 +38,7 @@ class Debug{
             self::$mTraceInfo[] = array($sMsg,$type,$displayTime);
             print_r(self::$mTraceInfo);die;
             $aInfo = array($sLogInfo,$iLevel, $iFrom, $iRunTime);
-            \struggle\Sle::getInstance()->hasInfo($aInfo[0],$aInfo[1],$aInfo[2],$aInfo[3]);
+            \struggle\Sle::app()->hasInfo($aInfo[0],$aInfo[1],$aInfo[2],$aInfo[3]);
             $this->save($aInfo[0],$aInfo[1],$aInfo[2],$aInfo[3]);
         }
     }
@@ -53,10 +53,10 @@ class Debug{
      * @tutorial 格式
      *           错误:[system error]0.001s 错误信息  文件     第几行
      */
-    public static function save($msg,$type,$time){
+    public static function save($msg,$type,$time){//die('end');
         $sMsgTypeTxt = self::getTypeText($type);
         import('@.Cache.Driver.File');
-        $oLog = new File();
+        $oLog = new File();die('end');
         echo $sMsgTypeTxt;die;
         if(!$this->hdRecord->write($sTxt))
             throw new \Exception('写入日志失败', E_USER_ERROR);

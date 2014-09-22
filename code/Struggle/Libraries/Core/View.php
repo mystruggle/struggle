@@ -47,7 +47,7 @@ class View extends \struggle\libraries\Object{
     public function render($sRenderFile = '', $aParam = array()){
         static $aTpl = array();
         $sTplFile = '';
-        if (sle\fexists($sRenderFile)){
+        if (sle\isFile($sRenderFile)){
             $sTplFile = $sRenderFile;
         }else {
             $aControlPart = explode('/', trim($sRenderFile,'/'));
@@ -61,12 +61,12 @@ class View extends \struggle\libraries\Object{
             }
         }
         $sKey = '';
-        if ($sTplFile && sle\fexists($sTplFile) && is_readable($sTplFile)){
+        if ($sTplFile && sle\isFile($sTplFile) && is_readable($sTplFile)){
             $sKey = md5($sTplFile.filemtime(realpath($sTplFile)));
             //clearstatcache();TODO;
             if (!isset($aTpl[$sKey])){
                 $sCompileFile = APP_RUNTIME."{$this->mCompilePath}{$sKey}.php";
-                if(sle\fexists($sCompileFile) && !APP_DEBUG){
+                if(sle\isFile($sCompileFile) && !APP_DEBUG){
                     $aTpl[$sKey] = $sCompileFile;
                 }elseif (is_writeable(dirname($sCompileFile))){
                     $oFile=new \struggle\libraries\cache\driver\File(array('file'=>$sTplFile,'mode'=>'rb'));
@@ -84,7 +84,7 @@ class View extends \struggle\libraries\Object{
         }else{
             $this->debug(__METHOD__."文件不存在或不可读 ".($sTplFile?$sTplFile:$sRenderFile)." line ".__LINE__, E_USER_ERROR,sle\Sle::SLE_SYS);
         }
-        return sle\Sle::getInstance()->LastError?false:$aTpl[$sKey];
+        return sle\Sle::app()->LastError?false:$aTpl[$sKey];
     }
     
     /**
@@ -216,7 +216,7 @@ class View extends \struggle\libraries\Object{
             $sIncludeFile = ltrim($sIncludeFile,'/');
             $sIncludeFile = "{$this->mPublicTplPath}{$sIncludeFile}";
         }
-        if(sle\fexists($sIncludeFile) && is_readable($sIncludeFile)){
+        if(sle\isFile($sIncludeFile) && is_readable($sIncludeFile)){
             ob_start();
             include $sIncludeFile;
             $sIncludeCon = ob_get_clean();
@@ -248,7 +248,7 @@ class View extends \struggle\libraries\Object{
                 $xData = eval($sEvel);
                 if ($xData !== false){
                     if (isset($aAttr['name']) && $aAttr['name']){
-                        $oCtl = sle\Sle::getInstance()->Controller;
+                        $oCtl = sle\Sle::app()->Controller;
                         $oCtl->TplData = array_merge($oCtl->TplData,array($aAttr['name']=>$xData));
                     }
                 }else{
@@ -331,7 +331,7 @@ class View extends \struggle\libraries\Object{
      * @return string
      */
     private function _url($path){
-        $oRoute = sle\Sle::getInstance()->Route;
+        $oRoute = sle\Sle::app()->Route;
 		return '<?PHP echo "'.$oRoute->genUrl($path).'";?>';
     }
     

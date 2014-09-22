@@ -1,12 +1,14 @@
 <?php
-namespace struggle\libraries\cache\driver;
-use struggle as sle;
 /**
- * 需要动态改变配置的，不用写在config.php文件中，如日志跟其他文本文件的读写，
-   其他文件的路径、文件名随时都有可能改变，所以不需要写入，只需在构造函数添加
-   一个配置数组形参即可
+ * - 需要动态改变配置的，不用写在config.php文件中，如日志跟其他文本文件的读写，
+ * 其他文件的路径、文件名随时都有可能改变，所以不需要写入，只需在构造函数添加
+ * 一个配置数组形参即可
 */
-class File extends \struggle\libraries\Object{
+namespace struggle\libraries\cache\driver;
+use \struggle\libraries\Object;
+use struggle as sle;
+
+class File extends Object{
     public  $file    = '';
     public  $length  = 1024;    //读取文件的长度，字节byte
     public  $mode    = 'ab';

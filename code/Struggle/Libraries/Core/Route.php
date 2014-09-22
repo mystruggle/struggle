@@ -45,7 +45,7 @@ class Route extends Object{
                 $sClassName = $this->namespaceModule.$this->module.$this->moduleSuffix;
                 $sMethod = "{$this->methodPrefix}{$this->action}";
                 $oController = new $sClassName();
-                sle\Sle::getInstance()->Controller = $oController;
+                sle\Sle::app()->Controller = $oController;
                 if(method_exists($oController,$sMethod)){
                     $oController->$sMethod();
                 }else{
@@ -95,7 +95,7 @@ class Route extends Object{
         $aQuery     = array();
 		$aTmpUrlPath = explode('/',$aPath['path']);
 		if(count($aTmpUrlPath) === 1){
-			$sUrlModule = \struggle\Sle::getInstance()->Route->defaultModule;
+			$sUrlModule = \struggle\Sle::app()->Route->defaultModule;
 			$sUrlAction = $aTmpUrlPath[0];
 		}else{
 			$sUrlModule = $aTmpUrlPath[0];

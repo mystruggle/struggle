@@ -41,7 +41,7 @@ class Debug extends Object{
             $sClassName = '\struggle\libraries\cache\driver\\'.sle\ctop($this->recordType);
             $sRecordFile = rtrim($this->recordFilePath,'/').'/'.$this->recordFileName.'.'.$this->recordFileExt;
             $aOpt = array('file'=>$sRecordFile,'mode'=>$this->recordFileMode,'size'=>$this->recordFileSize,'renum'=>$this->recordFileNum);
-            \struggle\Sle::getInstance()->hasInfo("初始化类{$sClassName},初始化参数".print_r($aOpt,true),E_USER_NOTICE,\struggle\Sle::SLE_SYS,\microtime(true));
+            \struggle\Sle::app()->hasInfo("初始化类{$sClassName},初始化参数".print_r($aOpt,true),E_USER_NOTICE,\struggle\Sle::SLE_SYS,\microtime(true));
             $oReocrd = new $sClassName($aOpt);
         }
         $this->hdRecord = $oReocrd;
@@ -51,7 +51,7 @@ class Debug extends Object{
         $sHtml="<div style='font-family:\"宋体\",sans-serif,verdana,arial;width:auto;border:1px solid #cccccc;font-size:13px;position:relative;margin:0px;padding:10px;'>"
                ."<div style='text-align:right;'><a style='text-decoration:none;color:blue;' href='javascript:void(0);' onclick='this.parentNode.parentNode.style.display=\"none\";'>X</a></div><div style='margin:0px;padding:0px;'><ul style='margin:0px;padding:0px;list-style-type:none;'>";
         $sTxt='';
-        foreach (\struggle\Sle::getInstance()->aInfo as $info){
+        foreach (\struggle\Sle::app()->aInfo as $info){
             if ($this->decideDebug($info[1], $info[2])){
                 $aLevelInfo = \struggle\getErrLevel($info[1]);
                 $info[3] = sprintf('%1.5f',round(($info[3] - BEGIN_TIME),5));
@@ -84,7 +84,7 @@ class Debug extends Object{
         if ($this->decideDebug($iLevel,$iFrom)){
             empty($iRunTime) && $iRunTime = microtime(true);
             $aInfo = array($sLogInfo,$iLevel, $iFrom, $iRunTime);
-            \struggle\Sle::getInstance()->hasInfo($aInfo[0],$aInfo[1],$aInfo[2],$aInfo[3]);
+            \struggle\Sle::app()->hasInfo($aInfo[0],$aInfo[1],$aInfo[2],$aInfo[3]);
             $this->save($aInfo[0],$aInfo[1],$aInfo[2],$aInfo[3]);
         }
     }

@@ -89,7 +89,7 @@ require_cache(LIB_PATH.'Object.php');
 //加载调试类文件
 require_once SLE_PATH.'Libraries/Debug.php';
 
-Debug::trace('ffff',Debug::ERROR);
+Debug::trace("ffff\t".__FILE__."\tline\t".__LINE__,Debug::WARNING);
 
 
 define('IS_WIN',PHP_OS == 'WINNT'?true:false);

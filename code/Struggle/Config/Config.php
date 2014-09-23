@@ -22,13 +22,14 @@ return array(
     //语言
     'LANG_NAME'              =>'zh_cn',
     //调试                                                            
-    'DEBUG_RECORD_TYPE'      =>'file',
-    'DEBUG_RECORD_FILE_NAME' =>'application',
-    'DEBUG_RECORD_FILE_PATH' =>APP_RUNTIME,
-    'DEBUG_RECORD_FILE_EXT'  =>'log',
-    'DEBUG_RECORD_FILE_MODE' =>'ab',
-    'DEBUG_RECORD_FILE_SIZE' =>2000,  //kb
-    'DEBUG_RECORD_FILE_NUM'  =>3,
+    'DEBUG_LOG_TYPE'      =>'file',
+    'DEBUG_LOG_FILE_NAME' =>'application',
+    'DEBUG_LOG_FILE_DIR' =>APP_RUNTIME,
+    'DEBUG_LOG_FILE_PATH' =>'',
+    'DEBUG_LOG_FILE_EXT'  =>'log',
+    'DEBUG_LOG_FILE_MODE' =>'ab',
+    'DEBUG_LOG_FILE_SIZE' =>2000,  //kb
+    'DEBUG_LOG_FILE_NUM'  =>3,
     /* 是否启用调试日志 */
     'DEBUG_ENABLED'          =>false,
     /* 是否展示调试页面  */

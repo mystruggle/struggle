@@ -83,7 +83,6 @@ class File extends Object{
         }
         
         !isset($aHandle[$sKey]) && $aHandle[$sKey] = @fopen($this->file, $this->mode);
-        var_dump($aHandle[$sKey],$this->file);
         if (!\struggle\isResource($aHandle[$sKey]))
             \struggle\halt("文件打开失败{$this->file}\t".__METHOD__."\tline\t".__LINE__);
         return $aHandle[$sKey];

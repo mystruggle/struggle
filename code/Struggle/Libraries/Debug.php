@@ -60,8 +60,8 @@ class Debug{
     
     /**
      * 追踪调试信息
-     * @param unknown $message
-     * @param unknown $type
+     * @param string $message
+     * @param integer $type
      * @param number $displayTime
      */
     public static function trace($message, $type = self::NOTICE, $displayTime = 0){
@@ -69,13 +69,9 @@ class Debug{
 			self::init();
             $displayTime || $displayTime = microtime(true);
             $displayTime = $displayTime - BEGIN_TIME;
-            self::save($message, $type, $displayTime);
             $sMsg = is_string($message)?$message:(is_array($message)?print_r($message,true):var_export($message));
+            self::save($sMsg, $type, $displayTime);
             self::$mTraceInfo[] = array($sMsg,$type,$displayTime);
-            print_r(self::$mTraceInfo);die;
-            $aInfo = array($sLogInfo,$iLevel, $iFrom, $iRunTime);
-            \struggle\Sle::app()->hasInfo($aInfo[0],$aInfo[1],$aInfo[2],$aInfo[3]);
-            $this->save($aInfo[0],$aInfo[1],$aInfo[2],$aInfo[3]);
         }
     }
     
@@ -101,17 +97,37 @@ class Debug{
         if(!Sle::app()->file->write($sTxt)){
             halt("写入日志失败\t".__METHOD__."\tline\t".__LINE__);
         }
-        die('endq');
-        
-        if ($this->decideDebug($iCode, $iType)){
-            $sTxt = date('Y-m-d H:i:s')."/".($iExecTime-BEGIN_TIME)."s";
-            $aInfoType = \struggle\getErrLevel($iCode);
-            $sTxt .="[{$aInfoType[1]} {$aInfoType[2]}]{$mInfo}".PHP_EOL;
-            if(!$this->hdRecord->write($sTxt))
-                throw new \Exception('写入日志失败', E_USER_ERROR);
-        }
     }
     
+    
+    /**
+     * 在页面显示调试信息
+     */
+    public static function show(){
+        $sHtml="<div style='font-family:\"宋体\",sans-serif,verdana,arial;width:auto;border:1px solid #cccccc;font-size:13px;position:relative;margin:0px;padding:10px;'>"
+                ."<div style='text-align:right;'><a style='text-decoration:none;color:blue;' href='javascript:void(0);' onclick='this.parentNode.parentNode.style.display=\"none\";'>X</a></div><div style='margin:0px;padding:0px;'><ul style='margin:0px;padding:0px;list-style-type:none;'>";
+        $sTxt='';
+        foreach (self::$mTraceInfo as $info){
+            $sMsgTypeTxt = self::getTypeText($info[1]);
+                $info[2] = sprintf('%1.5f',round($info[2],5));
+                switch ($info[1]){
+                    case self::ERROR:
+                    case self::SYS_ERROR:
+                        $sTxt .="<li style='line-height:100%;'><font color='red'>{$sMsgTypeTxt} {$info[2]}s {$info[0]}</font></li>";
+                        break;
+                    case self::WARNING:
+                    case self::SYS_WARNING:
+                        $sTxt .= "<li style='line-height:100%;'><font color='blue'>{$sMsgTypeTxt} {$info[2]}s {$info[0]}</font></li>";
+                        break;
+                    default:
+                        $sTxt .="<li style='line-height:120%;'><font color='#999999'>{$sMsgTypeTxt} {$info[2]}s {$info[0]}</font></li>";
+                        break;
+                }
+        }
+        if ($sTxt)
+            echo "{$sHtml}{$sTxt}</ul></div></div>";
+    }
+
     
     
     /**

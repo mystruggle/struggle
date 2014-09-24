@@ -516,6 +516,8 @@ function M($sName = ''){
 	}
 	return isset($aModel[$sKey])?$aModel[$sKey]:null;
 }
+
+
 /**
  * 名称命名转换
  * @param  string       $sName    需要转换的名称
@@ -600,7 +602,7 @@ function isResource ($res) {
  * @param $key  需要异或的值(加/解密key)，必须十进制
  * @param $new  非空时为文件名，即另生成一个文件;为空时返回加/解密后字符串
  * @return string
- * @author luguo@139.com * 
+ * @author luguo@139.com 
  */
 function fileXor($file,$key,$new=''){
 	$sFile = $file;

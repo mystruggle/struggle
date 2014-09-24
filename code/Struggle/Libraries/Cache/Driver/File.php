@@ -18,6 +18,7 @@ class File extends Object{
     private $mHandle = null;
     
     public function __construct($aOpt = array()){
+		parent::__construct();
         if (!empty($aOpt)){
             isset($aOpt['file'])  && $aOpt['file'] && $this->file = $aOpt['file'];
             //isset($aOpt['path'])  && $aOpt['path'] && $this->path = $aOpt['path'];
@@ -26,6 +27,9 @@ class File extends Object{
             isset($aOpt['renum']) && $aOpt['renum'] && $this->renum = $aOpt['renum']; 
         }       
     }
+
+	public function _init(){
+	}
     
     public function write($sContent){
         $this->mHandle = $this->open();

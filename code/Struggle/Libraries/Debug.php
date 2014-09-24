@@ -21,17 +21,15 @@ class Debug{
     const WARNING = 5;
     const ERROR   = 6;
     
-    
-    
-    public function __construct(){
+    public static function init(){
         static $oReocrd = null;
-        $this->recordType     = sle\C('DEBUG_RECORD_TYPE');
-        $this->recordFileName = sle\C('DEBUG_RECORD_FILE_NAME');
-        $this->recordFilePath = sle\C('DEBUG_RECORD_FILE_PATH');
-        $this->recordFileExt  = sle\C('DEBUG_RECORD_FILE_EXT');
-        $this->recordFileMode = sle\C('DEBUG_RECORD_FILE_MODE');
-        $this->recordFileSize = sle\C('DEBUG_RECORD_FILE_SIZE');
-        $this->recordFileNum  = sle\C('DEBUG_RECORD_FILE_NUM');
+        $this->recordType     = \struggle\C('DEBUG_RECORD_TYPE');
+        $this->recordFileName = \struggle\C('DEBUG_RECORD_FILE_NAME');
+        $this->recordFilePath = \struggle\C('DEBUG_RECORD_FILE_PATH');
+        $this->recordFileExt  = \struggle\C('DEBUG_RECORD_FILE_EXT');
+        $this->recordFileMode = \struggle\C('DEBUG_RECORD_FILE_MODE');
+        $this->recordFileSize = \struggle\C('DEBUG_RECORD_FILE_SIZE');
+        $this->recordFileNum  = \struggle\C('DEBUG_RECORD_FILE_NUM');
         $this->recordType     || $this->recordType     = 'file';
         $this->recordFileName || $this->recordFileName = 'application';
         $this->recordFilePath || $this->recordFilePath = APP_RUNTIME;
@@ -39,6 +37,7 @@ class Debug{
         $this->recordFileMode || $this->recordFileMode = 'ab';
         $this->recordFileSize || $this->recordFileSize = 2000;
         $this->recordFileNum  || $this->recordFileNum  = 3;
+		die('end');
         if (is_null($oReocrd)){
             $sClassName = '\struggle\libraries\cache\driver\\'.sle\ctop($this->recordType);
             $sRecordFile = rtrim($this->recordFilePath,'/').'/'.$this->recordFileName.'.'.$this->recordFileExt;
@@ -47,7 +46,7 @@ class Debug{
             $oReocrd = new $sClassName($aOpt);
         }
         $this->hdRecord = $oReocrd;
-    }
+	}
     
     /**
      * 追踪调试信息
@@ -57,6 +56,7 @@ class Debug{
      */
     public static function trace($message, $type = self::NOTICE, $displayTime = 0){
         if (C('DEBUG_ENABLED')){
+			self::init();
             $displayTime || $displayTime = microtime(true);
             $displayTime = $displayTime - BEGIN_TIME;
             self::save($message, $type, $displayTime);

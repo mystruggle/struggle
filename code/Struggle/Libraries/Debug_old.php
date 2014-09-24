@@ -23,6 +23,7 @@ class Debug extends Object{
     
     public function __construct(){
         static $oReocrd = null;
+		$this->storeType = '';
         $this->recordType     = sle\C('DEBUG_RECORD_TYPE');
         $this->recordFileName = sle\C('DEBUG_RECORD_FILE_NAME');
         $this->recordFilePath = sle\C('DEBUG_RECORD_FILE_PATH');
@@ -46,6 +47,9 @@ class Debug extends Object{
         }
         $this->hdRecord = $oReocrd;
     }
+
+
+
     
     public function show(){
         $sHtml="<div style='font-family:\"宋体\",sans-serif,verdana,arial;width:auto;border:1px solid #cccccc;font-size:13px;position:relative;margin:0px;padding:10px;'>"

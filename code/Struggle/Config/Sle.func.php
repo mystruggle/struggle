@@ -594,5 +594,45 @@ function isResource ($res) {
 
 
 
+/**
+ * 异或加/解密算法(不同语言也可)
+ * @param $file  需要加密或解密的文件
+ * @param $key  需要异或的值(加/解密key)，必须十进制
+ * @param $new  非空时为文件名，即另生成一个文件;为空时返回加/解密后字符串
+ * @return string
+ * @author luguo@139.com * 
+ */
+function fileXor($file,$key,$new=''){
+	$sFile = $file;
+	$sKey  = $key;
+	$str   = '';
+	$sNewFile = $new;
+    if($hanldle=fopen($sFile,"rb")) {
+		while(!feof($hanldle)) {
+			$bCon= fread($hanldle,1); //读文件 读取
+			//不能直接从二进制转成十进制，要先从二进制转成十六进制，再从十六进制转成十进制，再用chr转成字符串
+			$bCon=hexdec(bin2hex($bCon));
+            $str .= chr( $bCon ^ $sKey);   // 读取个8位，并进行惑运算
+	    }
+		fclose($hanldle) ; // 关闭资源  $filebinary
+    }
+	if($sNewFile)
+        return file_put_contents($sNewFile,$str)?'1':'';
+	return $str;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

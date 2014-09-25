@@ -14,6 +14,22 @@ use struggle\libraries\cache\driver\File;
 
 class Debug{
     private static $mTraceInfo;
+    //调试信息存储方式
+    private static $mLogType = 'file';
+    //存储方式为file时，存储文件名
+    private static $mLogFileName = 'application';
+    //存储方式为file时，存储文件扩展名
+    private static $mLogFileExt = 'log';
+    //存储方式为file时，存储文件目录
+    private static $mLogFileDir = APP_RUNTIME;
+    //存储方式为file时，存储文件路径
+    private static $mLogFilePath = '';
+    //存储方式为file时，打开文件模式
+    private static $mLogFileMode = 'ab';
+    //存储方式为file时，存储文件最大大小，kb
+    private static $mLogFileMaxSize = 2000;
+    //存储方式为file时，存储文件个数
+    private static $mLogFileNum = 3;
     const SYS_NOTICE  = 1;
     const SYS_WARNING = 2;
     const SYS_ERROR   = 3;
@@ -22,30 +38,24 @@ class Debug{
     const ERROR   = 6;
     
     public static function init(){
-        static $oReocrd = null;
-        $this->recordType     = \struggle\C('DEBUG_RECORD_TYPE');
-        $this->recordFileName = \struggle\C('DEBUG_RECORD_FILE_NAME');
-        $this->recordFilePath = \struggle\C('DEBUG_RECORD_FILE_PATH');
-        $this->recordFileExt  = \struggle\C('DEBUG_RECORD_FILE_EXT');
-        $this->recordFileMode = \struggle\C('DEBUG_RECORD_FILE_MODE');
-        $this->recordFileSize = \struggle\C('DEBUG_RECORD_FILE_SIZE');
-        $this->recordFileNum  = \struggle\C('DEBUG_RECORD_FILE_NUM');
-        $this->recordType     || $this->recordType     = 'file';
-        $this->recordFileName || $this->recordFileName = 'application';
-        $this->recordFilePath || $this->recordFilePath = APP_RUNTIME;
-        $this->recordFileExt  || $this->recordFileExt  = 'log';
-        $this->recordFileMode || $this->recordFileMode = 'ab';
-        $this->recordFileSize || $this->recordFileSize = 2000;
-        $this->recordFileNum  || $this->recordFileNum  = 3;
-		die('end');
-        if (is_null($oReocrd)){
-            $sClassName = '\struggle\libraries\cache\driver\\'.sle\ctop($this->recordType);
-            $sRecordFile = rtrim($this->recordFilePath,'/').'/'.$this->recordFileName.'.'.$this->recordFileExt;
-            $aOpt = array('file'=>$sRecordFile,'mode'=>$this->recordFileMode,'size'=>$this->recordFileSize,'renum'=>$this->recordFileNum);
-            \struggle\Sle::app()->hasInfo("初始化类{$sClassName},初始化参数".print_r($aOpt,true),E_USER_NOTICE,\struggle\Sle::SLE_SYS,\microtime(true));
-            $oReocrd = new $sClassName($aOpt);
+        \struggle\C('DEBUG_LOG_TYPE') && self::$mLogType = \struggle\C('DEBUG_LOG_TYPE');
+        if (self::$mLogType == 'file'){
+            self::initFile();
         }
-        $this->hdRecord = $oReocrd;
+	}
+	
+	private static function initFile(){
+        \struggle\C('DEBUG_LOG_FILE_NAME') && self::$mLogFileName = \struggle\C('DEBUG_LOG_FILE_NAME');
+        \struggle\C('DEBUG_LOG_FILE_EXT') && self::$mLogFileExt = \struggle\C('DEBUG_LOG_FILE_EXT');
+        \struggle\C('DEBUG_LOG_FILE_DIR') && self::$mLogFileDir = \struggle\C('DEBUG_LOG_FILE_DIR');
+        \struggle\C('DEBUG_LOG_FILE_PATH') && self::$mLogFilePath = \struggle\C('DEBUG_LOG_FILE_PATH');
+        \struggle\C('DEBUG_LOG_FILE_MODE') && self::$mLogFileMode = \struggle\C('DEBUG_LOG_FILE_MODE');
+        \struggle\C('DEBUG_LOG_FILE_SIZE') && self::$mLogFileMaxSize = \struggle\C('DEBUG_LOG_FILE_SIZE');
+        //Sle::app()->file
+        import('@.Cache.Driver.File');
+        Sle::app()->file->file = self::$mLogFileDir.self::$mLogFilePath.self::$mLogFileName.'.'.self::$mLogFileExt;
+        Sle::app()->file->mode = self::$mLogFileMode;
+        Sle::app()->file->size = self::$mLogFileMaxSize;
 	}
     
     /**
@@ -77,11 +87,9 @@ class Debug{
      * @param integer $time
      * @throws \Exception
      * @tutorial 格式
-     *           错误:[system error]0.001s 错误信息  文件     第几行
+     *           1970-01-01 00:00:00 错误:[system error]0.001s 错误信息  文件     第几行
      */
     public static function save($msg,$type,$time){
-        //Sle::app()->file
-        import('@.Cache.Driver.File');
         $sTxt = '';
         $sMsgTypeTxt = self::getTypeText($type);
         $sTxt .= $sMsgTypeTxt;
@@ -89,11 +97,11 @@ class Debug{
         if(C('DEBUG_DISPLAY_TIME')){
             $sTxt .= $time."s\t"; 
         }
-        $sTxt .= $msg."\t";
+        $sTxt .= $msg."\t".PHP_EOL;
         if(!Sle::app()->file->write($sTxt)){
             halt("写入日志失败\t".__METHOD__."\tline\t".__LINE__);
         }
-        die('end');
+        die('endq');
         
         if ($this->decideDebug($iCode, $iType)){
             $sTxt = date('Y-m-d H:i:s')."/".($iExecTime-BEGIN_TIME)."s";
@@ -112,28 +120,28 @@ class Debug{
      * @return string
      */
     public static function getTypeText($msgType){
-        $sTypeText = '';
+        $sTypeText = date('Y-m-d H:i:s')."\t";
         switch ($msgType){
             case self::ERROR:
-                $sTypeText = '错误：[ERROR]\t';
+                $sTypeText .= "错误：[ERROR]\t";
                 break;
             case self::SYS_ERROR:
-                $sTypeText = '错误：[SYSTEM ERROR]\t';
+                $sTypeText .= "错误：[SYSTEM ERROR]\t";
                 break;
             case self::WARNING:
-                $sTypeText = '警告：[WARNING]\t';
+                $sTypeText .= "警告：[WARNING]\t";
                 break;
             case self::SYS_WARNING:
-                $sTypeText = '警告：[SYSTEM WARNING]\t';
+                $sTypeText .= "警告：[SYSTEM WARNING]\t";
                 break;
             case self::NOTICE:
-                $sTypeText = '通知：[NOTICE]\t';
+                $sTypeText .= "通知：[NOTICE]\t";
                 break;
             case self::SYS_NOTICE:
-                $sTypeText = '通知：[SYSTEM NOTICE]\t';
+                $sTypeText .= "通知：[SYSTEM NOTICE]\t";
                 break;
             default:
-                $sTypeText = '其他：[OTHER]\t';
+                $sTypeText .= "其他：[OTHER]\t";
         }
         return $sTypeText;
     }

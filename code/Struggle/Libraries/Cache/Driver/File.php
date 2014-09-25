@@ -6,15 +6,14 @@
 */
 namespace struggle\libraries\cache\driver;
 use \struggle\libraries\Object;
-use struggle\halt;
 use struggle\Sle;
 
 class File extends Object{
     public  $file    = '';
     public  $length  = 1024;    //读取文件的长度，字节byte
     public  $mode    = 'ab';
-    public  $size    = 2000;  //kb
-    public  $renum   = 3;     //超过文件设置的大小时重命名的数量
+    public  $size    = 2000;  //文件大小 kb
+    public  $parts   = 3;     //超过文件设置的大小时重命名的数量
     private $mHandle = null;
     
     public function __construct($aOpt = array()){
@@ -47,7 +46,7 @@ class File extends Object{
         $bRlt = true;
         if ((filesize($this->file) / 1024) > $this->size){
             $bRlt = false;
-            $max = $this->renum;
+            $max = $this->parts;
             flock($this->mHandle, LOCK_EX);
             for($i=$max;$i>0;$i--){
                 $sReName = $this->file.".{$i}";
@@ -79,8 +78,8 @@ class File extends Object{
             return $aHandle[$sKey];
         }
         $sWriteDir = dirname($this->file);
-        if (is_writeable($sWriteDir)){
-            halt("目录不可写{$sWriteDir}\t".__METHOD__."\tline\t".__LINE__);
+        if (!is_writable($sWriteDir)){
+            \struggle\halt("目录不可写{$sWriteDir}\t".__METHOD__."\tline\t".__LINE__);
         }
         
         !isset($aHandle[$sKey]) && $aHandle[$sKey] = @fopen($this->file, $this->mode);

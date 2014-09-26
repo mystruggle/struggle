@@ -8,6 +8,10 @@
  * - 主键所在的表叫被参照表(被引用表、主表)，主键在另一表中做外键时所在的表叫做参照表(引用表、子表)。在参照完整性中有描述
  *
  */
+
+namespace  struggle\model;
+class Model extends \struggle\libraries\core\BaseModel{}
+
 namespace struggle\libraries\core;
 use struggle as sle;
 use struggle\ctop;
@@ -358,6 +362,3 @@ class BaseModel extends \struggle\libraries\Object{
 
 
 
-
-namespace  struggle\model;
-class Model extends \struggle\libraries\core\BaseModel{}

@@ -32,7 +32,7 @@ function require_cache($name){
  *               当为Sle时入口文件目录为起始位置;
  *               当为空值时项目库目录为起始位置
  * @param string $name 导入名称，以'.'分割
- * @return boolean
+ * @return boolean|string  成功返回文件名，失败返回false
  */
 function import($name){
     static $aInclude = array();
@@ -54,7 +54,7 @@ function import($name){
     if (!isset($aInclude[$sKey])){
         $aInclude[$sKey] = false;
         if (isFile($sName)){
-            $aInclude[$sKey] = require_cache($sName);
+            require_cache($sName) && $aInclude[$sKey] = $sName;
 			//把该文件注册到全局类Sle
 			$sClassName = fetchClassName($sName,false);
 			$sIdent = strtolower($sClassName[0]).substr($sClassName, 1);

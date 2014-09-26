@@ -1,6 +1,6 @@
 <?php
 namespace struggle\libraries;
-use struggle as sle;
+use struggle\Debug;
 class Route extends Object{
     public  $url  = '';
     public  $mode = '';
@@ -16,10 +16,10 @@ class Route extends Object{
 	public  $namespaceModule = '\struggle\controller\\';
 
 	
-    public function __construct($sUrl){
-        $this->mode = sle\C('ROUTE_MODE');
-        $this->url    = $sUrl;
-        $this->debug("路由模式{$this->mode};url=>{$this->url}", E_USER_NOTICE);
+    public function __construct(){
+        $this->mode = \struggle\C('ROUTE_MODE');
+        $this->url    = '$sUrl';
+        Debug::trace("路由模式{$this->mode};url=>{$this->url}", Debug::SYS_NOTICE);
     }
     
     

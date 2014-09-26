@@ -1,4 +1,7 @@
 <?php
+namespace struggle\controller;
+class Controller extends \struggle\libraries\core\BaseController{}
+
 namespace struggle\libraries\core;
 use struggle as sle;
 use struggle\libraries\cache\driver\File;
@@ -325,8 +328,6 @@ class BaseController extends \struggle\libraries\Object{
 
 
 
-namespace struggle\controller;
-class Controller extends \struggle\libraries\core\BaseController{}
 
 
 

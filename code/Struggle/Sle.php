@@ -89,8 +89,6 @@ require_cache(LIB_PATH.'Object.php');
 //加载调试类文件
 require_once SLE_PATH.'Libraries/Debug.php';
 
-Debug::trace("ffff\t".__FILE__."\tline\t".__LINE__,Debug::SYS_NOTICE);
-Debug::show();
 
 define('IS_WIN',PHP_OS == 'WINNT'?true:false);
 /*
@@ -100,45 +98,6 @@ define('IS_WIN',PHP_OS == 'WINNT'?true:false);
  *   false   关闭debug
  */
 defined('APP_DEBUG') or define('APP_DEBUG', false); 
-
-
-
-
-/**
- * 关于错误的相关信息
- * @param integer $iCode 错误代码
- * @return mixed 返回关于该错误代码的相关信息；1错误、2警告、3提醒、0未知
- */
-
-function getErrLevel($iCode){
-    static $aRlt=array();
-    if (empty($aRlt)){
-        $aRlt=array(
-        //第一个元素自定义错误等级1错误、2警告、3通知或其他;第二字符标示;第三该常量对应的值
-            E_ERROR         => array(1,'E_ERROR',1),
-            E_WARNING       => array(2,'E_WARNING',2),                //'运行时警告，非致命错误'
-            E_PARSE         => array(1,'E_PARSE',4),                 //'编译时解析错误',
-            E_NOTICE        => array(3,'E_NOTICE',8),                //'运行时通知',
-            E_CORE_ERROR    => array(1,'E_CORE_ERROR',16),           //'致命错误，php核心触发',  
-            E_CORE_WARNING  => array(2,'E_CORE_WARNING',32),         //'警告，php核心触发', 
-            E_COMPILE_ERROR => array(1,'E_COMPILE_ERROR',64),        //'致命编译时错误，zend脚本引擎触发',
-            E_COMPILE_WARNING =>array(2,'E_COMPILE_WARNING',128), 	 	 
-            E_USER_ERROR    => array(1,'E_USER_ERROR',256), 	 	 
-     	    E_USER_WARNING  => array(2,'E_USER_WARNING',512), 	 	 
-     	    E_USER_NOTICE   => array(3,'E_USER_NOTICE',1024), 	 	 
-     	    E_STRICT        => array(3,'E_STRICT',2048), 	
-     	    E_RECOVERABLE_ERROR => array(1,'E_RECOVERABLE_ERROR',4096), 	
-     	    E_DEPRECATED    => array(0,'E_DEPRECATED',8192), 	
-     	    E_USER_DEPRECATED => array(0,'E_USER_DEPRECATED',16384),
-     	    E_ALL           => array(0,'E_ALL',32767),
-       );
-    }
-   return isset($aRlt[$iCode])?$aRlt[$iCode]:false;
-}
-
-
-
-
 
 
 
@@ -293,29 +252,26 @@ class Sle{
     
 
     
-    public function run(){		
+    public function run(){
 		//加载核心文件
-		if (!$this->mLastError){
-			$aCoreFile = array(
-				LIB_PATH.'Object.php',
-				// LIB_PATH.'Debug.php',
-				LIB_PATH.'Exception.php',
-				// LIB_PATH.'Log.php',
-				LIB_PATH.'Core/Route.php',
-				LIB_PATH.'Core/Controller.php',
-				LIB_PATH.'Core/Model.php',
-				LIB_PATH.'Db/Db.php',
-				LIB_PATH.'Core/View.php',
-			);
-			foreach ($aCoreFile as $sFile){
-				if (require_cache($sFile)){
-					$this->hasInfo("加载核心文件{$sFile}", E_USER_NOTICE, Sle::SLE_SYS);
-				}else{
-					$this->hasInfo("文件不存在或不可读{$sFile},请检查文件", E_USER_ERROR, Sle::SLE_SYS);
-				}
-			}
+		$aCoreFile = array(
+			//LIB_PATH.'Object.php',
+			// LIB_PATH.'Debug.php',
+			'@.Exception',
+			// LIB_PATH.'Log.php',
+			'@.Core.Route',
+			'@.Core.Controller',
+			'@.Core.Model',
+			'@.Db.Db',
+			'@.Core.View',
+		);
+		foreach ($aCoreFile as $sFile){
+		    $bStat = import($sFile);
+		    Debug::trace('加载核心文件'.($bStat?$bStat:$sFile).','.($bStat?'成功':'失败'),$bStat?Debug::SYS_NOTICE:Debug::SYS_ERROR);
 		}
-		
+		print_r(Sle::app()->model);
+		Debug::show();
+		die;
 		//设置自动包含路径
 		if (!$this->mLastError){
 			$sDir = C('AUTOLOAD_DIR');
@@ -398,7 +354,7 @@ class Sle{
 }
 
 //系统开始运行
-//Sle::app()->run();
+Sle::app()->run();
 //Sle::app()->Debug->show();
 
 

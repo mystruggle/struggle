@@ -139,22 +139,22 @@ class Debug{
         $sTypeText = date('Y-m-d H:i:s')."\t";
         switch ($msgType){
             case self::ERROR:
-                $sTypeText .= "错误：[ERROR]\t";
+                $sTypeText .= "错误：[ERROR 256]\t";
                 break;
             case self::SYS_ERROR:
-                $sTypeText .= "错误：[SYSTEM ERROR]\t";
+                $sTypeText .= "错误：[SYSTEM ERROR 256]\t";
                 break;
             case self::WARNING:
-                $sTypeText .= "警告：[WARNING]\t";
+                $sTypeText .= "警告：[WARNING 512]\t";
                 break;
             case self::SYS_WARNING:
-                $sTypeText .= "警告：[SYSTEM WARNING]\t";
+                $sTypeText .= "警告：[SYSTEM WARNING 512]\t";
                 break;
             case self::NOTICE:
-                $sTypeText .= "通知：[NOTICE]\t";
+                $sTypeText .= "通知：[NOTICE 1024]\t";
                 break;
             case self::SYS_NOTICE:
-                $sTypeText .= "通知：[SYSTEM NOTICE]\t";
+                $sTypeText .= "通知：[SYSTEM NOTICE 1024]\t";
                 break;
             default:
                 $sTypeText .= "其他：[OTHER]\t";

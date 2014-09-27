@@ -140,6 +140,7 @@ class Sle{
             }
             return $this->mRegClass[$name];
         }else{
+            //debug_print_backtrace();
             try {
                 throw new \Exception("访问一个不存在的属性{$name}");
             }catch (\Exception $e){
@@ -151,18 +152,28 @@ class Sle{
 
     /**
 	 * 在该全局类注册一个类，方便调用
-	 * @param string $str    类文件或类名
+	 * @param string $file    类文件或类名
 	 * @param string $ident  类的身份标识，唯一。用于调用，为空时默认用文件名代替
 	 * @example
 	 *    如，类文件example.class.php,ident 为空是则ident等于example,调用该类方法为Sle::app()->example
 	 */
-	public function registerClass($str,$ident = ''){
+	public function registerClass($file,$ident = ''){
+		//把该文件注册到全局类Sle
+		if (!$ident){
+    		$sIdent = fetchClassName($file,false);
+    		$ident = strtolower($sIdent[0]).substr($sIdent, 1);
+		}
+		$sClassName = '\\'.fetchNamespace($file).'\\'.fetchClassName($file);
 		try{
-			if(!isFile($str) && !class_exists($str))throw new \Exception("文件不存在或不可读，文件名区分大小写,抑或是该类名不存在\t{$str}");
+		    if (!class_exists($sClassName)){
+		        if (!isFile($file))throw new \Exception("文件不存在或不可读，文件名区分大小写\t{$file}");
+		        require_cache($file);
+		    }
+			if(!class_exists($sClassName))throw new \Exception("该类{$sClassName}在类文件{$file}不存在\t");
 		}catch(\Exception $e){
 			 halt("异常错误: {$e->getMessage()}  {$e->getFile()} 第{$e->getLine()}行");
 		}
-	   $this->mRegClass[$ident] = $str;
+	   $this->mRegClass[$ident] = $sClassName;
 	}
     
     private function Route(){
@@ -257,19 +268,25 @@ class Sle{
 		$aCoreFile = array(
 			//LIB_PATH.'Object.php',
 			// LIB_PATH.'Debug.php',
-			'@.Exception',
+			LIB_PATH.'Exception.php',
 			// LIB_PATH.'Log.php',
-			'@.Core.Route',
-			'@.Core.Controller',
-			'@.Core.Model',
-			'@.Db.Db',
-			'@.Core.View',
+			LIB_PATH.'Core/Route.php',
+			LIB_PATH.'Core/Controller.php',
+			LIB_PATH.'Core/Model.php',
+			LIB_PATH.'Db/Db.php',
+			LIB_PATH.'Core/View.php',
 		);
 		foreach ($aCoreFile as $sFile){
-		    $bStat = import($sFile);
-		    Debug::trace('加载核心文件'.($bStat?$bStat:$sFile).','.($bStat?'成功':'失败'),$bStat?Debug::SYS_NOTICE:Debug::SYS_ERROR);
+		    if (!isFile($sFile)){
+		        halt("文件不存在或不可读{$sFile}\t".__FILE__."\tline\t".__LINE__);
+		    }
+		    if (strpos($sFile, 'Exception') ===false && strpos($sFile, 'Db') ===false)
+		        $this->registerClass($sFile);
+		    else 
+		        require_cache($sFile);
+		    Debug::trace('加载核心文件'.$sFile,Debug::SYS_NOTICE);
 		}
-		print_r(Sle::app()->model);
+		print_r(Sle::app()->route);
 		Debug::show();
 		die;
 		//设置自动包含路径

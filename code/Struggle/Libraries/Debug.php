@@ -52,7 +52,8 @@ class Debug{
         \struggle\C('DEBUG_LOG_FILE_MODE') && self::$mLogFileMode = \struggle\C('DEBUG_LOG_FILE_MODE');
         \struggle\C('DEBUG_LOG_FILE_SIZE') && self::$mLogFileMaxSize = \struggle\C('DEBUG_LOG_FILE_SIZE');
         //Sle::app()->file
-        import('@.Cache.Driver.File');
+        Sle::app()->registerClass(LIB_PATH.'Cache/Driver/File.php');
+        //import('@.Cache.Driver.File');
         //Sle::app()->file->debug = true;
         Sle::app()->file->dir = self::$mLogFileDir;
         Sle::app()->file->path = self::$mLogFilePath;
@@ -105,7 +106,8 @@ class Debug{
         $sTxt .= $msg."\t".PHP_EOL;
         //写入文件
         if(!Sle::app()->file->write($sTxt)){
-            halt("写入日志失败,{Sle::app()->file->error}\t".__METHOD__."\tline\t".__LINE__);
+            
+            halt(Sle::app()->file->error);
         }
         //print_r(Sle::app()->file->getDebugInfo());
     }

@@ -64,7 +64,7 @@ class BaseModel extends \struggle\libraries\Object{
         $this->mCharset = sle\C('LANG_CHARACTER_SET')?sle\C('LANG_CHARACTER_SET'):'utf8';
         $this->mCharset = str_replace('-','',$this->mCharset);
 
-        $sModelName = str_replace(sle\C('MODEL_CLASS_SUFFIX'),'',basename(str_replace(array('/','\\'),'/',get_class($this))));
+        $sModelName = str_replace('Model','',basename(str_replace(array('/','\\'),'/',get_class($this))));
         if($sModelName){
             if(property_exists($this,'alias') && $this->alias){
                 $this->mAlias = $this->alias;

@@ -55,10 +55,6 @@ function import($name){
         $aInclude[$sKey] = false;
         if (isFile($sName)){
             require_cache($sName) && $aInclude[$sKey] = $sName;
-			//把该文件注册到全局类Sle
-			$sClassName = fetchClassName($sName,false);
-			$sIdent = strtolower($sClassName[0]).substr($sClassName, 1);
-			Sle::app()->registerClass('\\'.fetchNamespace($sName).'\\'.$sClassName,$sIdent);
         }else{
             try {
                 throw new \Exception("文件不存在或该文件没有读权限,{$sName}");

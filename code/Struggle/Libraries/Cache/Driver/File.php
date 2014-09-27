@@ -116,7 +116,7 @@ class File extends Object{
             return null;
         }
         
-        !isset($aHandle[$sKey]) && $aHandle[$sKey] = @fopen($this->mFile, $this->mode);
+        !isset($aHandle[$sKey]) && $aHandle[$sKey] = fopen($this->mFile, $this->mode);
         if (!\struggle\isResource($aHandle[$sKey])){
             $this->error = "文件打开失败{$this->mFile}\t".__METHOD__."\tline\t".__LINE__;
             return null;
@@ -160,8 +160,10 @@ class File extends Object{
     
     
     public function __destruct(){
-        if (\struggle\isResource($this->mHandle))
-            @fclose($this->mHandle);
+        if (\struggle\isResource($this->mHandle)){
+            //想重复利用不能关闭
+            //@fclose($this->mHandle);
+        }
     }
 
 

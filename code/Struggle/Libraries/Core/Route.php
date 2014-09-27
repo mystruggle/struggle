@@ -18,7 +18,7 @@ class Route extends Object{
 	
     public function __construct(){
         $this->mode = \struggle\C('ROUTE_MODE');
-        $this->url    = '$sUrl';
+        $this->url    = '';
         Debug::trace("路由模式{$this->mode};url=>{$this->url}", Debug::SYS_NOTICE);
     }
     

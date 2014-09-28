@@ -140,7 +140,7 @@ class Sle{
             }
             return $this->mRegClass[$name];
         }else{
-            //debug_print_backtrace();
+            debug_print_backtrace();
             try {
                 throw new \Exception("访问一个不存在的属性{$name}");
             }catch (\Exception $e){
@@ -280,87 +280,54 @@ class Sle{
 		    if (!isFile($sFile)){
 		        halt("文件不存在或不可读{$sFile}\t".__FILE__."\tline\t".__LINE__);
 		    }
-		    if (strpos($sFile, 'Exception') ===false && strpos($sFile, 'Db') ===false)
+		    if ( strpos($sFile, 'Db') ===false)//strpos($sFile, 'Exception') ===false &&
 		        $this->registerClass($sFile);
 		    else 
 		        require_cache($sFile);
 		    Debug::trace('加载核心文件'.$sFile,Debug::SYS_NOTICE);
 		}
-		print_r(Sle::app()->route);
-		Debug::show();
-		die;
+		
+		
 		//设置自动包含路径
-		if (!$this->mLastError){
-			$sDir = C('AUTOLOAD_DIR');
-			$sPath = '';
-			if (strpos($sDir, ',') !== false){
-				$aDir = explode(',', $sDir);
-				foreach ($aDir as $sDir){
-					$sDir = APP_ROOT.$sDir;
-					if (is_dir($sDir)){
-						$sPath .= $sDir.PATH_SEPARATOR;
-					}else{
-						$this->hasInfo("{$sDir}不是目录，请检查",E_USER_ERROR, Sle::SLE_SYS);
-					}
-				}
-			}else{
-				$sDir = APP_ROOT.$sDir;
-				if (is_dir($sDir)){
-					$sPath .= $sDir.PATH_SEPARATOR;
-				}else{
-					$this->hasInfo("{$sDir}不是目录，请检查",E_USER_ERROR, Sle::SLE_SYS);
-				}
-			}
+		$aDir = explode(',', C('AUTOLOAD_DIR'));
+		$aPath = array();
+		$aAutoPath = array();
+		foreach ($aDir as $dir){
+		    $aPath = array_merge($aPath,fetchDirs($dir));
 		}
+		$aPath = array_unique(array_merge($aPath,$aDir));
+		$aAutoPath = array_map('realpath', $aPath);
+		$sAutoPath = get_include_path().PATH_SEPARATOR.implode(PATH_SEPARATOR, $aAutoPath);
+		if (!set_include_path($sAutoPath)){
+		    halt("设置自动包含目录失败{$sAutoPath}\tfile\t".__FILE__."\tline\t".__LINE__);
+		}
+		Debug::trace('设置自动包含目录'.$sAutoPath.',成功',Debug::SYS_NOTICE);
 
-		//分开写，以判断是否进行自动包含
-		if (!$this->mLastError){
-			//$sPath .= get_include_path();
-			if (set_include_path($sPath)){
-				$this->hasInfo("设置{$sPath}自动包含目录",E_USER_NOTICE, Sle::SLE_SYS);
-			}else{
-				$this->hasInfo("设置{$sPath}自动包含目录失败",E_USER_ERROR, Sle::SLE_SYS);
-			}
-		}else{
-			$this->hasInfo("由于程序错误，设置自动包含目录失败",E_USER_ERROR, Sle::SLE_SYS);
+
+        //自定义自动包含句柄
+		$hdAutoLoad = '\struggle\autoLoad';
+		Debug::trace('设置自动包含处理函数'.$hdAutoLoad,Debug::SYS_NOTICE);
+		if (!spl_autoload_register($hdAutoLoad)){
+		    halt('设置自动包含处理函数失败!'.$hdAutoLoad);
 		}
 		
+		//自定义脚本停止执行前执行的函数
+		$sFuncName = 'shutdownHandle';
+		Debug::trace("自定义shutdown处理句柄{$sFuncName}",Debug::SYS_NOTICE);
+		register_shutdown_function(array($this->exception,$sFuncName));
 		
-		//自定义自动包含句柄
-		if (!$this->mLastError){
-			$sFuncName = '\struggle\autoLoad';
-			if (spl_autoload_register($sFuncName)){
-				$this->hasInfo("自定义自动包含处理函数{$sFuncName}",E_USER_NOTICE, Sle::SLE_SYS);
-			}else{
-				$this->hasInfo("自定义自动包含处理函数{$sFuncName}失败",E_USER_ERROR, Sle::SLE_SYS);
-			}
-		}
+		//自定义异常处理句柄
+		$sFuncName = 'exceptionHandle';
+		Debug::trace("自定义异常处理句柄{$sFuncName}",Debug::SYS_NOTICE);
+		set_exception_handler(array($this->exception,$sFuncName));
 		
-		//分开写，以判断是否进行自动包含
-		if(!$this->mLastError){
-			//自定义句柄
-			$sClassName = '\struggle\libraries\Exception';
-			$oException = new $sClassName();
-			//自定义脚本停止执行前执行的函数
-			$sFuncName = 'shutdownHandle';
-			$this->hasInfo("自定义shutdown处理句柄{$sClassName}::{$sFuncName}",E_USER_NOTICE, Sle::SLE_SYS);
-			register_shutdown_function(array($oException,$sFuncName));
-			
-			//自定义异常处理句柄
-			$sFuncName = 'exceptionHandle';
-			$this->hasInfo("自定义异常处理句柄{$sClassName}::{$sFuncName}",E_USER_NOTICE, Sle::SLE_SYS);
-			set_exception_handler(array($oException,$sFuncName));
-			
-			//自定义错误处理句柄
-			$sFuncName = 'errorHandle';
-			$this->hasInfo("自定义错误处理句柄{$sClassName}::{$sFuncName}",E_USER_NOTICE, Sle::SLE_SYS);
-			set_error_handler(array($oException,$sFuncName),E_ALL | E_STRICT);
-		}
-        //实例化类
-        if (!self::$moHandle->mLastError){
-            //执行路由
-            $this->Route->exec();
-        }
+		//自定义错误处理句柄
+		$sFuncName = 'errorHandle';
+		Debug::trace("自定义错误处理句柄{$sFuncName}",Debug::SYS_NOTICE);
+		set_error_handler(array($this->exception,$sFuncName),E_ALL | E_STRICT);
+		
+        //执行路由
+        $this->route->exec();
 
     }
     
@@ -372,7 +339,7 @@ class Sle{
 
 //系统开始运行
 Sle::app()->run();
-//Sle::app()->Debug->show();
+Debug::show();
 
 
 

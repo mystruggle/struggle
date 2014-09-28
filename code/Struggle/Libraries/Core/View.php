@@ -1,5 +1,6 @@
 <?php 
 namespace struggle\libraries\core;
+use struggle\Debug;
 use struggle as sle;
 
 
@@ -82,7 +83,7 @@ class View extends \struggle\libraries\Object{
                 }
             }
         }else{
-            $this->debug(__METHOD__."文件不存在或不可读 ".($sTplFile?$sTplFile:$sRenderFile)." line ".__LINE__, E_USER_ERROR,sle\Sle::SLE_SYS);
+            Debug::trace(__METHOD__."文件不存在或不可读 ".($sTplFile?$sTplFile:$sRenderFile)." line ".__LINE__, Debug::SYS_ERROR);
         }
         return sle\Sle::app()->LastError?false:$aTpl[$sKey];
     }

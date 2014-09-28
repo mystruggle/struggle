@@ -471,8 +471,8 @@ function fetchDirs($dir){
         while ($sSubDir = $hdDir->read()){
 			//刷选目录，过滤目录下文件
             if (!is_file($dir.'/'.$sSubDir) && !in_array($sSubDir, array('.','..'))){
-                $aRlt[]=rtrim($dir,'/').'/'.$sSubDir;
-                $aRlt = array_merge($aRlt,fetchDirs(rtrim($dir,'/').'/'.$sSubDir.'/'));
+                $aRlt[]=rtrim($dir,'/').'/'.$sSubDir.'/';
+                $aRlt = array_merge($aRlt,fetchDirs(rtrim($dir,'/').'/'.$sSubDir));
             }
         }
         $hdDir->close();

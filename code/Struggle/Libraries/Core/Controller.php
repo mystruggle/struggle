@@ -3,12 +3,11 @@ namespace struggle\controller;
 class Controller extends \struggle\libraries\core\BaseController{}
 
 namespace struggle\libraries\core;
-use struggle as sle;
+use struggle\Sle;
 use struggle\libraries\cache\driver\File;
 use struggle\libraries\Client;
 
 class BaseController extends \struggle\libraries\Object{
-    private $mView = '';
     private $mSle  = '';
     private $msWidgetPath = '';
     protected $mTplData = array();
@@ -21,11 +20,6 @@ class BaseController extends \struggle\libraries\Object{
     
     public function __construct(){
         parent::__construct();
-        static $oView='';
-        if (!$oView){
-            $oView = new View();
-        }
-        $this->mView = $oView;
         $this->mSle = \struggle\Sle::app();
     }
 
@@ -61,7 +55,7 @@ class BaseController extends \struggle\libraries\Object{
         }
         $this->mTplData = array_merge($this->mTplData,$aTplData);
         if ($this->getCurTpl($sPath)){
-            if ($this->mCompiledTplFile = $this->mView->render($this->curTpl)){
+            if ($this->mCompiledTplFile = Sle::app()->view->render($this->curTpl)){
                 return $this->outputComplieFile($this->mCompiledTplFile);
             }
         }
@@ -81,11 +75,12 @@ class BaseController extends \struggle\libraries\Object{
         $sTpl    = '';
         $sFile = $tpl;
         $aRlt  = array('status'=>true,'msg'=>'');
+        $oView =Sle::app()->view;
         //检查布局文件
         if ($tpl){
             $sLoyout = $this->getCurTpl($tpl);
         }else{
-            $sFile = APP_THEME.$this->mView->Theme.'/Layout/layout.'.$this->mView->TplSuffix;
+            $sFile = APP_THEME.$oView->Theme.'/Layout/layout.'.$oView->TplSuffix;
             $sLoyout = $this->getCurTpl($sFile);
         }
         $sTpl = $this->getCurTpl();
@@ -93,14 +88,14 @@ class BaseController extends \struggle\libraries\Object{
             //替换布局文件中{content}标签，用当前控制器模板内容替换之
             $sLoyout = preg_replace('/\{content\}/i', $sTpl, $sLoyout);
             //把替换后的布局文件写一个文件
-            $sFileKey = $this->mView->getFileKey($sFile);
-            $sContentKey = $this->mView->getFileKey($this->curTpl);
-            $sFile = APP_RUNTIME.md5($sFileKey.$sContentKey).'.'.$this->mView->TplSuffix;
+            $sFileKey = $oView->getFileKey($sFile);
+            $sContentKey = $oView->getFileKey($this->curTpl);
+            $sFile = APP_RUNTIME.md5($sFileKey.$sContentKey).'.'.$oView->TplSuffix;
             if (!file_exists($sFile)){
                 $oFile = new File(array('file'=>$sFile,'mode'=>'wb+'));
                 $oFile->write($sLoyout);
             }
-            if ($this->mCompiledTplFile = $this->mView->render($sFile)){
+            if ($this->mCompiledTplFile = $oView->render($sFile)){
                 return $this->outputComplieFile($this->mCompiledTplFile);
             }
         }
@@ -187,6 +182,8 @@ class BaseController extends \struggle\libraries\Object{
     private function getCurTpl($tpl = ''){
         $sFile = '';
         $aRlt = array('status'=>true,'msg'=>'');
+        $oView = Sle::app()->view;
+        $oRoute = Sle::app()->route;
         if ($tpl){
             if (file_exists($tpl)){
                 $sFile = $tpl;
@@ -197,11 +194,11 @@ class BaseController extends \struggle\libraries\Object{
                 if (isset($aTplInfo[1]) && $aTplInfo[1]){
                     $sTplPath = sle\ctop($aTplInfo[1]).'/'.sle\ptoc($aTplInfo[0]);
                 }
-                $sFile = $this->mView->ThemePath.$this->mView->Theme.'/'.$sTplPath.'.'.$this->mView->TplSuffix;
+                $sFile = $oView->ThemePath.$oView->Theme.'/'.$sTplPath.'.'.$oView->TplSuffix;
                 
             }
         }else{
-            $sFile = $this->mView->ThemePath.$this->mView->Theme.'/'.sle\ctop($this->mSle->Route->module).'/'.sle\ptoc($this->mSle->Route->action).'.'.$this->mView->TplSuffix;
+            $sFile = $oView->ThemePath.$oView->Theme.'/'.\struggle\ctop($oRoute->module).'/'.\struggle\ptoc($oRoute->action).'.'.$oView->TplSuffix;
         }
         //判断文件是否存在
         if (file_exists($sFile)){
@@ -286,8 +283,8 @@ class BaseController extends \struggle\libraries\Object{
         if (sle\Sle::app()->LastError){
             $this->debug(__METHOD__."由于存在致命错误，程序中止执行 line ".__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
         }else{
-            $this->mView->WidgetTplPath='Widget/';
-            if($this->mCompiledTplFile = $this->mView->render($sPath)){
+            Sle::app()->view->WidgetTplPath='Widget/';
+            if($this->mCompiledTplFile = Sle::app()->view->render($sPath)){
                 extract($this->mTplData);
                 include $this->mCompiledTplFile;
             }else{
@@ -300,17 +297,18 @@ class BaseController extends \struggle\libraries\Object{
 
     public function _include_tpl_($sFile){
         $sIncludeFile = $sFile;
+        $oView = Sle::app()->view;
         if (strrpos($sIncludeFile, '.',strrpos($sIncludeFile, '/'))!==false){
-            if(substr($sIncludeFile, strrpos($sIncludeFile, '.',strrpos($sIncludeFile, '/'))+1) != $this->mView->TplSuffix)
-                $sIncludeFile .= ".{$this->mView->TplSuffix}";
+            if(substr($sIncludeFile, strrpos($sIncludeFile, '.',strrpos($sIncludeFile, '/'))+1) != $oView->TplSuffix)
+                $sIncludeFile .= ".{$oView->TplSuffix}";
         }else{
-            $sIncludeFile .=".{$this->mView->TplSuffix}";
+            $sIncludeFile .=".{$oView->TplSuffix}";
         }
         if (!realpath($sIncludeFile)){
             $sIncludeFile = ltrim($sIncludeFile,'/');
-            $sIncludeFile = "{$this->mView->PublicTplPath}{$sIncludeFile}";
+            $sIncludeFile = "{$oView->PublicTplPath}{$sIncludeFile}";
         }
-        if(sle\isFile($sIncludeFile) && is_readable($sIncludeFile) && ($this->mCompiledTplFile = $this->mView->render($sIncludeFile)) ){
+        if(sle\isFile($sIncludeFile) && is_readable($sIncludeFile) && ($this->mCompiledTplFile = $oView->render($sIncludeFile)) ){
             ob_start();
             include $this->mCompiledTplFile;
             $sIncludeCon = ob_get_clean();

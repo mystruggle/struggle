@@ -18,41 +18,41 @@ class Route extends Object{
 	
     public function __construct(){
         $this->mode = \struggle\C('ROUTE_MODE');
-        $this->url    = '';
+        $this->url    = $_SERVER['REQUEST_URI'];
         Debug::trace("路由模式{$this->mode};url=>{$this->url}", Debug::SYS_NOTICE);
     }
     
     
     public function exec(){
         if ($this->mode == self::ROUTE_NORMAL){
-            $this->moduleTag = sle\C('ROUTE_MODULE_TAG')?sle\C('ROUTE_MODULE_TAG'):'m';
-            $this->actionTag = sle\C('ROUTE_ACTION_TAG')?sle\C('ROUTE_ACTION_TAG'):'a';
-            $this->defaultModule = sle\C('ROUTE_DEFAULT_MODULE')?sle\C('ROUTE_DEFAULT_MODULE'):'index';
-            $this->defaultAction = sle\C('ROUTE_DEFAULT_ACTION')?sle\C('ROUTE_DEFAULT_ACTION'):'index';
+            $this->moduleTag = \struggle\C('ROUTE_MODULE_TAG')?\struggle\C('ROUTE_MODULE_TAG'):'m';
+            $this->actionTag = \struggle\C('ROUTE_ACTION_TAG')?\struggle\C('ROUTE_ACTION_TAG'):'a';
+            $this->defaultModule = \struggle\C('ROUTE_DEFAULT_MODULE')?\struggle\C('ROUTE_DEFAULT_MODULE'):'index';
+            $this->defaultAction = \struggle\C('ROUTE_DEFAULT_ACTION')?\struggle\C('ROUTE_DEFAULT_ACTION'):'index';
             if (!isset($_GET[$this->moduleTag]))
-                $this->module = sle\ctop($this->defaultModule);
+                $this->module = \struggle\ctop($this->defaultModule);
             else 
-                $this->module = sle\ctop($_GET[$this->moduleTag]);
+                $this->module = \struggle\ctop($_GET[$this->moduleTag]);
                 
             if (!isset($_GET[$this->actionTag]))
-                $this->action = sle\ctop($this->defaultAction);
+                $this->action = \struggle\ctop($this->defaultAction);
             else 
-                $this->action = sle\ctop($_GET[$this->actionTag]);
-            $this->debug("模块标签=>{$this->moduleTag};方法标签=>{$this->actionTag};模块=>{$this->module};方法=>{$this->action}",E_USER_NOTICE);
+                $this->action = \struggle\ctop($_GET[$this->actionTag]);
+            Debug::trace("模块标签=>{$this->moduleTag};方法标签=>{$this->actionTag};模块=>{$this->module};方法=>{$this->action}",Debug::SYS_NOTICE);
             $sControlFile = APP_CONTROLLER."{$this->module}{$this->moduleFileSuffix}";
             if(file_exists($sControlFile) && is_readable($sControlFile)){
-                sle\require_cache($sControlFile);
+                \struggle\require_cache($sControlFile);
                 $sClassName = $this->namespaceModule.$this->module.$this->moduleSuffix;
                 $sMethod = "{$this->methodPrefix}{$this->action}";
                 $oController = new $sClassName();
-                sle\Sle::app()->Controller = $oController;
+                \struggle\Sle::app()->Controller = $oController;
                 if(method_exists($oController,$sMethod)){
                     $oController->$sMethod();
                 }else{
-                    $this->debug("方法不存在{$sClassName}::{$sMethod}",E_USER_ERROR);
+                    Debug::trace("方法不存在{$sClassName}::{$sMethod}",Debug::SYS_ERROR);
                 }
             }else{
-                $this->debug("controller文件不存在或不可读{$sControlFile}", E_USER_ERROR);
+                Debug::trace("controller文件不存在或不可读{$sControlFile}", Debug::SYS_ERROR);
             }
         }
     }

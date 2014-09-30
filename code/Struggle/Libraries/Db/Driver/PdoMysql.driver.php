@@ -1,6 +1,7 @@
 <?php
 namespace struggle\libraries\db\driver;
 use struggle as sle;
+use struggle\libraries\Debug;
 use struggle\ctop;
 /**
  * 模型运用例子
@@ -184,7 +185,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 					$this->mPdoStatement->bindParam(($i+1),$this->mBindParam[$i],$iDataType);
 				}
 			}elseif($iNum>0){
-				$this->debug("SQL绑定参数个数错误:".print_r($this->mBindParam,true),E_USER_ERROR,sle\Sle::SLE_SYS);
+				Debug::trace("SQL绑定参数个数错误:".print_r($this->mBindParam,true),Debug::SYS_ERROR);
 			}
 		}else{
 			//其他占位符绑定
@@ -209,7 +210,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
     			}
 		    }
 		}
-		$this->debug("SQL绑定参数:".print_r($this->mBindParam,true),E_USER_NOTICE,sle\Sle::SLE_SYS);
+		Debug::trace("SQL绑定参数:".print_r($this->mBindParam,true),Debug::SYS_NOTICE);
 		//每次查询后清空绑定的参数
 		$this->mBindParam = array();
 	}
@@ -234,7 +235,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 	        }
 	    } 
 	    if (!$xRlt['status'])
-	        $this->debug($xRlt['msg'], E_USER_ERROR,sle\Sle::SLE_SYS);
+	        Debug::trace($xRlt['msg'], Debug::SYS_ERROR);
 	    $sOrgi = str_replace($sSearch, $sReplace, $sOrgi);
 	    return $sOrgi;
 	}
@@ -250,7 +251,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 		$sOrderby = isset($this->mSelectInfo['orderby'])?$this->mSelectInfo['orderby']:'';
 		$sLimit   = isset($this->mSelectInfo['limit'])?$this->mSelectInfo['limit']:'';
 		$sSql = "SELECT {$sField} FROM {$sTable} AS {$sAlias} {$sJoin} {$sWhere} {$sGroupby} {$sHaving} {$sOrderby} {$sLimit}";
-		$this->debug("SQL语句拼接:{$sSql}",E_USER_NOTICE,sle\Sle::SLE_SYS);
+		Debug::trace("SQL语句拼接:{$sSql}",Debug::NOTICE);
 		return $sSql;
 	}
 
@@ -276,7 +277,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
         if(!isset($this->mSelectInfo['field']) || empty($this->mSelectInfo['field'])){
             $this->mSelectInfo['field'] = "*";
         }
-		$this->debug("select 语句参数信息 : ".print_r($this->mSelectInfo,true).__METHOD__.' line '.__LINE__,E_USER_NOTICE,sle\Sle::SLE_SYS);
+		Debug::trace("select 语句参数信息 : ".print_r($this->mSelectInfo,true).__METHOD__.' line '.__LINE__,Debug::SYS_NOTICE);
     }
 
 
@@ -409,9 +410,9 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
     		    $sJoin .= ' AND '.$sJoinOn;
     		}
     		
-		    $this->debug('join拼接后的字符串 '.$sJoin.' '.__METHOD__.' line '.__LINE__, E_USER_NOTICE,sle\Sle::SLE_SYS);
+		    Debug::trace('join拼接后的字符串 '.$sJoin.' '.__METHOD__.' line '.__LINE__, Debug::SYS_NOTICE);
 		}else{
-	        $this->debug($xRlt['msg'],E_USER_ERROR,sle\Sle::SLE_SYS);
+	        Debug::trace($xRlt['msg'],Debug::SYS_ERROR);
 		}
 		$this->mSelectInfo['join'] = $sJoin;
     }
@@ -435,7 +436,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 		$sepa  = 'AND';
         if(is_array($param)){
 		    uasort($param,array($this,'btosSort'));
-			$this->debug("where参数排序后=>".print_r($param,true).__METHOD__.' line '.__LINE__,E_USER_NOTICE,sle\Sle::SLE_SYS);
+			Debug::trace("where参数排序后=>".print_r($param,true).__METHOD__.' line '.__LINE__,Debug::SYS_NOTICE);
             foreach($param as $name=>$p){
                 $sMethod = "_Where".ucfirst($name);
                 if(method_exists($this,$sMethod)){
@@ -444,7 +445,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
                 }
 				if(is_numeric($name) && is_array($p)){
 					$aSql[]=$this->traversalArr($p,true);
-					$this->debug("解析where数组参数后=>".print_r(end($aSql),true).__METHOD__.' line '.__LINE__,E_USER_NOTICE,sle\Sle::SLE_SYS);
+					Debug::trace("解析where数组参数后=>".print_r(end($aSql),true).__METHOD__.' line '.__LINE__,Debug::SYS_NOTICE);
 				}else{
 					if(strtolower($name) === '_logic'){
 						$sepa = strtoupper($p);
@@ -452,7 +453,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 					}
                     //过滤array('value')这种情况
                     if(is_numeric($name) && is_string($p)){
-                        $this->debug("错误的WHERE参数=> {$name}=>{$p}".print_r($param,true).__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+                        Debug::trace("错误的WHERE参数=> {$name}=>{$p}".print_r($param,true).__METHOD__.' line '.__LINE__,Debug::SYS_ERROR);
                     }else{
 					    $aSql[] = $this->reassoc($name,$p);
                     }
@@ -725,7 +726,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 			}elseif(is_string($key)){
 				$sSql .="{$this->reassoc($key,$value)} {$sepa} ";
 			}else{
-				$this->debug("解析where参数错误=> {$key}:{$value} in ".print_r($aVal,true).__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+				Debug::trace("解析where参数错误=> {$key}:{$value} in ".print_r($aVal,true).__METHOD__.' line '.__LINE__,Debug::SYS_ERROR);
 			}
 		}
 		$sSql = substr($sSql,0,strrpos($sSql,$sepa));

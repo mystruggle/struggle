@@ -9,8 +9,9 @@
  * @author luguo<luguo@139.com>
  *
  */
-namespace struggle;
+namespace struggle\libraries;
 use struggle\libraries\cache\driver\File;
+use struggle\Sle;
 
 class Debug{
     private static $mTraceInfo = array();
@@ -72,12 +73,12 @@ class Debug{
      */
     public static function trace($message, $type = self::NOTICE, $displayTime = 0){
         //先判断是否开启调试，再判断该信息是否符合记录等级
-        if (C('DEBUG_ENABLED') && self::_isPassed($type)){
+        if (\struggle\C('DEBUG_ENABLED') && self::_isPassed($type)){
 			self::init();
             $displayTime || $displayTime = microtime(true);
             $displayTime = $displayTime - BEGIN_TIME;
             $sMsg = is_string($message)?$message:(is_array($message)?print_r($message,true):var_export($message));
-            if (C('DEBUG_STORAGE'))
+            if (\struggle\C('DEBUG_STORAGE'))
                 self::save($sMsg, $type, $displayTime);
             self::$mTraceInfo[] = array($sMsg,$type,$displayTime);
             return true;
@@ -100,7 +101,7 @@ class Debug{
         $sMsgTypeTxt = self::getTypeText($type);
         $sTxt .= $sMsgTypeTxt;
         //是否记录时间，调试性能
-        if(C('DEBUG_DISPLAY_TIME')){
+        if(\struggle\C('DEBUG_DISPLAY_TIME')){
             $sTxt .= $time."s\t"; 
         }
         $sTxt .= $msg."\t".PHP_EOL;
@@ -117,7 +118,7 @@ class Debug{
      * 在页面显示调试信息
      */
     public static function show(){
-        if (!C('DEBUG_PAGE'))
+        if (!\struggle\C('DEBUG_PAGE'))
             return false;
         $sHtml="<div style='font-family:\"宋体\",sans-serif,verdana,arial;width:auto;border:1px solid #cccccc;font-size:13px;position:relative;margin:0px;padding:10px;'>"
                 ."<div style='text-align:right;'><a style='text-decoration:none;color:blue;' href='javascript:void(0);' onclick='this.parentNode.parentNode.style.display=\"none\";'>X</a></div><div style='margin:0px;padding:0px;'><ul style='margin:0px;padding:0px;list-style-type:none;'>";
@@ -211,7 +212,7 @@ class Debug{
         $bFlag = true;
         static $aLevel = array();
         if (!$aLevel){
-            $sLevel = strtolower(C('DEBUG_LEVEL'));
+            $sLevel = strtolower(\struggle\C('DEBUG_LEVEL'));
             $aLevel = explode(',', $sLevel);
             $aMsgLevel = array();
             

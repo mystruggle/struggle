@@ -6,9 +6,9 @@ namespace struggle\libraries\core;
 use struggle\Sle;
 use struggle\libraries\cache\driver\File;
 use struggle\libraries\Client;
+use struggle\libraries\Exception;
 
 class BaseController extends \struggle\libraries\Object{
-    private $mSle  = '';
     private $msWidgetPath = '';
     protected $mTplData = array();
     private $mCompiledTplFile = '';
@@ -17,16 +17,24 @@ class BaseController extends \struggle\libraries\Object{
     private $widgetModule = '';
     private $widgetAction = '';
     private $curTpl       = '';//当前模板文件
+	//模块类名后缀
+	public  $moduleSuffix = 'Controller';
+	//动作方法名前缀
+	public  $methodPrefix = 'action';
+	//控制器文件后缀
+	public  $fileSuffix   = '.controller.php';
     
     public function __construct(){
         parent::__construct();
-        $this->mSle = \struggle\Sle::app();
     }
 
 	public function _init(){
 		array_walk($_GET,array($this,'stripSpecialChar'));
 		array_walk($_POST,array($this,'stripSpecialChar'));
 		array_walk($_REQUEST,array($this,'stripSpecialChar'));
+		//初始化Client类 LIB_PATH
+		$sClientFile = LIB_PATH.'Client.php';
+		Sle::app()->registerClass($sClientFile);
 	}
 
 	private function stripSpecialChar(&$item,$key){
@@ -50,7 +58,7 @@ class BaseController extends \struggle\libraries\Object{
 
         //传递的参数
         if (!is_array($aTplData)){
-            $this->debug("传递参数不规范，传递给模板的参数不是数组".(is_string($aTplData)?$aTplData:print_r($aTplData,true)).'line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+            Debug::trace("传递参数不规范，传递给模板的参数不是数组".(is_string($aTplData)?$aTplData:print_r($aTplData,true)).'line '.__LINE__,Debug::SYS_ERROR);
             $aTplData = array();
         }
         $this->mTplData = array_merge($this->mTplData,$aTplData);
@@ -93,7 +101,9 @@ class BaseController extends \struggle\libraries\Object{
             $sFile = APP_RUNTIME.md5($sFileKey.$sContentKey).'.'.$oView->TplSuffix;
             if (!file_exists($sFile)){
                 $oFile = new File(array('file'=>$sFile,'mode'=>'wb+'));
-                $oFile->write($sLoyout);
+                if(!$oFile->write($sLoyout)){
+					throw new Exception($oFile->error);
+				}
             }
             if ($this->mCompiledTplFile = $oView->render($sFile)){
                 return $this->outputComplieFile($this->mCompiledTplFile);
@@ -126,28 +136,23 @@ class BaseController extends \struggle\libraries\Object{
         }
         
         if (!$aRlt['status']){
-            $this->debug($aRlt['msg'], E_USER_ERROR,sle\Sle::SLE_SYS);
+            Debug::trace($aRlt['msg'], Debug::SYS_ERROR);
         }
-        if (sle\Sle::app()->LastError){
-            $this->debug('由于存在致命错误，程序中止执行 '.__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
-            return false;
-        }else{
-            //输出内容
-            header('Content-type:text/html;charset=utf-8');
-            ob_flush();
-            flush();
-            ob_start();
-            extract($this->mTplData);
-            include $file;
-            $sTxt=ob_get_clean();
-            $this->_before($sTxt);
-            echo $sTxt;
-            return true;
-        }
+		//输出内容
+		header('Content-type:text/html;charset=utf-8');
+		ob_flush();
+		flush();
+		ob_start();
+		extract($this->mTplData);
+		include $file;
+		$sTxt=ob_get_clean();
+		$this->_before($sTxt);
+		echo $sTxt;
+		return true;
     }
     
     private function _before(&$content){
-        $aJs = \struggle\Sle::app()->Client->Js;
+        $aJs = \struggle\Sle::app()->client->Js;
         foreach ($aJs as $pos=>$js){
             switch ($pos){
                 case Client::POS_HEAD_TOP:
@@ -175,13 +180,12 @@ class BaseController extends \struggle\libraries\Object{
     /**
      * 获取模板内容
      * @param string $tpl 模板文件
-     * @return string 成功返回模板内容,否则返回空字符
+     * @return string 成功返回模板内容,模板不存在将抛出异常
      * @author luguo@139.com
      * explain 当$tpl为空时，默认获取当前控制器模板；否则获取对应模板
      */
     private function getCurTpl($tpl = ''){
         $sFile = '';
-        $aRlt = array('status'=>true,'msg'=>'');
         $oView = Sle::app()->view;
         $oRoute = Sle::app()->route;
         if ($tpl){
@@ -190,9 +194,9 @@ class BaseController extends \struggle\libraries\Object{
             }else{
                 //不是绝对路径，检查是否是控制器/动作 格式
                 $aTplInfo = explode('/', $tpl);
-                $sTplPath = sle\ctop($aTplInfo[0]).'/'.sle\ptoc($this->mSle->Route->action);
+                $sTplPath = \struggle\ctop($aTplInfo[0]).'/'.\struggle\ptoc($oRoute->action);
                 if (isset($aTplInfo[1]) && $aTplInfo[1]){
-                    $sTplPath = sle\ctop($aTplInfo[1]).'/'.sle\ptoc($aTplInfo[0]);
+                    $sTplPath = \struggle\ctop($aTplInfo[1]).'/'.\struggle\ptoc($aTplInfo[0]);
                 }
                 $sFile = $oView->ThemePath.$oView->Theme.'/'.$sTplPath.'.'.$oView->TplSuffix;
                 
@@ -201,22 +205,11 @@ class BaseController extends \struggle\libraries\Object{
             $sFile = $oView->ThemePath.$oView->Theme.'/'.\struggle\ctop($oRoute->module).'/'.\struggle\ptoc($oRoute->action).'.'.$oView->TplSuffix;
         }
         //判断文件是否存在
-        if (file_exists($sFile)){
-            if (!is_readable($sFile)){
-                $aRlt['status'] = false;
-                $aRlt['msg']    = '模板文件不可读'.$sFile.' '.__METHOD__.' line '.__LINE__;
-            }
-        }else{
-            $aRlt['status'] = false;
-            $aRlt['msg']    = '模板文件不存在'.$sFile.' '.__METHOD__.' line '.__LINE__;
-        }
-        if ($aRlt['status']){
-            $this->curTpl = $sFile;
-            return file_get_contents($this->curTpl);
-        }else{
-            $this->debug($aRlt['msg'],E_USER_ERROR,sle\Sle::SLE_SYS);
-            return '';
-        }
+		if(!\struggle\isFile($sFile)){
+			throw new Exception("模板文件不存在{$sFile}");
+		}
+		$this->curTpl = $sFile;
+		return file_get_contents($this->curTpl);
     }
 
     /**
@@ -231,13 +224,13 @@ class BaseController extends \struggle\libraries\Object{
         if (isset($aTmp['path']) && $aTmp['path']){
             $aControlPart = explode('/',trim($aTmp['path'],'/'));
             if(count($aControlPart)>=2){
-                $sModuleName = sle\ctop($aControlPart[0]);
-                $sActName = sle\ctop($aControlPart[1]);
+                $sModuleName = \struggle\ctop($aControlPart[0]);
+                $sActName = \struggle\ctop($aControlPart[1]);
                 $sWidgetFile = APP_CONTROLLER."{$sModuleName}{$this->mWidgetModuleSuffix}";
-                if(sle\isFile($sWidgetFile) && is_readable($sWidgetFile)){
-					sle\require_cache($sWidgetFile);
-                    $sClassName = $this->mSle->Route->namespaceModule.$sModuleName.
-						          sle\ctop(dirname(trim(str_replace('.','/',$this->mWidgetModuleSuffix),'/')));
+                if(\struggle\isFile($sWidgetFile) && is_readable($sWidgetFile)){
+					\struggle\require_cache($sWidgetFile);
+                    $sClassName = Sle::app()->route->namespaceModule.$sModuleName.
+						          \struggle\ctop(dirname(trim(str_replace('.','/',$this->mWidgetModuleSuffix),'/')));
                     $oWidget = new $sClassName();
                     $sMethodName = "action{$sActName}";
                     if(method_exists($oWidget,$sMethodName)){
@@ -245,19 +238,19 @@ class BaseController extends \struggle\libraries\Object{
                         $oWidget->widgetAction = $sActName;
                         //解析参数
                         if (isset($aTmp['query']) && $aTmp['query']){
-                            $this->mSle->Route->registerGlobalVar($aTmp['query']);
+                            Sle::app()->route->registerGlobalVar($aTmp['query']);
                         }
                         $oWidget->$sMethodName();
                     }else{
-                        $this->debug(__METHOD__."该方法不存在{$sClassName}::{$sMethodName} line ".__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+                        Debug::trace(__METHOD__."该方法不存在{$sClassName}::{$sMethodName} line ".__LINE__,Debug::SYS_ERROR);
                     }
                 }else{
-                    $this->debug(__METHOD__."文件不存在或不可读{$sWidgetFile} line ".__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+                    Debug::trace(__METHOD__."文件不存在或不可读{$sWidgetFile} line ".__LINE__,Debug::SYS_ERROR);
                 }
 
             }
         }else{
-            $this->debug(__METHOD__."传递的参数有误".(print_r($aTmp,true))." line ".__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+            Debug::trace(__METHOD__."传递的参数有误".(print_r($aTmp,true))." line ".__LINE__,Debug::SYS_ERROR);
             return;
         }
     }
@@ -271,27 +264,22 @@ class BaseController extends \struggle\libraries\Object{
         if($this->widgetModule && $this->widgetAction){
             $sPath = "{$this->widgetModule}/{$this->widgetAction}";
         }else{
-            $this->debug(__METHOD__."挂件模块方法不能为空 line ".__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+            Debug::trace(__METHOD__."挂件模块方法不能为空 line ".__LINE__,Debug::SYS_ERROR);
         }
         //传递的参数
         if (!is_array($aData)){
-            $this->debug("传递参数不规范，传递给模板的参数不是数组".(is_string($aData)?$aData:print_r($aData,true)).'line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+            Debug::trace("传递参数不规范，传递给模板的参数不是数组".(is_string($aData)?$aData:print_r($aData,true)).'line '.__LINE__,Debug::SYS_ERROR);
             $aData = array();
         }
         $this->mTplData = array_merge($this->mTplData,$aData);
 
-        if (sle\Sle::app()->LastError){
-            $this->debug(__METHOD__."由于存在致命错误，程序中止执行 line ".__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
-        }else{
-            Sle::app()->view->WidgetTplPath='Widget/';
-            if($this->mCompiledTplFile = Sle::app()->view->render($sPath)){
-                extract($this->mTplData);
-                include $this->mCompiledTplFile;
-            }else{
-                $this->debug(__METHOD__."挂件模板渲染失败！ line ".__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
-            }
-
-        }
+        Sle::app()->view->WidgetTplPath='Widget/';
+		if($this->mCompiledTplFile = Sle::app()->view->render($sPath)){
+			extract($this->mTplData);
+			include $this->mCompiledTplFile;
+		}else{
+			Debug::trace(__METHOD__."挂件模板渲染失败！ line ".__LINE__,Debug::SYS_ERROR);
+		}
     }
 
 
@@ -308,13 +296,13 @@ class BaseController extends \struggle\libraries\Object{
             $sIncludeFile = ltrim($sIncludeFile,'/');
             $sIncludeFile = "{$oView->PublicTplPath}{$sIncludeFile}";
         }
-        if(sle\isFile($sIncludeFile) && is_readable($sIncludeFile) && ($this->mCompiledTplFile = $oView->render($sIncludeFile)) ){
+        if(\struggle\isFile($sIncludeFile) && is_readable($sIncludeFile) && ($this->mCompiledTplFile = $oView->render($sIncludeFile)) ){
             ob_start();
             include $this->mCompiledTplFile;
             $sIncludeCon = ob_get_clean();
             return $sIncludeCon;
         }else{
-            $this->debug(__METHOD__."文件不存在或不可读 {$sIncludeFile} line ".__LINE__, E_USER_ERROR,sle\Sle::SLE_SYS);
+            Debug::trace(__METHOD__."文件不存在或不可读 {$sIncludeFile} line ".__LINE__, Debug::SYS_ERROR);
         }
     }
 

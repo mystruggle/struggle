@@ -12,7 +12,7 @@ class Client extends Object{
     
     public function __construct(){
         parent::__construct();
-        $sTheme = Sle::app()->View->Theme;
+        $sTheme = Sle::app()->view->Theme;
         $this->mJsBasePath = APP_PUBLIC.$sTheme.'/js/';
     }
     

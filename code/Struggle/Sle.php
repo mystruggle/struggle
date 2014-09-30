@@ -1,5 +1,6 @@
 <?php
 namespace struggle;
+use struggle\libraries\Debug;
 
 defined('SLE_PATH') or die('Access Forbidden');
 
@@ -140,7 +141,7 @@ class Sle{
             }
             return $this->mRegClass[$name];
         }else{
-            debug_print_backtrace();
+            //debug_print_backtrace();
             try {
                 throw new \Exception("访问一个不存在的属性{$name}");
             }catch (\Exception $e){
@@ -165,6 +166,7 @@ class Sle{
 		}
 		$sClassName = '\\'.fetchNamespace($file).'\\'.fetchClassName($file);
 		try{
+			//class_exists,类不存在会触发autoLoad
 		    if (!class_exists($sClassName)){
 		        if (!isFile($file))throw new \Exception("文件不存在或不可读，文件名区分大小写\t{$file}");
 		        require_cache($file);

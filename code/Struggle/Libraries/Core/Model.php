@@ -13,7 +13,8 @@ namespace  struggle\model;
 class Model extends \struggle\libraries\core\BaseModel{}
 
 namespace struggle\libraries\core;
-use struggle as sle;
+use struggle\Sle;
+use struggle\libraries\Debug;
 use struggle\ctop;
 
 define('HAS_ONE',1);
@@ -53,15 +54,15 @@ class BaseModel extends \struggle\libraries\Object{
 
 
     protected function _init(){
-		$this->mType   = sle\C('DB_TYPE')?sle\C('DB_TYPE'):'pdo';
-		$this->mDriver = sle\C('DB_DRIVER')?sle\C('DB_DRIVER'):'mysql';
-		$this->mDbName = sle\C('DB_NAME')?sle\C('DB_NAME'):null;
-		$this->mHost   = sle\C('DB_HOST')?sle\C('DB_HOST'):'127.0.0.1';
-		$this->mPort   = sle\C('DB_PORT')?sle\C('DB_PORT'):'330';
-		$this->mUser   = sle\C('DB_USER')?sle\C('DB_USER'):'root';
-		$this->mPwd    = sle\C('DB_PWD')?sle\C('DB_PWD'):'';
-		$this->mDns    = sle\C('DB_DNS')?sle\C('DB_DNS'):'';
-        $this->mCharset = sle\C('LANG_CHARACTER_SET')?sle\C('LANG_CHARACTER_SET'):'utf8';
+		$this->mType   = \struggle\C('DB_TYPE')?\struggle\C('DB_TYPE'):'pdo';
+		$this->mDriver = \struggle\C('DB_DRIVER')?\struggle\C('DB_DRIVER'):'mysql';
+		$this->mDbName = \struggle\C('DB_NAME')?\struggle\C('DB_NAME'):null;
+		$this->mHost   = \struggle\C('DB_HOST')?\struggle\C('DB_HOST'):'127.0.0.1';
+		$this->mPort   = \struggle\C('DB_PORT')?\struggle\C('DB_PORT'):'330';
+		$this->mUser   = \struggle\C('DB_USER')?\struggle\C('DB_USER'):'root';
+		$this->mPwd    = \struggle\C('DB_PWD')?\struggle\C('DB_PWD'):'';
+		$this->mDns    = \struggle\C('DB_DNS')?\struggle\C('DB_DNS'):'';
+        $this->mCharset = \struggle\C('LANG_CHARACTER_SET')?\struggle\C('LANG_CHARACTER_SET'):'utf8';
         $this->mCharset = str_replace('-','',$this->mCharset);
 
         $sModelName = str_replace('Model','',basename(str_replace(array('/','\\'),'/',get_class($this))));
@@ -83,14 +84,14 @@ class BaseModel extends \struggle\libraries\Object{
 		if(strtolower($this->mType) != strtolower($this->mDriver)){
 			$sFileName = "{$this->mType}_{$this->mDriver}";
 		}
-		$sClassName = sle\ctop($sFileName);
+		$sClassName = \struggle\ctop($sFileName);
 		$sFileName = LIB_PATH."Db/Driver/{$sClassName}{$this->mDrvFileSuffix}";
-		if(!sle\require_cache($sFileName)){
-			$this->debug("目标文件不存在或不可读{$sFileName} 在".__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+		if(!\struggle\require_cache($sFileName)){
+			Debug::trace("目标文件不存在或不可读{$sFileName} 在".__METHOD__.' line '.__LINE__,Debug::SYS_ERROR);
 		}
 		$sClassName = $this->mDrvNameSpace.$sClassName.$this->mDrvClassSuffix;
 		if(!class_exists($sClassName)){
-			$this->debug("当前类不存在{$sClassName} 在".__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+			Debug::trace("当前类不存在{$sClassName} 在".__METHOD__.' line '.__LINE__,Debug::SYS_ERROR);
 		}
         $sKey = md5($sClassName.$this->mType.$this->mDriver.$this->mDbIdent);
         $aOpt = array('driver'=>$this->mDriver,
@@ -166,7 +167,7 @@ class BaseModel extends \struggle\libraries\Object{
 		}elseif(is_string($condition)){
             $where = $condition;
         }else{
-			$this->debug("WHERE参数只能为数组或字符串类型".__METHOD__.' line '.__LINE__,E_USER_ERROR,sle\Sle::SLE_SYS);
+			Debug::trace("WHERE参数只能为数组或字符串类型".__METHOD__.' line '.__LINE__,Debug::SYS_ERROR);
 		}
 		$this->mSelectElement['where']=$where;
 		return $this;
@@ -240,9 +241,9 @@ class BaseModel extends \struggle\libraries\Object{
 		}
 		
 		if (!$xRlt['status']){
-		    $this->debug($xRlt['msg'], E_USER_ERROR,sle\Sle::SLE_SYS);
+		    Debug::trace($xRlt['msg'],Debug::SYS_ERROR);
 		}else{
-		    $this->debug('join参数 '.print_r($this->mSelectElement,true).' '.__METHOD__.' line '.__LINE__, E_USER_NOTICE,sle\Sle::SLE_SYS);
+			Debug::trace('join参数 '.print_r($this->mSelectElement,true).' '.__METHOD__.' line '.__LINE__,Debug::SYS_NOTICE);
 		}
         return $this;
     }
@@ -258,7 +259,7 @@ class BaseModel extends \struggle\libraries\Object{
 	    foreach ($aField as $field){
 	        if ($iPos = strpos($field, '.')){
 	            $sModelName = substr($field, 0,$iPos);
-	            if(!$oModel = sle\M(sle\ctop($sModelName))){
+	            if(!$oModel = \struggle\M(\struggle\ctop($sModelName))){
 	                $xRlt = $xRlt['status'] = false;
 	                $xRlt = $xRlt['msg']    = "模型不存在{$sModelName}".__METHOD__.' line '.__LINE__;
 	            }
@@ -276,7 +277,7 @@ class BaseModel extends \struggle\libraries\Object{
 	    if ($xRlt['status'])
 		    $this->mSelectElement['field'] = implode(',', $aRlt);
 	    else 
-	        $this->debug($xRlt['msg'], E_USER_ERROR,sle\Sle::SLE_SYS);
+	        Debug::trace($xRlt['msg'], Debug::SYS_ERROR);
 		return $this;
 	}
 
@@ -327,7 +328,7 @@ class BaseModel extends \struggle\libraries\Object{
 	}
 
 	public function getTableName(){
-		return sle\C('DB_TABLE_PREFIX').sle\ptoc($this->name).sle\C('DB_TABLE_SUFFIX');
+		return \struggle\C('DB_TABLE_PREFIX').\struggle\ptoc($this->name).\struggle\C('DB_TABLE_SUFFIX');
 	}
 
 

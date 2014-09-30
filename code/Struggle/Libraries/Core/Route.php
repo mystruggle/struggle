@@ -1,6 +1,8 @@
 <?php
 namespace struggle\libraries;
-use struggle\Debug;
+use struggle\libraries\Debug;
+use struggle\Sle;
+
 class Route extends Object{
     public  $url  = '';
     public  $mode = '';
@@ -10,21 +12,32 @@ class Route extends Object{
     public  $defaultAction = '';
     public  $moduleTag     = '';
     public  $actionTag     = '';
-    public  $moduleSuffix = 'Controller';
-    public  $moduleFileSuffix = '.controller.php';
-    public  $methodPrefix = 'action';
-	public  $namespaceModule = '\struggle\controller\\';
+	//控制器
+	private $mCtl          = null;
+	//类内部错误存储变量
+	private  $mError       = '';
+	//类内部错误代码存储变量
+	private  $mCode        = '';
+	//类内部调试开关
+	private  $mDebug       = false;
+	//类内部跟踪信息存储变量
+	private  $mTrace       = array();
 
 	
     public function __construct(){
         $this->mode = \struggle\C('ROUTE_MODE');
         $this->url    = $_SERVER['REQUEST_URI'];
+		$this->mCtl = Sle::app()->controller;
         Debug::trace("路由模式{$this->mode};url=>{$this->url}", Debug::SYS_NOTICE);
     }
     
-    
+    /**
+	 * 应用开始执行
+	 */
     public function exec(){
+		//普通模式
         if ($this->mode == self::ROUTE_NORMAL){
+			//执行的模块、动作
             $this->moduleTag = \struggle\C('ROUTE_MODULE_TAG')?\struggle\C('ROUTE_MODULE_TAG'):'m';
             $this->actionTag = \struggle\C('ROUTE_ACTION_TAG')?\struggle\C('ROUTE_ACTION_TAG'):'a';
             $this->defaultModule = \struggle\C('ROUTE_DEFAULT_MODULE')?\struggle\C('ROUTE_DEFAULT_MODULE'):'index';
@@ -39,23 +52,27 @@ class Route extends Object{
             else 
                 $this->action = \struggle\ctop($_GET[$this->actionTag]);
             Debug::trace("模块标签=>{$this->moduleTag};方法标签=>{$this->actionTag};模块=>{$this->module};方法=>{$this->action}",Debug::SYS_NOTICE);
-            $sControlFile = APP_CONTROLLER."{$this->module}{$this->moduleFileSuffix}";
-            if(file_exists($sControlFile) && is_readable($sControlFile)){
-                \struggle\require_cache($sControlFile);
-                $sClassName = $this->namespaceModule.$this->module.$this->moduleSuffix;
-                $sMethod = "{$this->methodPrefix}{$this->action}";
-                $oController = new $sClassName();
-                \struggle\Sle::app()->Controller = $oController;
-                if(method_exists($oController,$sMethod)){
-                    $oController->$sMethod();
-                }else{
-                    Debug::trace("方法不存在{$sClassName}::{$sMethod}",Debug::SYS_ERROR);
-                }
-            }else{
-                Debug::trace("controller文件不存在或不可读{$sControlFile}", Debug::SYS_ERROR);
-            }
+			//模块文件
+            $sControlFile = APP_CONTROLLER."{$this->module}".$this->mCtl->fileSuffix;
+			Debug::trace("加载控制器文件{$sControlFile}", Debug::SYS_NOTICE);
+			if(!\struggle\isFile($sControlFile)){
+				throw new \Exception("控制器文件不存在{$sControlFile}");
+			}
+			//加载控制器
+			\struggle\require_cache($sControlFile);
+			$sClassName = rtrim(\struggle\fetchNamespace($sControlFile),'\\').'\\'.$this->module.$this->mCtl->moduleSuffix;
+			$sMethod = $this->mCtl->methodPrefix.$this->action;
+			$oController = new $sClassName();
+			Sle::app()->controller = $oController;
+			Debug::trace("调用模块、方法{$sClassName}::{$sMethod}",Debug::SYS_NOTICE);
+			if(!method_exists($oController,$sMethod)){
+				throw new \Exception("调用模块、方法{$sClassName}::{$sMethod}不存在！");
+			}
+			$oController->$sMethod();
         }
     }
+
+
     
     /**
      * 把uri地址问号后面的参数注册成$_GET和$_REQUEST
@@ -95,7 +112,7 @@ class Route extends Object{
         $aQuery     = array();
 		$aTmpUrlPath = explode('/',$aPath['path']);
 		if(count($aTmpUrlPath) === 1){
-			$sUrlModule = \struggle\Sle::app()->Route->defaultModule;
+			$sUrlModule = $this->defaultModule;
 			$sUrlAction = $aTmpUrlPath[0];
 		}else{
 			$sUrlModule = $aTmpUrlPath[0];
@@ -142,8 +159,7 @@ class Route extends Object{
 			}
             $sUrl = "?{$this->moduleTag}={$sUrlModule}&{$this->actionTag}={$sUrlAction}".($sQuery?'&'.$sQuery:'');
         }
-        
-        $this->debug($xRlt['msg'],$xRlt['status']?E_USER_NOTICE:E_USER_ERROR,sle\Sle::SLE_SYS);
+        Debug::trace($xRlt['msg'],$xRlt['status']?Debug::SYS_NOTICE:Debug::SYS_ERROR);
 		return $sUrl;
 	}
 

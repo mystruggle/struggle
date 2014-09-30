@@ -1,11 +1,12 @@
 <?php
 namespace struggle\libraries;
+use struggle\libraries\Debug;
 
-class Exception extends Object{
+class Exception extends \Exception{
     
     public function errorHandle($errno, $errstr, $errfile, $errline, $errcontext){
         $sErrInfo = "{$errstr}\t{$errfile}\t第{$errline}行";
-        $this->registInfo($sErrInfo, $errno);        
+        Debug::trace($sErrInfo,$errno);    
     }
     
     
@@ -17,7 +18,7 @@ class Exception extends Object{
          */ 
         if($aError = error_get_last()){
             $sErrInfo = "fatal error:{$aError['message']}{$aError['file']} 第{$aError['line']}行";
-            $this->registInfo($sErrInfo, $aError['type']);
+			Debug::trace($sErrInfo, $aError['type']);
         }
     }
     
@@ -25,18 +26,8 @@ class Exception extends Object{
     public function exceptionHandle($e){
         $iCode = $e->getCode()?$e->getCode():E_USER_ERROR;
         $sMsg="异常错误信息: {$e->getMessage()}  {$e->getFile()} 第{$e->getLine()}行";
-        $this->registInfo($sMsg, $iCode);
+		Debug::trace($sMsg, $iCode);
     } 
-    
-    public function registInfo($sRegInfo,$sRegType){
-        if (APP_DEBUG){
-            $iFrom = \struggle\Sle::SLE_APP;
-            $iTime = microtime(true);
-            $oSle = \struggle\Sle::app();
-            $aRegInfo = array($sRegInfo,$sRegType,$iFrom,$iTime);
-            $oSle->hasInfo($aRegInfo[0],$aRegInfo[1],$aRegInfo[2],$aRegInfo[3]);
-        }
-    }
     
     
     

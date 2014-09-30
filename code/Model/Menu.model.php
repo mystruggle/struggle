@@ -1,6 +1,7 @@
 <?php
 namespace struggle\model;
 use struggle\Sle;
+
 class MenuModel extends Model{
     public $name ='Menu';
     public $table = 'menu';
@@ -52,7 +53,7 @@ class MenuModel extends Model{
 		}
 		//菜单链处理
 		$aMenuChain = explode(',',$this->_getMenuDep($iSelectId,$sDep));
-		Sle::getInstance()->Controller->assgin('menuChain',$aMenuChain);
+		Sle::app()->controller->assgin('menuChain',$aMenuChain);
 		$aMenuChainInfo = array();
 		$aNodeInfo = array();
 		foreach ($aMenuChain as $id){
@@ -63,7 +64,7 @@ class MenuModel extends Model{
 		      $aMenuChainInfo[$id]['name'] = $aNodeInfo['name'];
 		    $aMenuChainInfo[$id]['link']   = $this->_genLink($aNodeInfo['ctl_name'], $aNodeInfo['act_name']);
 		}
-		Sle::getInstance()->Controller->assgin('menuChainInfo',$aMenuChainInfo);
+		Sle::app()->controller->assgin('menuChainInfo',$aMenuChainInfo);
         return $aResult;
     }
 
@@ -73,7 +74,7 @@ class MenuModel extends Model{
 	private function _genLink($ctlName,$actName){
 	    if (empty($ctlName))
 	        return '';
-		return \struggle\Sle::getInstance()->Route->genUrl("{$ctlName}/{$actName}");
+		return Sle::app()->route->genUrl("{$ctlName}/{$actName}");
     }
 
     /**
@@ -104,8 +105,8 @@ class MenuModel extends Model{
      * @return boolean
      */
     private function _isSelected($ctl,$act){
-        $oSle = \struggle\Sle::getInstance();
-        if ($ctl == $oSle->Route->module && $oSle->Route->action){
+        $oSle = Sle::app();
+        if ($ctl == $oSle->route->module && $oSle->route->action){
             return true;
         }
         return false;

@@ -558,12 +558,18 @@ function ctop($sName){
  * 自动加载处理函数
  */
 function autoLoad($name){
+	static $aInclude = array();
+	$sKey = md5($name);
+	if(isset($aInclude[$sKey])){
+		return $aInclude[$sKey];
+	}
 	//包含文件
 	$sName = $name;
 	strpos($sName,'\\')!==false && $sName = str_replace('\\','/',$sName);
-	$sName = basename($sName);
+	$sName = str_replace('_','.',ucfirst(ptoc(basename($sName)))).'.php';
 	try{
-		if (!require_cache($sName))throw new Exception("找不到文件{$sName}");
+		//include 失败返回false并发警告,成功返回1，除非包含文件有return
+		if (!include $sName)throw new \Exception("找不到文件{$name}.");
 	}catch(Exception $e){
 		halt("异常错误: {$e->getMessage()}  {$e->getFile()} 第{$e->getLine()}行");
 	}

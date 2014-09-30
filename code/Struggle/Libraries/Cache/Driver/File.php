@@ -33,7 +33,13 @@ class File extends Object{
             isset($aOpt['parts']) && $this->parts = $aOpt['parts'];
             isset($aOpt['mode'])  && $this->mode  = $aOpt['mode'];
             isset($aOpt['size'])  && $this->size  = $aOpt['size'];
-        }       
+            if(isset($aOpt['file'])  && $this->mFile){
+				$this->dir = rtrim(dirname($aOpt['file']),'/').'/';
+				$sFile = basename($aOpt['file']);
+				$this->name = substr($sFile,0,strpos($sFile,'.'));
+				$this->ext = substr($sFile,strpos($sFile,'.')+1);
+			}
+        }
     }
 
 	public function _init(){
@@ -76,7 +82,7 @@ class File extends Object{
      */
     private function chkFileSize(){
         $bRlt = true;
-        if ((filesize($this->mFile) / 1024) > $this->size){
+        if (\struggle\isFile($this->mFile) && (filesize($this->mFile) / 1024) > $this->size){
             $bRlt = false;
             $max = $this->parts;
             flock($this->mHandle, LOCK_EX);
@@ -128,9 +134,7 @@ class File extends Object{
     
     public function read(){
         $sRlt = '';
-        if (is_null($this->mHandle) && !$this->open()){
-            return false;
-        }
+		$this->mHandle = $this->open();
         while (!feof($this->mHandle)){
             $sRlt .= fread($this->mHandle, $this->length);
         }

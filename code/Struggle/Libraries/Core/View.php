@@ -1,7 +1,8 @@
 <?php 
 namespace struggle\libraries\core;
-use struggle\Debug;
-use struggle as sle;
+use struggle\libraries\Debug;
+use struggle\Sle;
+use \struggle\libraries\cache\driver\File;
 
 
 class View extends \struggle\libraries\Object{
@@ -17,9 +18,9 @@ class View extends \struggle\libraries\Object{
     public function __construct(){
         parent::__construct();
         $this->mThemePath    = APP_THEME;
-        sle\C('VIEW_THEME_PATH') && $this->mThemePath   = sle\C('VIEW_THEME_PATH');
-        sle\C('VIEW_TPL_SUFFIX') && $this->mTplSuffix   = sle\C('VIEW_TPL_SUFFIX');
-        sle\C('VIEW_THEME')      && $this->mTheme       = sle\C('VIEW_THEME');
+        \struggle\C('VIEW_THEME_PATH') && $this->mThemePath   = \struggle\C('VIEW_THEME_PATH');
+        \struggle\C('VIEW_TPL_SUFFIX') && $this->mTplSuffix   = \struggle\C('VIEW_TPL_SUFFIX');
+        \struggle\C('VIEW_THEME')      && $this->mTheme       = \struggle\C('VIEW_THEME');
         $this->mPublicTplPath = APP_PUBLIC."{$this->mTheme}/html/";
         
     }
@@ -43,49 +44,47 @@ class View extends \struggle\libraries\Object{
      * 渲染模板
      * @param string $sRenderFile   模板路径.  format:   controller/action or 模板文件相对或绝对路径
      * @param array  $aParam        传递的参数
-     * @return boolean  成功返回编译后的模板路径失败返回false
+     * @return string|null  成功返回编译后的模板路径失败返回null
      */
     public function render($sRenderFile = '', $aParam = array()){
         static $aTpl = array();
-        $sTplFile = '';
-        if (sle\isFile($sRenderFile)){
-            $sTplFile = $sRenderFile;
-        }else {
-            $aControlPart = explode('/', trim($sRenderFile,'/'));
+        $sTplFile = $sRenderFile;
+        if (!$sTplFile) {
+            $aControlPart = explode('/', trim($sTplFile,'/'));
             if (count($aControlPart) >= 2){
-                $sTplFile = "{$this->mThemePath}{$this->mTheme}/{$this->mWidgetTplPath}{$aControlPart[0]}/".(sle\ptoc($aControlPart[1])).".{$this->mTplSuffix}";
+                $sTplFile = "{$this->mThemePath}{$this->mTheme}/{$this->mWidgetTplPath}{$aControlPart[0]}/".(\struggle\ptoc($aControlPart[1])).".{$this->mTplSuffix}";
             }
             //传递的参数
             if (!is_array($aParam)){
-                $this->debug(__METHOD__."参数有误，非数组类型 ".(is_string($aParam)?$aParam:print_r($aParam,true))." line ".__LINE__, E_USER_ERROR,sle\Sle::SLE_SYS);
+                Debug::trace("参数有误，非数组类型 ".print_r($aParam,true)."\t".__METHOD__."\tline\t".__LINE__, Debug::SYS_ERROR);
                 $aParam = array();
             }
         }
         $sKey = '';
-        if ($sTplFile && sle\isFile($sTplFile) && is_readable($sTplFile)){
+        if (\struggle\isFile($sTplFile)){
             $sKey = md5($sTplFile.filemtime(realpath($sTplFile)));
             //clearstatcache();TODO;
             if (!isset($aTpl[$sKey])){
                 $sCompileFile = APP_RUNTIME."{$this->mCompilePath}{$sKey}.php";
-                if(sle\isFile($sCompileFile) && !APP_DEBUG){
+                if(\struggle\isFile($sCompileFile) && !\struggle\C('DEBUG_ENABLED')){
                     $aTpl[$sKey] = $sCompileFile;
                 }elseif (is_writeable(dirname($sCompileFile))){
-                    $oFile=new \struggle\libraries\cache\driver\File(array('file'=>$sTplFile,'mode'=>'rb'));
+                    $oFile=new File(array('file'=>$sTplFile,'mode'=>'rb'));
                     $sTplCon = $oFile->read();
                     $sParsedCon = $this->parse($sTplCon);
-                    $oFile = new \struggle\libraries\Cache\Driver\File(array('file'=>$sCompileFile,'mode'=>'wb'));
+                    $oFile = new File(array('file'=>$sCompileFile,'mode'=>'wb'));
                     if($oFile->write($sParsedCon)){
                         $aTpl[$sKey] = $sCompileFile;
-                        $this->debug("把编译后内容写入编译文件{$sCompileFile}",E_USER_NOTICE,sle\Sle::SLE_SYS);
+                        Debug::trace("把编译后内容写入编译文件{$sCompileFile}",Debug::SYS_NOTICE);
                     }
                 }else{
-                    $this->debug("目录不可写".dirname($sCompileFile),E_USER_ERROR,sle\Sle::SLE_SYS);
+                    Debug::trace("目录不可写".dirname($sCompileFile),Debug::SYS_ERROR);
                 }
             }
         }else{
             Debug::trace(__METHOD__."文件不存在或不可读 ".($sTplFile?$sTplFile:$sRenderFile)." line ".__LINE__, Debug::SYS_ERROR);
         }
-        return sle\Sle::app()->LastError?false:$aTpl[$sKey];
+        return $aTpl[$sKey];
     }
     
     /**
@@ -120,7 +119,7 @@ class View extends \struggle\libraries\Object{
                     $sMethodName = str_replace('/','',$aMatch[1]);
                     $sMethodName = "_close_{$sMethodName}";
                     if(method_exists($this,$sMethodName)){
-                        $this->debug("调用".__CLASS__."::{$sMethodName}方法",E_USER_NOTICE,sle\Sle::SLE_SYS);
+                        Debug::trace("调用".__CLASS__."::{$sMethodName}方法",Debug::SYS_NOTICE);
                         return $this->$sMethodName();
                     }
                     break;
@@ -130,7 +129,7 @@ class View extends \struggle\libraries\Object{
                         $sMethodName = "_".trim(array_shift($aTmp));
                         if (method_exists($this, $sMethodName)){
                             $sTmpParam = implode(' ' , $aTmp);
-                            $this->debug("调用".__CLASS__."::{$sMethodName}('{$sTmpParam}')方法",E_USER_NOTICE,sle\Sle::SLE_SYS);
+                            Debug::trace("调用".__CLASS__."::{$sMethodName}('{$sTmpParam}')方法",Debug::SYS_NOTICE);
                             return $this->$sMethodName($sTmpParam);
                         }
                     }
@@ -217,7 +216,7 @@ class View extends \struggle\libraries\Object{
             $sIncludeFile = ltrim($sIncludeFile,'/');
             $sIncludeFile = "{$this->mPublicTplPath}{$sIncludeFile}";
         }
-        if(sle\isFile($sIncludeFile) && is_readable($sIncludeFile)){
+        if(\struggle\isFile($sIncludeFile)){
             ob_start();
             include $sIncludeFile;
             $sIncludeCon = ob_get_clean();
@@ -225,7 +224,7 @@ class View extends \struggle\libraries\Object{
             $sIncludeCon = $this->parse($sFilterIncludeTag);
             return $sIncludeCon;
         }else{
-            $this->debug(__METHOD__."文件不存在或不可读 {$sIncludeFile} line ".__LINE__, E_USER_ERROR,sle\Sle::SLE_SYS);
+            Debug::trace(__METHOD__."文件不存在或不可读 {$sIncludeFile} line ".__LINE__, Debug::SYS_ERROR);
         }
     }
     
@@ -249,7 +248,7 @@ class View extends \struggle\libraries\Object{
                 $xData = eval($sEvel);
                 if ($xData !== false){
                     if (isset($aAttr['name']) && $aAttr['name']){
-                        $oCtl = sle\Sle::app()->Controller;
+                        $oCtl = Sle::app()->controller;
                         $oCtl->TplData = array_merge($oCtl->TplData,array($aAttr['name']=>$xData));
                     }
                 }else{
@@ -278,7 +277,7 @@ class View extends \struggle\libraries\Object{
         if ($xRlt['status']){
             return '<?php foreach('.$sName.' AS '.$sList.'):?>';
         }else {
-            $this->debug($xRlt['msg'],E_USER_ERROR,sle\Sle::SLE_SYS);
+            Debug::trace($xRlt['msg'],Debug::SYS_ERROR);
             return '';
         }
     }
@@ -332,7 +331,7 @@ class View extends \struggle\libraries\Object{
      * @return string
      */
     private function _url($path){
-        $oRoute = sle\Sle::app()->Route;
+        $oRoute = Sle::app()->route;
 		return '<?PHP echo "'.$oRoute->genUrl($path).'";?>';
     }
     
@@ -357,7 +356,7 @@ class View extends \struggle\libraries\Object{
         }else {
             $xRlt['status'] = false;
             $xRlt['msg']    = "参数格式错误,{$params}".__METHOD__.' line '.__LINE__;
-            $this->debug($xRlt['msg'], E_USER_ERROR,sle\Sle::SLE_SYS);
+            Debug::trace($xRlt['msg'], Debug::SYS_ERROR);
         }
         //截取冒号后面的字符串
         $sColonAfter = ltrim(substr($params, $iThemePos+1),'/');
@@ -438,7 +437,7 @@ class View extends \struggle\libraries\Object{
            default:
         }
         if (!$xRlt['status']){
-            $this->debug($xRlt['msg'], E_USER_ERROR,sle\Sle::SLE_SYS);
+            Debug::trace($xRlt['msg'], Debug::SYS_ERROR);
         }
         return $xReturn;
     }
@@ -468,7 +467,7 @@ class View extends \struggle\libraries\Object{
         if ($xRlt['status']){
             return $sElementPath;
         }else{
-            $this->debug($xRlt['msg'], E_USER_ERROR,sle\Sle::SLE_SYS);
+            Debug::trace($xRlt['msg'],Debug::SYS_ERROR);
             return '';
         }
     }

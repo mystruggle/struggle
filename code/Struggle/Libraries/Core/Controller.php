@@ -7,6 +7,7 @@ use struggle\Sle;
 use struggle\libraries\cache\driver\File;
 use struggle\libraries\Client;
 use struggle\libraries\Exception;
+use struggle\libraries\Debug;
 
 class BaseController extends \struggle\libraries\Object{
     private $msWidgetPath = '';
@@ -100,8 +101,9 @@ class BaseController extends \struggle\libraries\Object{
             $sContentKey = $oView->getFileKey($this->curTpl);
             $sFile = APP_RUNTIME.md5($sFileKey.$sContentKey).'.'.$oView->TplSuffix;
             if (!file_exists($sFile)){
-                $oFile = new File(array('file'=>$sFile,'mode'=>'wb+'));
-                if(!$oFile->write($sLoyout)){
+                $oFile = Sle::app()->file;
+                $oFile->setAttr('mode','wb+');
+                if(!$oFile->open($sFile) || !$oFile->write($sLoyout)){
 					throw new Exception($oFile->error);
 				}
             }
@@ -121,27 +123,14 @@ class BaseController extends \struggle\libraries\Object{
      */
     private function outputComplieFile($file){
         $aRlt = array('status'=>true,'msg'=>'');
-        if (empty($file)){
-            $aRlt['status'] = false;
-            $aRlt['msg']    = '编译文件不能为空 '.__METHOD__.' line '.__LINE__;
-        }
-        if ($aRlt['status'] && !file_exists($file)){
-            $aRlt['status']
-             = false;
-            $aRlt['msg']    = '编译文件不存在 '.__METHOD__.' line '.__LINE__;
-        }
-        if ($aRlt['status'] && !is_readable($file)){
-            $aRlt['status'] = false;
-            $aRlt['msg']    = '编译文件不可读 '.__METHOD__.' line '.__LINE__;
-        }
-        
-        if (!$aRlt['status']){
-            Debug::trace($aRlt['msg'], Debug::SYS_ERROR);
+        if (!\struggle\isFile($file)){
+            throw new Exception('编译文件不存在或不可读 '.$file);die('end');
+            return false;
         }
 		//输出内容
 		header('Content-type:text/html;charset=utf-8');
-		ob_flush();
-		flush();
+		//ob_flush();
+		//flush();
 		ob_start();
 		extract($this->mTplData);
 		include $file;
@@ -152,7 +141,7 @@ class BaseController extends \struggle\libraries\Object{
     }
     
     private function _before(&$content){
-        $aJs = \struggle\Sle::app()->client->Js;
+        $aJs = \struggle\Sle::app()->client->pager;
         foreach ($aJs as $pos=>$js){
             switch ($pos){
                 case Client::POS_HEAD_TOP:
@@ -175,6 +164,7 @@ class BaseController extends \struggle\libraries\Object{
         }
         
     }
+    
     
     
     /**

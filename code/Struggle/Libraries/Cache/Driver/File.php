@@ -9,47 +9,66 @@ use \struggle\libraries\Object;
 use struggle\Sle;
 
 class File extends Object{
-    public  $dir     = '';    //文件存放目录
-    public  $path    = '';    //文件路径
-    public  $name    = '';    //文件名
-    public  $ext     = '';    //文件扩展名
-    public  $parts   = 3;     //超过文件设置的大小时重命名的数量
-    public  $mode    = 'ab';  //打开文件模式
-    public  $size    = 2000;  //文件大小 kb
-    public  $length  = 1024;  //读取文件的长度，字节byte
-    public  $error   = '';     //错误信息
+    //public  $dir     = '';    //文件存放目录
+    //public  $path    = '';    //文件路径
+    //public  $name    = '';    //文件名
+    //public  $ext     = '';    //文件扩展名
+    private  $mParts   = 3;     //超过文件设置的大小时重命名的数量
+    private  $mMode    = 'ab';  //打开文件模式
+    private  $mSize    = 2000;  //文件大小 kb
+    private  $mLength  = 1024;  //读取文件的长度，字节byte
     private $mHandle = null;
     private $mFile   = '';    //文件
-    public  $debug   = false; //本类内部调试
     private $mTrace  = array(); //内部调试信息
+    public  $error   = '';     //错误信息
+    public  $debug   = false; //本类内部调试
     
     public function __construct($aOpt = array()){
 		parent::__construct();
-        if (!empty($aOpt)){
-            isset($aOpt['dir'])   && $this->dir   = $aOpt['dir'];
-            isset($aOpt['path'])  && $this->path  = $aOpt['path'];
-            isset($aOpt['name'])  && $this->dir   = $aOpt['name'];
-            isset($aOpt['ext'])   && $this->ext   = $aOpt['ext'];
-            isset($aOpt['parts']) && $this->parts = $aOpt['parts'];
-            isset($aOpt['mode'])  && $this->mode  = $aOpt['mode'];
-            isset($aOpt['size'])  && $this->size  = $aOpt['size'];
-            if(isset($aOpt['file'])  && $this->mFile){
-				$this->dir = rtrim(dirname($aOpt['file']),'/').'/';
-				$sFile = basename($aOpt['file']);
-				$this->name = substr($sFile,0,strpos($sFile,'.'));
-				$this->ext = substr($sFile,strpos($sFile,'.')+1);
-			}
-        }
     }
 
 	public function _init(){
-	    $this->dir || $this->dir = APP_RUNTIME;
-	    $this->ext || $this->ext = 'txt';
-	    $this->mFile = $this->dir.$this->path.$this->name.'.'.$this->ext;
-	    $this->_trace('文件名'.$this->mFile);
-	    if (!is_dir(dirname($this->mFile))){
-	        $this->error = "目录不存在{$this->mFile}\t".__METHOD__."\tline\t".__LINE__;
+	}
+	
+	/**
+	 * 设置类属性
+	 * @param string $name
+	 * @param mixed $value
+	 * @return boolean
+	 */
+	public function setAttr($name,$value){
+	    $name = $this->_buildAttr($name);
+	    if (property_exists($this, $name)){
+	        $this->$name = $value;
+	        return true;
 	    }
+	    return false;
+	}
+	
+	/**
+	 * 获取类型属性值
+	 * @param string $name
+	 * @return mixed|boolean  成功返回该属性的值，否则返回false
+	 */
+	public function getAttr($name){
+	    $name = $this->_buildAttr($name);
+	    if (property_exists($this, $name)){
+	        return $this->$name;
+	    }
+	    return false;
+	}
+	
+	
+	/**
+	 * 拼接属性名
+	 * @param string $name
+	 */
+	private function _buildAttr($name){
+	    if (!$name){
+	        $this->error = "属性名不能为空.\t".__FILE__."\tline\t".__LINE__;
+	        return false;
+	    }
+	    return 'm'.strtoupper($name[0]).substr($name, 1);
 	}
 	
 	
@@ -59,13 +78,16 @@ class File extends Object{
      * @return boolean
      */
     public function write($content){
-        $this->mHandle = $this->open();
+        if (!\struggle\isResource($this->mHandle)){
+            $this->error = "文件打开失败{$this->mFile}.\t".__FILE__."\tline\t".__LINE__;
+            return false;
+        }
         if (!$this->chkFileSize()){
             $this->error = "文件重命名失败\t".__METHOD__."\tline\t".__LINE__;
             return false;
         }
         @flock($this->mHandle, LOCK_EX);
-        $mStat = @fwrite($this->mHandle, $content);
+        $mStat = fwrite($this->mHandle, $content);
         @flock($this->mHandle, LOCK_UN);
         if ($mStat === false){
             $this->error = "文件写入失败\t".__METHOD__."\tline\t".__LINE__;
@@ -82,9 +104,9 @@ class File extends Object{
      */
     private function chkFileSize(){
         $bRlt = true;
-        if (\struggle\isFile($this->mFile) && (filesize($this->mFile) / 1024) > $this->size){
+        if (\struggle\isFile($this->mFile) && (filesize($this->mFile) / 1024) > $this->mSize){
             $bRlt = false;
-            $max = $this->parts;
+            $max = $this->mParts;
             flock($this->mHandle, LOCK_EX);
             for($i=$max;$i>0;$i--){
                 $sReName = $this->mFile.".{$i}";
@@ -106,39 +128,48 @@ class File extends Object{
     
     
     /**
-     * 打开文件句柄
-     * @return resource|null
+     * 打开文件
+     * @param  string $file  文件名
+     * @return boolean
      */
-    private function open(){
-        self::__construct();
+    public function open($file){
+        $this->mFile = $file;
+        if (in_array(strtolower($this->mMode), array('r','r+')) && !\struggle\isFile($this->mFile)){
+            $this->error = "文件不存在或不可读{$this->mFile}\t".__FILE__."\tline\t".__LINE__;
+            return false;
+        }
+        $this->_trace("打开文件{$this->mFile}");
         static $aHandle = array();
-        $sKey = md5($this->mFile);
+        $sKey = md5(realpath($this->mFile).$this->mMode);
         if (isset($aHandle[$sKey]) && $aHandle[$sKey]){
-            return $aHandle[$sKey];
+            $this->mHandle = $aHandle[$sKey];
+            return true;
         }
-        $sWriteDir = dirname($this->mFile);
-        if (!is_writable($sWriteDir)){
-            $this->error = "目录不可写{$sWriteDir}\t".__METHOD__."\tline\t".__LINE__;
-            return null;
-        }
-        
-        !isset($aHandle[$sKey]) && $aHandle[$sKey] = fopen($this->mFile, $this->mode);
+        $aHandle[$sKey] = fopen($this->mFile, $this->mMode);
         if (!\struggle\isResource($aHandle[$sKey])){
             $this->error = "文件打开失败{$this->mFile}\t".__METHOD__."\tline\t".__LINE__;
-            return null;
+            return false;
         }
-        return $aHandle[$sKey];
+        $this->mHandle = $aHandle[$sKey];
+        return true;
     }
     
     
     
     public function read(){
         $sRlt = '';
-		$this->mHandle = $this->open();
+        if (!\struggle\isResource($this->mHandle)){
+            $this->error = "文件打开失败{$this->mFile}.\t".__FILE__."\tline\t".__LINE__;
+            return false;
+        }
         while (!feof($this->mHandle)){
-            $sRlt .= fread($this->mHandle, $this->length);
+            $sRlt .= fread($this->mHandle, $this->mLength);
         }
         return $sRlt;
+    }
+    
+    public function close(){
+        \fclose($this->mHandle);
     }
     
     

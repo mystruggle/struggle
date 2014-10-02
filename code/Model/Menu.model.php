@@ -111,6 +111,18 @@ class MenuModel extends Model{
         }
         return false;
     }
+    
+    public function _listField(){
+        return array(
+            'id',
+            'name',
+            'icon',
+            'desc',
+            'parent_id',
+            'orderby',
+            'create_time'
+        );
+    }
 
 
 

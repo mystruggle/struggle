@@ -10,38 +10,51 @@ var TableManaged = function () {
             }
 
             // begin first table
-            $('#sample_1').dataTable({
+            $('#menu_1').dataTable({
                 "aoColumns": [
                   { "bSortable": false },
                   null,
-                  { "bSortable": false },
+                  { "bSortable": false ,'sClass':'center','sName':'id'},
                   null,
                   { "bSortable": false },
-                  { "bSortable": false }
+                  { "bSortable": false },
+                  null,
+                  null,
+                  null,
                 ],
                 "aLengthMenu": [
                     [5, 15, 20, -1],
                     [5, 15, 20, "All"] // change per page values here
                 ],
                 // set the initial value
+                'bServerSide':false,
                 "iDisplayLength": 5,
-                "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+                "sDom": "<'row-fluid'<'span12'f>r>t<'row-fluid'<'span4'l><'span2'i><'span6'p>>",
                 "sPaginationType": "bootstrap",
                 "oLanguage": {
-                    "sLengthMenu": "_MENU_ records per page",
+                	"sSearch":'查询：',
+                	//'sProcessing':'sProcessing',
+                	'sZeroRecords':'没有找到记录',
+                	'sInfoEmpty':'没有数据',
+                	'sInfoFiltered':'(从 _MAX_ 条数据中检索)',
+                    "sLengthMenu": "每页  _MENU_ 记录",
+                    'sInfo':'当前第 _START_ - _END_ 条 共计 _TOTAL_ 条',
                     "oPaginate": {
-                        "sPrevious": "Prev",
-                        "sNext": "Next"
+                    	'sFirst':'首页',
+                        "sPrevious": "上一页",
+                        "sNext": "下一页",
+                        'sLast':'尾页'
                     }
                 },
                 "aoColumnDefs": [{
                         'bSortable': false,
                         'aTargets': [0]
                     }
-                ]
+                ],
+                'sAjaxSource':_menuListUrl,
             });
 
-            jQuery('#sample_1 .group-checkable').change(function () {
+            jQuery('#menu_1 .group-checkable').change(function () {
                 var set = jQuery(this).attr("data-set");
                 var checked = jQuery(this).is(":checked");
                 jQuery(set).each(function () {
@@ -55,9 +68,9 @@ var TableManaged = function () {
             });
 
             jQuery('#sample_1_wrapper .dataTables_filter input').addClass("m-wrap medium"); // modify table search input
-            jQuery('#sample_1_wrapper .dataTables_length select').addClass("m-wrap small"); // modify table per page dropdown
+            jQuery('#sample_1_wrapper .dataTables_length select').addClass("m-wrap xsamll"); // modify table per page dropdown
             //jQuery('#sample_1_wrapper .dataTables_length select').select2(); // initialzie select2 dropdown
-
+/*
             // begin second table
             $('#sample_2').dataTable({
                 "aLengthMenu": [
@@ -139,6 +152,7 @@ var TableManaged = function () {
             jQuery('#sample_3_wrapper .dataTables_filter input').addClass("m-wrap small"); // modify table search input
             jQuery('#sample_3_wrapper .dataTables_length select').addClass("m-wrap small"); // modify table per page dropdown
             jQuery('#sample_3_wrapper .dataTables_length select').select2(); // initialzie select2 dropdown
+            */
 
         }
 

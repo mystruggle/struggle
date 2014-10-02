@@ -69,14 +69,19 @@ class View extends \struggle\libraries\Object{
                 if(\struggle\isFile($sCompileFile) && !\struggle\C('DEBUG_ENABLED')){
                     $aTpl[$sKey] = $sCompileFile;
                 }elseif (is_writeable(dirname($sCompileFile))){
-                    $oFile=new File(array('file'=>$sTplFile,'mode'=>'rb'));
-                    $sTplCon = $oFile->read();
-                    $sParsedCon = $this->parse($sTplCon);
-                    $oFile = new File(array('file'=>$sCompileFile,'mode'=>'wb'));
-                    if($oFile->write($sParsedCon)){
-                        $aTpl[$sKey] = $sCompileFile;
-                        Debug::trace("把编译后内容写入编译文件{$sCompileFile}",Debug::SYS_NOTICE);
+                    //$oFile=new File(array('file'=>$sTplFile,'mode'=>'rb'));die('end');
+                    $oFile = Sle::app()->file;
+                    $oFile->setAttr('mode','rb');
+                    if (!$oFile->open($sTplFile) || !($sTplCon = $oFile->read())){
+                        throw new Exception($oFile->error);
                     }
+                    $sParsedCon = $this->parse($sTplCon);
+                    $oFile->setAttr('mode','wb');
+                    if (!$oFile->open($sCompileFile) || !$oFile->write($sParsedCon)){
+                        throw new Exception($oFile->error);
+                    }
+                    $aTpl[$sKey] = $sCompileFile;
+                    Debug::trace("把编译后内容写入编译文件{$sCompileFile}",Debug::SYS_NOTICE);
                 }else{
                     Debug::trace("目录不可写".dirname($sCompileFile),Debug::SYS_ERROR);
                 }
@@ -144,7 +149,7 @@ class View extends \struggle\libraries\Object{
         $aFuncParam = array();
         $sFuncParam = '';
         if (substr($mVar, -2) == '++'){
-            return '<?php echo '.$mVar.';?>';
+            return '<?php echo '.$mVar.'++;?>';
         }
         if (($iVertPos = strpos($mVar,'|')) !==false){
             $sVar = substr($mVar, 0,$iVertPos);
@@ -444,6 +449,7 @@ class View extends \struggle\libraries\Object{
     
     /**
      * 组装html相关元素存放路径
+     * @access private
      * @param string $element  元素名称  ，如css，js
      * @param string $path     存放的路径
      * @param string $theme    所属主题
@@ -512,6 +518,17 @@ class View extends \struggle\libraries\Object{
         return $xReturn;
         
         
+    }
+    
+    
+    
+    /**
+     * 获取配置变量  TODO;
+     * @param unknown $param
+     * @return unknown
+     */
+    private function _config($param){
+        return $param;
     }
     
     

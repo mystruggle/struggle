@@ -7,11 +7,11 @@
 
                         <!-- BEGIN EXAMPLE TABLE PORTLET-->
 
-                        <div class="portlet box light-grey">
+                        <div class="portlet box grey">
 
                             <div class="portlet-title">
 
-                                <div class="caption"><i class="icon-globe"></i>Managed Table</div>
+                                <div class="caption"><i class="icon-globe"></i>菜单管理</div>
 
                                 <div class="tools">
 
@@ -33,9 +33,9 @@
 
                                     <div class="btn-group">
 
-                                        <button id="sample_editable_1_new" class="btn green">
+                                        <button id="menu_editable_1_new" class="btn green">
 
-                                        Add New <i class="icon-plus"></i>
+                                                                                                          新增 <i class="icon-plus"></i>
 
                                         </button>
 
@@ -43,7 +43,7 @@
 
                                     <div class="btn-group pull-right">
 
-                                        <button class="btn dropdown-toggle" data-toggle="dropdown">Tools <i class="icon-angle-down"></i>
+                                        <button class="btn dropdown-toggle" data-toggle="dropdown">工具 <i class="icon-angle-down"></i>
 
                                         </button>
 
@@ -61,23 +61,22 @@
 
                                 </div>
 
-                                <table class="table table-striped table-bordered table-hover" id="sample_1">
+                                <table class="table table-striped table-bordered table-hover" id="menu_1">
 
                                     <thead>
 
                                         <tr>
 
                                             <th style="width:8px;"><input type="checkbox" class="group-checkable" data-set="#sample_1 .checkboxes" /></th>
+                                            {foreach name='model->_listField()' list='index,field'}
+                                            {if condition='index==1'}
+                                            <th>{$field|\struggle\L}</th>
+                                            {else /}
+                                            <th class="hidden-480">{$field|\struggle\L}</th>
+                                            {/if}
+                                            {/foreach}
 
-                                            <th>Username</th>
-
-                                            <th class="hidden-480">Email</th>
-
-                                            <th class="hidden-480">Points</th>
-
-                                            <th class="hidden-480">Joined</th>
-
-                                            <th ></th>
+                                            <th >操作</th>
 
                                         </tr>
 

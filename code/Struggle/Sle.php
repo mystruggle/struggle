@@ -60,6 +60,9 @@ try {
 }
 
 
+//定义页面theme路径
+$GLOBALS['Sle']['Frontend']['themePath'] = rtrim(APP_PUBLIC.C('VIEW_THEME'),'/').'/';
+
 
 
 //加载语言配置文件
@@ -107,14 +110,6 @@ defined('APP_DEBUG') or define('APP_DEBUG', false);
 class Sle{
     private static $moHandle = null;//isset判断null返回false
     private static $maAttr = array();
-    private $maInfo  = array();
-    private $mLastError = array();
-    private $mDebug     = '';
-    private $mLog       = '';
-    private $mRoute     = '';
-    private $mController = '';
-    private $mClient = null;
-    private $mView   = null;
 	/* 把注册类存放于该数组 */
 	private $mRegClass = array();
     
@@ -178,53 +173,8 @@ class Sle{
 	   $this->mRegClass[$ident] = $sClassName;
 	}
     
-    private function Route(){
-        static $oRoute = null;
-        if(is_null($oRoute)){
-            $this->hasInfo("初始化类".__FUNCTION__, E_USER_NOTICE, Sle::SLE_SYS);
-            $this->Route = $oRoute = new libraries\Route($_SERVER['REQUEST_URI']);
-        }
-        return $this->Route;
-    }
+   
 
-    private function Debug(){
-        static $oDebug = null;
-        if(is_null($oDebug)){
-            $this->hasInfo("初始化类".__FUNCTION__, E_USER_NOTICE, Sle::SLE_SYS);
-            $this->Debug = $oDebug = new libraries\Debug();
-            foreach ($this->maInfo as $info){
-                $oDebug->save($info[0],$info[1],$info[2],$info[3]);
-            }
-        }
-        return $this->Debug;
-    }
-    
-    private function Log(){
-        static $oLog = null;
-        if(is_null($oLog)){
-            $this->hasInfo("初始化类".__FUNCTION__, E_USER_NOTICE, Sle::SLE_SYS);
-            $this->Log = $oLog = new libraries\Log();
-        }
-        return $this->Log;
-    }
-    
-    private  function Client(){
-        static $oClient = null;
-        if (is_null($oClient)){
-            $this->hasInfo("初始化类".__FUNCTION__, E_USER_NOTICE, Sle::SLE_SYS);
-            $this->Client = $oClient = new libraries\Client();
-        }
-        return $this->Client;
-    }
-    
-    private function View(){
-        static $oView = null;
-        if (is_null($oView)){
-            $this->hasInfo("初始化类".__FUNCTION__, E_USER_NOTICE, Sle::SLE_SYS);
-            $this->View = $oView = new libraries\Core\View();
-        }
-        return $this->View;
-    }
     
     /**
      * 记录程序执行信息
@@ -232,7 +182,7 @@ class Sle{
      * @param integer      $iType    错误类型，沿用php内置错误类型，如E_USER_ERROR
      * @param integer      $iFrom    信息类型，默认SLE_SYS,说明是系统日志还是用户日志
      * @param integer      $iRunTime 程序执行当前时间戳
-     */
+
     public function hasInfo($sInfo,$iType,$iFrom = Sle::SLE_APP, $iRunTime = 0){
         if (APP_DEBUG){
             empty($iRunTime) && $iRunTime = microtime(true);
@@ -263,7 +213,7 @@ class Sle{
         }
     }
     
-
+     */
     
     public function run(){
 		//加载核心文件

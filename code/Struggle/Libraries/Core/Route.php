@@ -130,7 +130,8 @@ class Route extends Object{
 		//解析参数
 		if(isset($aPath['query']) && !empty($aPath['query'])){
 			$aQuery = explode('&',trim($aPath['query'],'&'));
-			foreach($aQuery as $pair){
+			$aTmpQuery = array();
+			foreach($aQuery as $index=>$pair){
 				$aPair = explode('=',$pair);
 				if(count($aPair) == 2){
 					$sParamKey = $aPair[0];
@@ -142,7 +143,7 @@ class Route extends Object{
 					if($sParamVal[0] =='$'){
 						$sParamVal = '{'.str_replace('"',"'",$sParamVal).'}';
 					}
-					$aQuery[$sParamKey] = $sParamVal;
+					$aTmpQuery[$sParamKey] = $sParamVal;
 				}else{
 					$xRlt['status'] = false;
 					$xRlt['msg']    = 'url参数不正确'.$path.' '.__METHOD__.' line '.__LINE__;
@@ -150,8 +151,8 @@ class Route extends Object{
 				}
 
 			}
+			$aQuery = $aTmpQuery;
 		}
-
 		//生成对应模式的url
         if($xRlt['status'] && $this->mode === self::ROUTE_NORMAL){
 			if($aQuery){

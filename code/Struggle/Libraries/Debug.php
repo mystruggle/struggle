@@ -38,7 +38,7 @@ class Debug{
     const WARNING = 51;
     const ERROR   = 61;
     
-    public static function init(){
+    public static function _init(){
         \struggle\C('DEBUG_LOG_TYPE') && self::$mLogType = \struggle\C('DEBUG_LOG_TYPE');
         if (self::$mLogType == 'file'){
             self::initFile();
@@ -56,12 +56,8 @@ class Debug{
         Sle::app()->registerClass(LIB_PATH.'Cache/Driver/File.php');
         //import('@.Cache.Driver.File');
         //Sle::app()->file->debug = true;
-        Sle::app()->file->dir = self::$mLogFileDir;
-        Sle::app()->file->path = self::$mLogFilePath;
-        Sle::app()->file->name = self::$mLogFileName;
-        Sle::app()->file->ext = self::$mLogFileExt;
-        Sle::app()->file->mode = self::$mLogFileMode;
-        Sle::app()->file->size = self::$mLogFileMaxSize;
+        //Sle::app()->file->mode = self::$mLogFileMode;
+        //Sle::app()->file->size = self::$mLogFileMaxSize;
 	}
     
     /**
@@ -74,7 +70,6 @@ class Debug{
     public static function trace($message, $type = self::NOTICE, $displayTime = 0){
         //先判断是否开启调试，再判断该信息是否符合记录等级
         if (\struggle\C('DEBUG_ENABLED') && self::_isPassed($type)){
-			self::init();
             $displayTime || $displayTime = microtime(true);
             $displayTime = $displayTime - BEGIN_TIME;
             $sMsg = is_string($message)?$message:(is_array($message)?print_r($message,true):var_export($message));
@@ -105,10 +100,12 @@ class Debug{
             $sTxt .= $time."s\t"; 
         }
         $sTxt .= $msg."\t".PHP_EOL;
+        $sFile = self::$mLogFileDir.self::$mLogFilePath.self::$mLogFileName.'.'.self::$mLogFileExt;
+        Sle::app()->file->setAttr('mode',self::$mLogFileMode);
+        Sle::app()->file->setAttr('size',self::$mLogFileMaxSize);
         //写入文件
-        if(!Sle::app()->file->write($sTxt)){
-            
-            halt(Sle::app()->file->error);
+        if(!Sle::app()->file->open($sFile) || !Sle::app()->file->write($sTxt)){
+            \struggle\halt(Sle::app()->file->error);
         }
         //print_r(Sle::app()->file->getDebugInfo());
     }
@@ -329,6 +326,6 @@ class Debug{
 
 }
 
-
+Debug::_init();
 
 

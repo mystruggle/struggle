@@ -19,6 +19,7 @@ class Exception extends \Exception{
         if($aError = error_get_last()){
             $sErrInfo = "fatal error:{$aError['message']}{$aError['file']} 第{$aError['line']}行";
 			Debug::trace($sErrInfo, $aError['type']);
+			\struggle\halt($sErrInfo);
         }
     }
     
@@ -27,6 +28,7 @@ class Exception extends \Exception{
         $iCode = $e->getCode()?$e->getCode():E_USER_ERROR;
         $sMsg="异常错误信息: {$e->getMessage()}  {$e->getFile()} 第{$e->getLine()}行";
 		Debug::trace($sMsg, $iCode);
+        \struggle\halt($sMsg);
     } 
     
     

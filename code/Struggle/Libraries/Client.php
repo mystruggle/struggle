@@ -113,7 +113,7 @@ class Client extends Object{
             $sAction = Sle::app()->route->action;
             $sAction = strtolower($sAction[0]).substr($sAction, 1);
             $aPager = $this->$sModule;
-            $aPager = $aPager[$sAction];
+            $aPager = isset($aPager[$sAction])?$aPager[$sAction]:array();
             foreach ($aPager as $pos=>$val){
                 foreach ($val as $file){
                     $sType = substr($file,strrpos($file, '.')+1);

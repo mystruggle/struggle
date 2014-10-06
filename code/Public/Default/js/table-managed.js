@@ -27,8 +27,8 @@ var TableManaged = function () {
                     [5, 15, 20, "All"] // change per page values here
                 ],
                 // set the initial value
-                'bServerSide':false,
-                "iDisplayLength": 5,
+                'bServerSide':true,
+                "iDisplayLength": 2,
                 "sDom": "<'row-fluid'<'span12'f>r>t<'row-fluid'<'span4'l><'span2'i><'span6'p>>",
                 "sPaginationType": "bootstrap",
                 "oLanguage": {
@@ -48,7 +48,11 @@ var TableManaged = function () {
                 },
                 "aoColumnDefs": [{
                         'bSortable': false,
-                        'aTargets': [0]
+                        'aTargets': [0],
+                        'mData':null,
+                        'mRender':function(data,type,full){
+                        	return '<input type="checkbox" class="checkboxes" value="1">';
+                        }
                     }
                 ],
                 'sAjaxSource':_menuListUrl,

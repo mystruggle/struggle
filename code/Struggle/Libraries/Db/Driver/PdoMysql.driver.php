@@ -125,6 +125,16 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 		}
 		return true;
 	}
+	
+	
+	/**
+	 * 获取表字段
+	 * @param string   $table  表名
+	 * @return  array
+	 */
+	public function getFields($table){
+	    return isset($this->mTableInfo[$table])?array_keys($this->mTableInfo[$table]):array();
+	}
 
     public function find($aOpt = array()){
         $this->parseOpt($aOpt);
@@ -141,6 +151,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
         $this->execute();
         return $this->fetchAll();
     }
+    
 
     /**
      * 参数绑定(占位符不能混合使用)

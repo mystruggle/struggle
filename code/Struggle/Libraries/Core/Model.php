@@ -45,6 +45,7 @@ class BaseModel extends \struggle\libraries\Object{
 	private   $mAlias      = '';    //当前模型别名
 	private   $mPriKey     = '';   //当前模型的主键
 	private   $mCurModel = '';     //当前调用的模型
+	private   $mField      = array();
 
 
     public function __construct(){
@@ -113,6 +114,18 @@ class BaseModel extends \struggle\libraries\Object{
             //$aDb[$sKey] ->initTableMetadata($this->mTablePrefix.sle\ptoc($this->mReferModel.$this->mTableSuffix),$this->mAlias);
         return $this->mDb = $aDb[$sKey];
 	}
+	
+	
+	public function _field($name){die('end');
+	    if ($name == 'field'){
+	        $oStd = new \stdClass();
+	        $sTableName = \struggle\C('DB_TABLE_PREFIX').$this->table.\struggle\C('DB_TABLE_SUFFIX');
+	        $sKey = $sTableName.$name;
+	        $oStd->$sKey = $this->Db->getFields($sTableName);
+	        return $oStd;
+	    }
+	    return $this;
+	}
 
 
 
@@ -145,9 +158,8 @@ class BaseModel extends \struggle\libraries\Object{
 
     public function find($aOpt = array()){
 		$this->initOption($aOpt);
-		$this->mSelectElement['limit'] = '1';		
-		echo print_r($this->mSelectElement,true),__METHOD__,'<br><br>';
-        $this->Db->find($this->mSelectElement);
+		$this->mSelectElement['limit'] = '1';
+        return $this->Db->find($this->mSelectElement);
     }
 
     /**
@@ -284,6 +296,11 @@ class BaseModel extends \struggle\libraries\Object{
 
 	public function groupby(){
 	}
+	
+	public function limit($start,$length){
+	    $this->mSelectElement['limit'] = "{$start},{$length}";
+	    return $this;
+	}
 
 
 	/**
@@ -345,6 +362,12 @@ class BaseModel extends \struggle\libraries\Object{
         $this->initOption($options);
         $aResult = $this->Db->findAll($this->mSelectElement);
         return $aResult;
+    }
+    
+    public function count($field = ''){
+        $field || $field = '*';
+        $this->mSelectElement['field'] = "count({$field}) as count";
+        return $this->find();
     }
     
     

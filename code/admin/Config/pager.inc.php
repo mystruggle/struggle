@@ -40,12 +40,39 @@ return array(
                         'DT_bootstrap.js',
                         'table-managed.js',
                         'app.js',
+                        'jquery.validate.min.js',
+                        'additional-methods.min.js',
+                        'form-validation.js',
                 ),
                 Client::POS_HEAD_BOTTOM=>array(
                         'select2_metro.css',
                         'DT_bootstrap.css',
                 ),
             ),
+            'add'=>array(
+               Client::POS_BODY_BOTTOM=>array(
+                    'jquery.validate.min.js',
+                    'additional-methods.min.js',
+                    'select2.min.js',
+                    'chosen.jquery.min.js',
+                    'app.js',
+                    'form-validation.js',
+                ),
+               Client::POS_HEAD_BOTTOM=>array(
+                    'select2_metro.css',
+                    'chosen.css',
+                ),
+            ),
     ),
 );
+
+
+
+
+
+
+
+
+
+
 

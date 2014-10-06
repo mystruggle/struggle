@@ -142,6 +142,7 @@ class BaseController extends \struggle\libraries\Object{
     
     private function _before(&$content){
         $aJs = \struggle\Sle::app()->client->pager;
+        $aJs || $aJs = array();
         foreach ($aJs as $pos=>$js){
             switch ($pos){
                 case Client::POS_HEAD_TOP:

@@ -6,6 +6,7 @@
  * 3、只后台记录
  * 4、保存等级 sys_notice sys_warning sys_error notice warning error
  * 5、是否记录消耗时间，默认记录
+ * 6、判断生产环境还是开发环境，对重要信息隐藏，如文件路径；生产环境跳到500页面
  * @author luguo<luguo@139.com>
  *
  */
@@ -117,7 +118,7 @@ class Debug{
     public static function show(){
         if (!\struggle\C('DEBUG_PAGE'))
             return false;
-        $sHtml="<div style='font-family:\"宋体\",sans-serif,verdana,arial;width:auto;border:1px solid #cccccc;font-size:13px;position:relative;margin:0px;padding:10px;'>"
+        $sHtml="<div style='word-break:break-all;font-family:\"宋体\",sans-serif,verdana,arial;width:auto;border:1px solid #cccccc;font-size:13px;position:relative;margin:0px;padding:10px;'>"
                 ."<div style='text-align:right;'><a style='text-decoration:none;color:blue;' href='javascript:void(0);' onclick='this.parentNode.parentNode.style.display=\"none\";'>X</a></div><div style='margin:0px;padding:0px;'><ul style='margin:0px;padding:0px;list-style-type:none;'>";
         $sTxt='';
         foreach (self::$mTraceInfo as $info){

@@ -86,7 +86,7 @@ var FormValidation = function () {
                 allowClear: true
             });
 
-            var form2 = $('#form_sample_2');
+            var form2 = $('#form_menu_1');
             var error2 = $('.alert-error', form2);
             var success2 = $('.alert-success', form2);
 

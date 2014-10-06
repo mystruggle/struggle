@@ -47,7 +47,7 @@ var TableEditable = function () {
                 oTable.fnDraw();
             }
 
-            var oTable = $('#sample_editable_1').dataTable({
+            var oTable = $('#menu_editable_1').dataTable({
                 "aLengthMenu": [
                     [5, 15, 20, -1],
                     [5, 15, 20, "All"] // change per page values here
@@ -70,15 +70,15 @@ var TableEditable = function () {
                 ]
             });
 
-            jQuery('#sample_editable_1_wrapper .dataTables_filter input').addClass("m-wrap medium"); // modify table search input
-            jQuery('#sample_editable_1_wrapper .dataTables_length select').addClass("m-wrap small"); // modify table per page dropdown
-            jQuery('#sample_editable_1_wrapper .dataTables_length select').select2({
+            jQuery('#menu_editable_1_wrapper .dataTables_filter input').addClass("m-wrap medium"); // modify table search input
+            jQuery('#menu_editable_1_wrapper .dataTables_length select').addClass("m-wrap small"); // modify table per page dropdown
+            jQuery('#menu_editable_1_wrapper .dataTables_length select').select2({
                 showSearchInput : false //hide search box with special css class
             }); // initialzie select2 dropdown
 
             var nEditing = null;
 
-            $('#sample_editable_1_new').click(function (e) {
+            $('#menu_editable_1_new').click(function (e) {alert(e);
                 e.preventDefault();
                 var aiNew = oTable.fnAddData(['', '', '', '',
                         '<a class="edit" href="">Edit</a>', '<a class="cancel" data-mode="new" href="">Cancel</a>'
@@ -88,7 +88,7 @@ var TableEditable = function () {
                 nEditing = nRow;
             });
 
-            $('#sample_editable_1 a.delete').live('click', function (e) {
+            $('#menu_editable_1 a.delete').live('click', function (e) {
                 e.preventDefault();
 
                 if (confirm("Are you sure to delete this row ?") == false) {
@@ -100,7 +100,7 @@ var TableEditable = function () {
                 alert("Deleted! Do not forget to do some ajax to sync with backend :)");
             });
 
-            $('#sample_editable_1 a.cancel').live('click', function (e) {
+            $('#menu_editable_1 a.cancel').live('click', function (e) {
                 e.preventDefault();
                 if ($(this).attr("data-mode") == "new") {
                     var nRow = $(this).parents('tr')[0];
@@ -111,7 +111,7 @@ var TableEditable = function () {
                 }
             });
 
-            $('#sample_editable_1 a.edit').live('click', function (e) {
+            $('#menu_editable_1 a.edit').live('click', function (e) {
                 e.preventDefault();
 
                 /* Get the row as a parent of the link that was clicked on */

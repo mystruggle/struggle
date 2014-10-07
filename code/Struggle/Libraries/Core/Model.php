@@ -45,7 +45,7 @@ class BaseModel extends \struggle\libraries\Object{
 	private   $mAlias      = '';    //当前模型别名
 	private   $mPriKey     = '';   //当前模型的主键
 	private   $mCurModel = '';     //当前调用的模型
-	private   $mField      = array();
+	protected $mField      = array();
 
 
     public function __construct(){
@@ -78,8 +78,18 @@ class BaseModel extends \struggle\libraries\Object{
         }
     }
 
-
-	protected function _Db(){
+    public function __get($name){
+        $sAttrName = 'm'.strtoupper($name[0]).substr($name, 1);
+        if (property_exists($this, $sAttrName))
+            return $this->$sAttrName;
+        $sMethodName = '_'.strtolower($name[0]).substr($name, 1);
+        if (method_exists($this, $sMethodName))
+            return $this->$sMethodName();
+        return false;
+    }
+    
+    
+	protected function _db(){
         static $aDb = array();
 		$sFileName = $this->mDriver;
 		if(strtolower($this->mType) != strtolower($this->mDriver)){
@@ -116,7 +126,7 @@ class BaseModel extends \struggle\libraries\Object{
 	}
 	
 	
-	public function _field($name){die('end');
+	public function _Field($name){die('end');
 	    if ($name == 'field'){
 	        $oStd = new \stdClass();
 	        $sTableName = \struggle\C('DB_TABLE_PREFIX').$this->table.\struggle\C('DB_TABLE_SUFFIX');

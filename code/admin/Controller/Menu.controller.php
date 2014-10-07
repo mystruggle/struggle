@@ -33,6 +33,7 @@ class MenuController extends Controller{
     
     public function actionAdd(){
         Sle::app()->client->registerClient('jQuery(document).ready(function(){App.init();FormValidation.init();});',Client::POS_BODY_BOTTOM);
+        //\struggle\M('Menu')->Field;
         //$this->assgin($sKey, $mValue)
         $this->layout();
     }

@@ -17,7 +17,7 @@ class Object{
 	}
 
 
-
+/*
 	public function __get($sName){
 		$sAttr = "m{$sName}";
 		if(property_exists($this,$sAttr)){
@@ -30,7 +30,7 @@ class Object{
 		}
 		return false;
 	}
-
+*/
 	public function __set($sName,$mVal){
 		$sName = "m{$sName}";
 		$sMethod = "_".ucfirst($sName);

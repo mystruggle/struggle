@@ -193,7 +193,7 @@ class BaseController extends \struggle\libraries\Object{
                 
             }
         }else{
-            $sFile = $oView->ThemePath.$oView->Theme.'/'.\struggle\ctop($oRoute->module).'/'.\struggle\ptoc($oRoute->action).'.'.$oView->TplSuffix;
+            $sFile = $oView->ThemePath.$oView->Theme.'/'.\struggle\ctop($oRoute->module).'/'.\struggle\ptoc($oRoute->action).'.'.$oView->tplSuffix;
         }
         //判断文件是否存在
 		if(!\struggle\isFile($sFile)){

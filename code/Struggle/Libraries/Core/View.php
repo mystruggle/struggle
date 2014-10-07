@@ -25,6 +25,16 @@ class View extends \struggle\libraries\Object{
         
     }
     
+    public function __get($name){
+        $sAttrName = 'm'.strtoupper($name[0]).substr($name, 1);
+        if (property_exists($this, $sAttrName))
+            return $this->$sAttrName;
+        $sMethodName = '_'.strtolower($name[0]).substr($name, 1);
+        if (method_exists($this, $sMethodName))
+            return $this->$sMethodName();
+        return false;
+    }
+    
     /**
      * 返回文件的唯一键名
      * @param string $file   文件(相对路径或绝对路径)

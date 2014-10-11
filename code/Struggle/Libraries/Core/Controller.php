@@ -37,7 +37,20 @@ class BaseController extends \struggle\libraries\Object{
 		$sClientFile = LIB_PATH.'Client.php';
 		Sle::app()->registerClass($sClientFile);
 	}
-
+	
+	
+	public function __get($name){
+	    $sAttrName = 'm'.strtoupper($name[0]).substr($name, 1);
+	    if (property_exists($this, $sAttrName) && !is_null($this->$sAttrName))
+	        return $this->$sAttrName;
+	    $sMethodName = '_'.strtolower($name[0]).substr($name, 1);
+	    if (method_exists($this, $sMethodName))
+	        return $this->$sMethodName();
+	    return false;
+	}
+	
+	
+	
 	private function stripSpecialChar(&$item,$key){
 		if(is_array($item)){
 			array_walk($item,array($this,'stripSpecialChar'));

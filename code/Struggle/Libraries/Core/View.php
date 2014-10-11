@@ -184,6 +184,30 @@ class View extends \struggle\libraries\Object{
         }
         return '<?php echo '.$sVar.';?>';
     }
+    /**
+     * 处理非$开头的字面常量
+     * @param string $param  
+     */
+    private function _field($param){
+        //检查是否用了函数处理
+        $iVericalPos = strpos($param, '|');
+        $sConstant = $param;
+        if ($iVericalPos !== false){
+            $sConstant = substr($param, 0,$iVericalPos);
+            $sFunc      = substr($param, $iVericalPos+1);
+            $sFuncParam = $sConstant;
+            //判断是否有其他函数参数
+            $iEqSignPos = strpos($sFunc, '=');
+            if ($iEqSignPos !== false){
+                $sFunc = substr($sFunc, 0,$iEqSignPos);
+                $sFuncParam = substr($sFunc, $iEqSignPos+1);
+                $sFuncParam = str_replace('#', $sConstant, $sFuncParam);
+            }
+            $sFuncParam = '"'.str_replace(',','","',str_replace('"', "'", $sFuncParam)).'"';
+            return '<?php echo '.$sFunc.'('.$sFuncParam.');?>';
+        }
+        return '<?php echo "'.str_replace('"', "'", $sConstant).'";?>';
+    }
     
     
     
@@ -264,7 +288,8 @@ class View extends \struggle\libraries\Object{
                 if ($xData !== false){
                     if (isset($aAttr['name']) && $aAttr['name']){
                         $oCtl = Sle::app()->controller;
-                        $oCtl->TplData = array_merge($oCtl->TplData,array($aAttr['name']=>$xData));
+                        $oCtl->assgin($aAttr['name'],$xData);
+                        //$oCtl->tplData = array_merge($oCtl->tplData,array($aAttr['name']=>$xData));
                     }
                 }else{
                     $xRlt['status'] = false;

@@ -3,6 +3,7 @@ namespace struggle\libraries\db\driver;
 use struggle as sle;
 use struggle\libraries\Debug;
 use struggle\ctop;
+use struggle\libraries\Exception;
 /**
  * 模型运用例子
  * name='sys'
@@ -53,6 +54,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 		                              'float','double','decimal','numeric','bit');
 	private   $mTablePrefix = '';
 	private   $mTableSuffix = '';
+	public    $count = null;//记录总数
 
 
     public function __construct($aOpt){
@@ -110,7 +112,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 	}
 
 
-	public function setAttr($sName,$mVal){echo $sName.'1';
+	public function setAttr($sName,$mVal){
 		return $this->mLink->setAttribute($sName,$mVal);
 	}
 
@@ -141,7 +143,9 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 		$this->prepare($this->buildSelect());
 		$this->_beginBind();
 		$this->execute();
-		return $this->fetch();
+		$aRecordset = $this->fetch();
+        $this->isCount();
+        return $aRecordset;
     }
     
     public function findAll($options = array()){
@@ -149,9 +153,27 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
         $this->prepare($this->buildSelect());
         $this->_beginBind();
         $this->execute();
-        return $this->fetchAll();
+        $aRecordset = $this->fetchAll();
+        $this->isCount();
+        return $aRecordset;
     }
     
+    /**
+     * 检查是否需要统计
+     */
+    private function isCount(){
+        if (isset($this->mSelectInfo['count']) && $this->mSelectInfo['count']){
+            $this->prepare($this->buildSelectCount());
+            $this->execute();
+            $aCount = $this->fetch();
+            $this->count = $aCount['count'];
+        }
+    }
+    
+    
+    public function reset(){
+        $this->mSelectInfo = array();
+    }
 
     /**
      * 参数绑定(占位符不能混合使用)
@@ -265,6 +287,21 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 		Debug::trace("SQL语句拼接:{$sSql}",Debug::NOTICE);
 		return $sSql;
 	}
+	
+	private function buildSelectCount(){
+		$sField = $this->mSelectInfo['count'];
+		$sWhere = isset($this->mSelectInfo['where'])?$this->mSelectInfo['where']:'';
+		$sTable = $this->mTableFullName;
+		$sAlias = $this->mAlias;
+		$sJoin  = isset($this->mSelectInfo['join'])?$this->mSelectInfo['join']:'';
+		$sGroupby = isset($this->mSelectInfo['groupby'])?$this->mSelectInfo['groupby']:'';
+		$sHaving  = isset($this->mSelectInfo['having'])?$this->mSelectInfo['having']:'';
+		$sOrderby = isset($this->mSelectInfo['orderby'])?$this->mSelectInfo['orderby']:'';
+		$sLimit   = 'LIMIT 1';
+		$sSql = "SELECT {$sField} FROM {$sTable} AS {$sAlias} {$sJoin} {$sWhere} {$sGroupby} {$sHaving} {$sOrderby} {$sLimit}";
+		Debug::trace("SQL语句拼接:{$sSql}",Debug::NOTICE);
+		return $sSql;
+	}
 
 
     /**
@@ -299,6 +336,10 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 		if(is_string($sField))
 		    $this->mSelectInfo['field'] = $sField;
 		return false;
+    }
+    
+    private function _count($opt){
+        $this->mSelectInfo['count'] = $opt;
     }
 
 

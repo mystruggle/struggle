@@ -1,6 +1,7 @@
 <?php
 namespace struggle\model;
 use struggle\Sle;
+use struggle\libraries\Debug;
 
 class MenuModel extends Model{
     public $name ='Menu';
@@ -94,6 +95,11 @@ class MenuModel extends Model{
 		if($pos && isset($aDep[$pos-1]))
 			return $aDep[$pos-1];
 		return $dep;
+	}
+	
+	public function getAllMenu(){
+	    $aMenu = $this->field('id,name')->findAll();
+	    return $aMenu?$aMenu:array();
 	}
     
     

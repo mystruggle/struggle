@@ -20,8 +20,8 @@ class MenuController extends Controller{
     private function _getListData(){
         $oModel = \struggle\M('Menu');
         $iPageStart = $_GET['iDisplayStart']?$_GET['iDisplayStart']-1:0;
-        $aData = $oModel->field('id,name,icon,`desc`,parent_id,orderby,create_time')->limit($iPageStart*$_GET['iDisplayLength'],$_GET['iDisplayLength'])->findAll();
-        $aCount = $oModel->count();
+        $aData = $oModel->count()->field('id,name,icon,`desc`,parent_id,orderby,create_time')->limit($iPageStart*$_GET['iDisplayLength'],$_GET['iDisplayLength'])->findAll();
+        $aCount = $oModel->getCount();
         $aResponseData = array();
         foreach ($aData as $data){
             $aResponseData[] = array('',$data['id'],$data['name'],$data['icon'],$data['desc'],$data['parent_id'],$data['orderby'],date('Y-m-d H:i:s',$data['create_time']),'');

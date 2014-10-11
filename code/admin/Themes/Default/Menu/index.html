@@ -67,7 +67,7 @@
 
                                             <th style="width:8px;"><input type="checkbox" class="group-checkable" data-set="#menu_1 .checkboxes" /></th>
                                             {foreach name='model->_listField()' list='index,field'}
-                                            {if condition='index==1'}
+                                            {if condition='$index==1'}
                                             <th>{$field|\struggle\L}</th>
                                             {else /}
                                             <th class="hidden-480">{$field|\struggle\L}</th>

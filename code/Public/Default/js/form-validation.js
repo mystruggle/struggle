@@ -7,7 +7,7 @@ var FormValidation = function () {
 
             // for more info visit the official plugin documentation: 
             // http://docs.jquery.com/Plugins/Validation
-
+/*
             var form1 = $('#form_sample_1');
             var error1 = $('.alert-error', form1);
             var success1 = $('.alert-success', form1);
@@ -85,7 +85,7 @@ var FormValidation = function () {
                 placeholder: "Select an Option",
                 allowClear: true
             });
-
+*/
             var form2 = $('#form_menu_1');
             var error2 = $('.alert-error', form2);
             var success2 = $('.alert-success', form2);

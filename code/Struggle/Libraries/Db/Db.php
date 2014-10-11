@@ -15,6 +15,7 @@ abstract class Db extends \struggle\libraries\Object{
     abstract public function bindValue($name,$value);
     abstract public function bindParam($value);
     abstract public function getFields($table);
+    abstract public function reset();
 	//abstract public function findAll();
 	//abstract public function findBySql();
 	//abstract public function findAllSql();

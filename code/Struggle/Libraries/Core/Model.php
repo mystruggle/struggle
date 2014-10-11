@@ -41,11 +41,10 @@ class BaseModel extends \struggle\libraries\Object{
 	private   $mDrvClassSuffix = 'Driver';
 	private   $mDrvNameSpace = '\struggle\libraries\db\driver\\';
 	private   $mSelectElement = array('field'  =>'','join'=>'','where'=>'',
-		                              'groupby'=>'','having'=>'','orderby'=>'','limit'=>'');
+		                              'groupby'=>'','having'=>'','orderby'=>'','limit'=>'','count'=>'');
 	private   $mAlias      = '';    //当前模型别名
 	private   $mPriKey     = '';   //当前模型的主键
 	private   $mCurModel = '';     //当前调用的模型
-	protected $mField      = array();
 
 
     public function __construct(){
@@ -80,7 +79,7 @@ class BaseModel extends \struggle\libraries\Object{
 
     public function __get($name){
         $sAttrName = 'm'.strtoupper($name[0]).substr($name, 1);
-        if (property_exists($this, $sAttrName))
+        if (property_exists($this, $sAttrName) && !is_null($this->$sAttrName))
             return $this->$sAttrName;
         $sMethodName = '_'.strtolower($name[0]).substr($name, 1);
         if (method_exists($this, $sMethodName))
@@ -126,28 +125,16 @@ class BaseModel extends \struggle\libraries\Object{
 	}
 	
 	
-	public function _Field($name){die('end');
-	    if ($name == 'field'){
-	        $oStd = new \stdClass();
-	        $sTableName = \struggle\C('DB_TABLE_PREFIX').$this->table.\struggle\C('DB_TABLE_SUFFIX');
-	        $sKey = $sTableName.$name;
-	        $oStd->$sKey = $this->Db->getFields($sTableName);
-	        return $oStd;
-	    }
-	    return $this;
-	}
-
-
 
     public function getAttr($name){
-        return $this->Db->getAttr($name);
+        return $this->db->getAttr($name);
     }
 
 
     /**
 	 */
     public function setAttr($name,$value){
-        return $this->Db->setAttr($name,$value);
+        return $this->db->setAttr($name,$value);
     }
 
 
@@ -155,21 +142,22 @@ class BaseModel extends \struggle\libraries\Object{
 	 * 设置获取模式
 	 */
 	public function setFetchMode($mode){
-		return $this->Db->setFetchMode($mode);
+		return $this->db->setFetchMode($mode);
 	}
 
     public function bindValue($name,$value = null){
-        $this->Db->bindValue($name,$value);
+        $this->db->bindValue($name,$value);
     }
 
 	public function bindParam($value){
-		$this->Db->bindParam($value);
+		$this->db->bindParam($value);
 	}
 
     public function find($aOpt = array()){
-		$this->initOption($aOpt);
 		$this->mSelectElement['limit'] = '1';
-        return $this->Db->find($this->mSelectElement);
+        $aRecordset = $this->db->find($this->initOption($aOpt));
+        $this->resetElement();
+        return $aRecordset;
     }
 
     /**
@@ -319,6 +307,7 @@ class BaseModel extends \struggle\libraries\Object{
 	 */
 	private function initOption($aOpt){
         static $aSqlElement = null;
+        $aSelectElemet = array();
 		if(!$aSqlElement)
 			$aSqlElement = array_keys($this->mSelectElement);
 		if(is_array($aOpt)){
@@ -336,9 +325,10 @@ class BaseModel extends \struggle\libraries\Object{
         
         //如果条件空则从构造查询语句中去除
         foreach ($aSqlElement as $cond){
-            if (!isset($this->mSelectElement[$cond]) || empty($this->mSelectElement[$cond]))
-                unset($this->mSelectElement[$cond]);
+            if (isset($this->mSelectElement[$cond]) && $this->mSelectElement[$cond])
+                $aSelectElemet[$cond] = $this->mSelectElement[$cond];
         }
+        return $aSelectElemet;
 	}
 
 	/**
@@ -369,15 +359,27 @@ class BaseModel extends \struggle\libraries\Object{
 	 */
     public function findAll($options = array()){
         $aResult = array();
-        $this->initOption($options);
-        $aResult = $this->Db->findAll($this->mSelectElement);
+        $aResult = $this->db->findAll($this->initOption($options));
+        $this->resetElement();
         return $aResult;
     }
     
-    public function count($field = ''){
-        $field || $field = '*';
-        $this->mSelectElement['field'] = "count({$field}) as count";
-        return $this->find();
+    public function count($opt = ''){
+        $this->mSelectElement['count'] = 'count(*) as count';
+        if (is_string($opt) && $opt)
+            $this->mSelectElement['count'] = "count({$opt}) as count";
+        return $this;
+    }
+    
+    public function getCount(){
+        return $this->db->count;
+    }
+    
+    private function resetElement(){
+        foreach ($this->mSelectElement as $name=>$value){
+            $this->mSelectElement[$name] = '';
+        }
+        $this->db->reset();
     }
     
     

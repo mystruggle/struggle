@@ -50,7 +50,7 @@
 
                                     <div class="control-group">
 
-                                        <label class="control-label">Name<span class="required">*</span></label>
+                                        <label class="control-label">{field name|\struggle\L}<span class="required">*</span></label>
 
                                         <div class="controls">
 
@@ -62,11 +62,36 @@
 
                                     <div class="control-group">
 
-                                        <label class="control-label">Email<span class="required">*</span></label>
+                                        <label class="control-label">{field icon|\struggle\L}</label>
 
                                         <div class="controls">
 
-                                            <input name="email" type="text" class="span6 m-wrap"/>
+                                            <input name="icon" type="text" class="span6 m-wrap"/>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="control-group">
+
+                                        <label class="control-label">{field desc|\struggle\L}</label>
+
+                                        <div class="controls">
+
+                                            <textarea class="span6 m-wrap" rows="3" name='desc'></textarea>
+
+                                        </div>
+
+                                    </div>
+                                    
+                                    <div class="control-group">
+
+                                        <label class="control-label">{field orderby|\struggle\L}</label>
+
+                                        <div class="controls">
+
+                                            <input name="orderby" type="text" class="span6 m-wrap"/>
 
                                         </div>
 
@@ -74,34 +99,16 @@
 
                                     <div class="control-group">
 
-                                        <label class="control-label">Occupation&nbsp;&nbsp;</label>
+                                        <label class="control-label">{field ctl_id|\struggle\L}<span class="required">*</span></label>
 
                                         <div class="controls">
 
-                                            <input name="occupation" type="text" class="span6 m-wrap"/>
+                                            <select class="span6 m-wrap" name="ctl_id">
 
-                                        </div>
-
-                                    </div>
-
-                                    <div class="control-group">
-
-                                        <label class="control-label">Category<span class="required">*</span></label>
-
-                                        <div class="controls">
-
-                                            <select class="span6 m-wrap" name="category">
-
-                                                <option value="">Select...</option>
-
-                                                <option value="Category 1">Category 1</option>
-
-                                                <option value="Category 2">Category 2</option>
-
-                                                <option value="Category 3">Category 5</option>
-
-                                                <option value="Category 4">Category 4</option>
-
+                                                <option value="">请选择...</option>
+                                                {foreach sourceBySql='\struggle\M('Controller')->getAllCtl()' name='ctl' list='value'}
+                                                <option value="{$value['id']}">{$value['name']}</option>
+                                                {/foreach}
                                             </select>
 
                                         </div>
@@ -110,22 +117,16 @@
 
                                     <div class="control-group">
 
-                                        <label class="control-label">Chosen Dropdown<span class="required">*</span></label>
+                                        <label class="control-label">{field act_id|\struggle\L}<span class="required">*</span></label>
 
-                                        <div class="controls chzn-controls">
+                                        <div class="controls">
 
-                                            <select id="form_2_chosen" class="span6 chosen" data-with-diselect="1" name="options1" data-placeholder="Choose an Option" tabindex="1">
+                                            <select class="span6 m-wrap" name="act_id">
 
-                                                <option value=""></option>
-
-                                                <option value="Option 1">Option 1</option>
-
-                                                <option value="Option 2">Option 2</option>
-
-                                                <option value="Option 3">Option 3</option>
-
-                                                <option value="Option 4">Option 4</option>
-
+                                                <option value="">请选择...</option>
+                                                {foreach sourceBySql='\struggle\M('Action')->getAllAct()' name='act' list='value'}
+                                                <option value="{$value['id']}">{$value['name']}</option>
+                                                {/foreach}
                                             </select>
 
                                         </div>
@@ -134,93 +135,30 @@
 
                                     <div class="control-group">
 
-                                        <label class="control-label">Select2 Dropdown<span class="required">*</span></label>
+                                        <label class="control-label">{field parent_id|\struggle\L}<span class="required">*</span></label>
 
-                                        <div class="controls select2-wrapper">
+                                        <div class="controls">
 
-                                            <select id="form_2_select2" class="span6" name="options2">
+                                            <select class="span6 m-wrap" name="parent_id">
 
-                                                <option value=""></option>
-
-                                                <option value="Option 1">Option 1</option>
-
-                                                <option value="Option 2">Option 2</option>
-
-                                                <option value="Option 3">Option 3</option>
-
-                                                <option value="Option 4">Option 4</option>
-
+                                                <option value="0">请选择...</option>
+                                                {foreach sourceBySql='\struggle\M('Menu')->getAllMenu()' name='parent' list='value'}
+                                                <option value="{$value['id']}">{$value['name']}</option>
+                                                {/foreach}
                                             </select>
 
                                         </div>
 
                                     </div>
+                              
 
-                                    <div class="control-group">
-
-                                        <label class="control-label">Membership<span class="required">*</span></label>
-
-                                        <div class="controls">
-
-                                            <label class="radio line">
-
-                                            <input type="radio" name="membership" value="1" />
-
-                                            Fee
-
-                                            </label>
-
-                                            <label class="radio line">
-
-                                            <input type="radio" name="membership" value="2" />
-
-                                            Professional
-
-                                            </label> 
-
-                                            <div id="form_2_membership_error"></div>
-
-                                        </div>
-
-                                    </div>
-
-                                    <div class="control-group">
-
-                                        <label class="control-label">Services<span class="required">*</span></label>
-
-                                        <div class="controls">
-
-                                            <label class="checkbox line">
-
-                                            <input type="checkbox" value="1" name="service"/> Service 1
-
-                                            </label>
-
-                                            <label class="checkbox line">
-
-                                            <input type="checkbox" value="2" name="service"/> Service 2
-
-                                            </label>
-
-                                            <label class="checkbox line">
-
-                                            <input type="checkbox" value="3" name="service"/> Service 3
-
-                                            </label>
-
-                                            <span class="help-block">(select at least two)</span>
-
-                                            <div id="form_2_service_error"></div>
-
-                                        </div>
-
-                                    </div>
+                                    
 
                                     <div class="form-actions">
 
-                                        <button type="submit" class="btn green">Validate</button>
+                                        <button type="submit" class="btn green">{field confirm|\struggle\L}</button>
 
-                                        <button type="button" class="btn" onclick='location.href="{url menu/index}"'>Cancel</button>
+                                        <button type="button" class="btn" onclick='location.href="{url menu/index}"'>{field cancel|\struggle\L}</button>
 
                                     </div>
 

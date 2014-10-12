@@ -30,21 +30,21 @@
 
                                 <!--h3></h3-->
 
-                                <form action="#" id="form_menu_1" class="form-horizontal">
+                                <form action="{url menu/add?act=save}" id="form_menu_1" method='post' enctype="application/x-www-form-urlencoded" class="form-horizontal">
 
                                     <div class="alert alert-error hide">
 
                                         <button class="close" data-dismiss="alert"></button>
-
-                                        You have some form errors. Please check below.
+                                                                                                     输入有误，请检查下列项！
+                                        <!-- You have some form errors. Please check below.-->
 
                                     </div>
 
                                     <div class="alert alert-success hide">
 
                                         <button class="close" data-dismiss="alert"></button>
-
-                                        Your form validation is successful!
+                                                                                                    验证成功！
+                                        <!--Your form validation is successful!-->
 
                                     </div>
 
@@ -54,7 +54,7 @@
 
                                         <div class="controls">
 
-                                            <input type="text" name="name" data-required="1" class="span6 m-wrap"/>
+                                            <input type="text" name="name" class="span6 m-wrap" />
 
                                         </div>
 
@@ -99,7 +99,7 @@
 
                                     <div class="control-group">
 
-                                        <label class="control-label">{field ctl_id|\struggle\L}<span class="required">*</span></label>
+                                        <label class="control-label">{field ctl_id|\struggle\L}</label>
 
                                         <div class="controls">
 
@@ -117,7 +117,7 @@
 
                                     <div class="control-group">
 
-                                        <label class="control-label">{field act_id|\struggle\L}<span class="required">*</span></label>
+                                        <label class="control-label">{field act_id|\struggle\L}</label>
 
                                         <div class="controls">
 

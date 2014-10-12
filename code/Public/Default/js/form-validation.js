@@ -97,8 +97,8 @@ var FormValidation = function () {
                 ignore: "",
                 rules: {
                     name: {
-                        minlength: 2,
-                        required: true
+                        required: true,
+                        menuName:true
                     },
                     email: {
                         required: true,
@@ -126,6 +126,9 @@ var FormValidation = function () {
                 },
 
                 messages: { // custom messages for radio buttons and checkboxes
+                	name:{
+                		required:'菜单名称不能为空！'
+                	},
                     membership: {
                         required: "Please select a Membership type"
                     },
@@ -180,10 +183,20 @@ var FormValidation = function () {
                 submitHandler: function (form) {
                     success2.show();
                     error2.hide();
+                    form.submit();
                 }
 
             });
 
+            $.validator.addMethod('menuName',function(value,element,param){
+            	$iLength = value.length;
+            	var regexp = /[\u4e00-\u9fa5a-z_0-9]/i;
+            	if(!regexp.test(value)){
+            		return false;
+            	}
+            	return true;
+            },$.validator.format('只能包含汉字、a-z、_、0-9'));
+            /*
             //apply validation on chosen dropdown value change, this only needed for chosen dropdown integration.
             $('.chosen, .chosen-with-diselect', form2).change(function () {
                 form2.validate().element($(this)); //revalidate the chosen dropdown value and show error or success message for the input
@@ -193,7 +206,7 @@ var FormValidation = function () {
             $('.select2', form2).change(function () {
                 form2.validate().element($(this)); //revalidate the chosen dropdown value and show error or success message for the input
             });
-
+*/
         }
 
     };

@@ -32,10 +32,20 @@ class MenuController extends Controller{
     }
     
     public function actionAdd(){
+        if (isset($_REQUEST['act']) && $_REQUEST['act'] == 'save'){
+            $this->save();
+            return true;
+        }
         Sle::app()->client->registerClient('jQuery(document).ready(function(){App.init();FormValidation.init();});',Client::POS_BODY_BOTTOM);
         //\struggle\M('Menu')->Field;
         //$this->assgin($sKey, $mValue)
         $this->layout();
+    }
+    
+    private function save(){
+        header('content-Type:text/html;charset=UTF-8');
+        echo $_POST['name'];die('end');
+        print_r($_REQUEST);
     }
 
     

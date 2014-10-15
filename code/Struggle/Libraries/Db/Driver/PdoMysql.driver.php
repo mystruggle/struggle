@@ -158,6 +158,19 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
         return $aRecordset;
     }
     
+    public function save($data){
+        if (!isset($data['data']) || !is_array($data['data']))
+            return false;
+        if (strtolower($data['operation']) == 'insert'){
+            $sSql = "INSERT INTO {$data['table']} SET ";
+            foreach ($data['data'] as $name=>$value){
+                $sSql .= "{$name}={$value},";
+            }
+            $sSql = rtrim($sSql,',');
+        }
+        die($sSql);
+    }
+    
     /**
      * 检查是否需要统计
      */

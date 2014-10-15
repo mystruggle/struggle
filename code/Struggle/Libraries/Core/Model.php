@@ -45,6 +45,8 @@ class BaseModel extends \struggle\libraries\Object{
 	private   $mAlias      = '';    //当前模型别名
 	private   $mPriKey     = '';   //当前模型的主键
 	private   $mCurModel = '';     //当前调用的模型
+	//属
+	private   $data = array();
 
 
     public function __construct(){
@@ -345,7 +347,7 @@ class BaseModel extends \struggle\libraries\Object{
 	}
 
 	public function getTableName(){
-		return \struggle\C('DB_TABLE_PREFIX').\struggle\ptoc($this->name).\struggle\C('DB_TABLE_SUFFIX');
+		return \struggle\C('DB_TABLE_PREFIX').\struggle\ptoc($this->mCurModel).\struggle\C('DB_TABLE_SUFFIX');
 	}
 
 
@@ -362,6 +364,17 @@ class BaseModel extends \struggle\libraries\Object{
         $aResult = $this->db->findAll($this->initOption($options));
         $this->resetElement();
         return $aResult;
+    }
+    
+    public function save($data = array()){
+        $aInfo = array();
+        $aInfo['table'] = $this->getTableName();
+        $aInfo['operation'] = 'INSERT';
+        $aInfo['data']      = $data;
+        $res = $this->db->save($aInfo);
+        $aInfo = array();
+        return $res;
+        
     }
     
     public function count($opt = ''){

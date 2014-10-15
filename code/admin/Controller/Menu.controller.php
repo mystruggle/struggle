@@ -43,8 +43,9 @@ class MenuController extends Controller{
     }
     
     private function save(){
-        header('content-Type:text/html;charset=UTF-8');
-        echo $_POST['name'];die('end');
+        $oMenu = \struggle\M('Menu');
+        $oMenu->bindValue(':name',$_POST['name']);
+        $oMenu->save(array('name'=>':name'));
         print_r($_REQUEST);
     }
 

@@ -24,8 +24,10 @@ class MenuModel extends Model{
         $aMenu = $this->field('Menu.id,Menu.name,Controller.title as ctl_title,Action.title as act_title,icon,Controller.name as ctl_name,Action.name as act_name,parent_id')
 			          ->join('LEFT Controller LEFT Action')->findAll();
         $aResult = array();
-		$sDep = '';   // 记录菜单元素维度路径,每个路径用|分隔，节点之间用,分隔
+		$aDep = array();   
 		$iSelectId = 0;
+		
+		//一级菜单
         foreach ($aMenu as $index=>$value){
             if (intval($value['parent_id']) === 0){
                 if (empty($value['ctl_name']) || empty($value['act_name'])){
@@ -35,10 +37,14 @@ class MenuModel extends Model{
 				}
 				$this->_isSelected($value['ctl_name'], $value['act_name']) && $iSelectId = $value['id'];
                 $aResult[$value['id']] = $value;
-				$sDep        .= $value['id'].'|';
+				//$sDep        .= $value['id'].'|';
 				unset($aMenu[$index]);
             }
         }
+        $aDep[] = $aResult;
+        $aResult = array();
+        
+        //二级菜单
 		foreach($aMenu as $index=>$value){
 			if(in_array($value['parent_id'],array_keys($aResult))){
                 if (empty($value['ctl_name']) || empty($value['act_name'])){
@@ -48,10 +54,13 @@ class MenuModel extends Model{
 				}
 				$this->_isSelected($value['ctl_name'], $value['act_name']) && $iSelectId = $value['id'];
 				$aResult[$value['parent_id']]['submenu'][$value['id']] = $value;
-				$sDep  = str_replace($value['parent_id'],"{$value['parent_id']},{$value['id']}",$sDep);
+				//$sDep  = str_replace($value['parent_id'].',',"{$value['parent_id']},{$value['parent_id']}{$value['id']},",$sDep);
 				unset($aMenu[$index]);
 			}
 		}
+		$aDep[] = $aResult;
+		$aResult = array();
+		
 		//菜单链处理
 		$aMenuChain = explode(',',$this->_getMenuDep($iSelectId,$sDep));
 		Sle::app()->controller->assgin('menuChain',$aMenuChain);
@@ -86,6 +95,18 @@ class MenuModel extends Model{
 	 */
 	private function _getMenuDep($id,$dep,$pos = 0){
 		$dep ='|'.ltrim($dep,'|');
+		$aDepOfSort = array();
+		foreach (explode('|', $dep) as $value){
+		    if(empty($value)) continue;
+		    $aChin = explode(',', $value);
+		    $iParent = array_shift($aChin);
+		    $i = 0;
+		    do{
+		        if (intval(substr($aChin[$i], 0,strlen($iParent))) == intval($iParent)){
+		            $aDepOfSort[$iParent][] = substr($aChin[$i],strlen($iParent)+1);
+		        }
+		    }while($aChin);
+		}
 		$iIdPos = strpos($dep,$id);
 		$iVerticalPos = strpos($dep,'|',$iIdPos);
 		$dep = substr($dep,0,$iVerticalPos);

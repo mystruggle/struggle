@@ -2,6 +2,7 @@
 namespace struggle\controller;
 use struggle\Sle;
 use struggle\libraries\Client;
+use struggle\libraries\Debug;
 
 class MenuController extends Controller{
     public function actionIndex(){
@@ -19,14 +20,15 @@ class MenuController extends Controller{
     
     private function _getListData(){
         $oModel = \struggle\M('Menu');
-        $iPageStart = $_GET['iDisplayStart']?$_GET['iDisplayStart']-1:0;
-        $aData = $oModel->count()->field('id,name,icon,`desc`,parent_id,orderby,create_time')->limit($iPageStart*$_GET['iDisplayLength'],$_GET['iDisplayLength'])->findAll();
-        $aCount = $oModel->getCount();
+        $aData = $oModel->count()->field('id,name,icon,`desc`,parent_id,orderby,create_time')->limit($_GET['iDisplayStart'],$_GET['iDisplayLength'])->findAll();
+        $iCount = $oModel->getCount();
         $aResponseData = array();
         foreach ($aData as $data){
-            $aResponseData[] = array('',$data['id'],$data['name'],$data['icon'],$data['desc'],$data['parent_id'],$data['orderby'],date('Y-m-d H:i:s',$data['create_time']),'');
+            $sEditUrl = Sle::app()->route->genUrl('menu/update?id='.$data['id']);
+            $sDelUrl  = Sle::app()->route->genUrl('menu/delete?id='.$data['id']);
+            $aResponseData[] = array('',$data['id'],$data['name'],$data['icon'],$data['desc'],$data['parent_id'],$data['orderby'],date('Y-m-d H:i:s',$data['create_time']),'{"edit":"'.$sEditUrl.'","del":"'.$sDelUrl.'"}');
         }
-        $aResponseData = array('iTotalRecords'=>$aCount['count'],'sEcho'=>$_GET['sEcho'],'iTotalDisplayRecords'=>$aCount['count'],'aaData'=>$aResponseData);
+        $aResponseData = array('iTotalRecords'=>$iCount,'sEcho'=>$_GET['sEcho'],'iTotalDisplayRecords'=>$iCount,'aaData'=>$aResponseData);
         echo  json_encode($aResponseData);
         exit;
     }
@@ -44,9 +46,15 @@ class MenuController extends Controller{
     
     private function save(){
         $oMenu = \struggle\M('Menu');
-        $oMenu->bindValue(':name',$_POST['name']);
-        $oMenu->save(array('name'=>':name'));
-        print_r($_REQUEST);
+        $a = $oMenu->create($_POST);
+        $this->redirect('','新增'.($oMenu->save($a)?'成功':'失败'));        
+    }
+    
+    
+    public function actionDelete(){
+        $oMenu = \struggle\M('Menu');
+        $retval = $oMenu->delete(array('id'=>$_GET['id']));
+        die(json_encode(array('status'=>$retval,'message'=>($retval?'删除成功！':'删除失败'))));
     }
 
     

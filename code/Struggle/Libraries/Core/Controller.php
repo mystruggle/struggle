@@ -49,6 +49,19 @@ class BaseController extends \struggle\libraries\Object{
 	    return false;
 	}
 	
+	protected function redirect($url = '',$message = ''){
+	    if (!$url){
+	        $sModule = Sle::app()->route->module;
+	        $url = Sle::app()->route->scheme.
+	               Sle::app()->route->host.
+	               (Sle::app()->route->port == 80?'':Sle::app()->route->port).
+	               Sle::app()->route->baseUrl.'index.php'.
+	               Sle::app()->route->genUrl("{$sModule}/index");
+	        
+	    }
+	    $this->layout('tpl:'.APP_PUBLIC.'Default/html/redirect.html',array('message'=>$message,'url'=>$url));
+	}
+	
 	
 	
 	private function stripSpecialChar(&$item,$key){
@@ -93,19 +106,27 @@ class BaseController extends \struggle\libraries\Object{
      * @author luguo@139.com
      */
     public function layout($tpl = '', $data=array()){
-        $sLoyout = '';
+        $sLoyout = ''; //布局文件内容
         $sTpl    = '';
-        $sFile = $tpl;
+        $sFile = $tpl; //布局文件路径
         $aRlt  = array('status'=>true,'msg'=>'');
         $oView =Sle::app()->view;
+        //tpl:开头表示用户模板文件不是布局文件
+        $iPos = strpos($tpl, 'tpl:');
+        
         //检查布局文件
-        if ($tpl){
+        if ($iPos===false && $tpl){
             $sLoyout = $this->getCurTpl($tpl);
         }else{
             $sFile = APP_THEME.$oView->Theme.'/Layout/layout.'.$oView->TplSuffix;
             $sLoyout = $this->getCurTpl($sFile);
         }
-        $sTpl = $this->getCurTpl();
+        //当前模板内容
+        if ($iPos===false){
+            $sTpl = $this->getCurTpl(); 
+        }else{
+            $sTpl = $this->getCurTpl(substr($tpl, 4));
+        }
         if ($sTpl && $sLoyout){
             //替换布局文件中{content}标签，用当前控制器模板内容替换之
             $sLoyout = preg_replace('/\{content\}/i', $sTpl, $sLoyout);
@@ -121,6 +142,7 @@ class BaseController extends \struggle\libraries\Object{
 				}
             }
             if ($this->mCompiledTplFile = $oView->render($sFile)){
+                $this->mTplData = array_merge($this->mTplData,$data);
                 return $this->outputComplieFile($this->mCompiledTplFile);
             }
         }
@@ -137,7 +159,7 @@ class BaseController extends \struggle\libraries\Object{
     private function outputComplieFile($file){
         $aRlt = array('status'=>true,'msg'=>'');
         if (!\struggle\isFile($file)){
-            throw new Exception('编译文件不存在或不可读 '.$file);die('end');
+            throw new Exception('编译文件不存在或不可读 '.$file);
             return false;
         }
 		//输出内容
@@ -210,7 +232,7 @@ class BaseController extends \struggle\libraries\Object{
         }
         //判断文件是否存在
 		if(!\struggle\isFile($sFile)){
-			throw new Exception("模板文件不存在{$sFile}");
+			throw new Exception("模板文件不存在{$tpl},{$sFile}");
 		}
 		$this->curTpl = $sFile;
 		return file_get_contents($this->curTpl);

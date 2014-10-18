@@ -22,12 +22,26 @@ class Route extends Object{
 	private  $mDebug       = false;
 	//类内部跟踪信息存储变量
 	private  $mTrace       = array();
+	public  $host         = '';
+	public  $port         = '';
+	public  $scheme       = '';
+	public  $baseUrl      = '';
 
 	
     public function __construct(){
         $this->mode = \struggle\C('ROUTE_MODE');
         $this->url    = $_SERVER['REQUEST_URI'];
 		$this->mCtl = Sle::app()->controller;
+		$this->host = $_SERVER['HTTP_HOST'];
+		$this->Port = 80;
+		$this->scheme = 'http://';
+		if (($iPos = strpos($this->host, ':')) !== false){
+    		$this->port = substr($this->host, $iPos+1);
+    		$this->host = substr($this->host, 0,$iPos);
+		}
+		intval($this->port) == 443 && $this->scheme = 'https://';
+		$this->baseUrl = rtrim(dirname($_SERVER['SCRIPT_NAME']),'/').'/';
+		
         Debug::trace("路由模式{$this->mode};url=>{$this->url}", Debug::SYS_NOTICE);
     }
     

@@ -161,6 +161,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
     public function save($data){
         if (!isset($data['data']) || !is_array($data['data']))
             return false;
+        $sSql = '';
         if (strtolower($data['operation']) == 'insert'){
             $sSql = "INSERT INTO {$data['table']} SET ";
             foreach ($data['data'] as $name=>$value){
@@ -168,7 +169,44 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
             }
             $sSql = rtrim($sSql,',');
         }
-        die($sSql);
+        if (!$sSql)
+            return false;
+        $this->prepare($sSql);
+        $this->_beginBind();
+        $this->execute();
+        //$a='00'或$a='0..'多个时empty($a)为false，当$a='0'时empty($a)为true
+        is_numeric($this->mErrorCode) && $this->mErrorCode = intval($this->mErrorCode);
+        return $this->mErrorCode?false:true;
+    }
+    
+    public function delete($option){
+        if (!is_array($option))
+            return false;
+        $sSql = '';
+        if (strtolower($option['operation']) == 'delete'){
+            $sSql .= 'DELETE ';
+        }
+        if (isset($option['field']) && $option['field']){
+            $sSql .= "{$option['field']} ";
+        }
+        if (isset($option['table']) && $option['table']){
+            $sSql .= "FROM {$option['table']} ";
+        }
+        if (isset($option['where'])){
+            $sAlias = $this->mAlias;
+            $this->mAlias = '';
+            $this->_where($option['where']);
+            $this->mAlias = $sAlias;
+            $sSql .= $this->mSelectInfo['where'];
+        }
+        if (!$sSql)
+            return false;
+        $this->prepare($sSql);
+        $this->_beginBind();
+        $this->execute();
+        //$a='00'或$a='0..'多个时empty($a)为false，当$a='0'时empty($a)为true
+        is_numeric($this->mErrorCode) && $this->mErrorCode = intval($this->mErrorCode);
+        return $this->mErrorCode?false:true;
     }
     
     /**
@@ -186,6 +224,8 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
     
     public function reset(){
         $this->mSelectInfo = array();
+        $this->mErrorCode = 0;
+        $this->mErrorInfo = '';
     }
 
     /**
@@ -590,7 +630,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
         }
         isset($this->mFieldExpMap[$sOp]) && $sOp = $this->mFieldExpMap[$sOp];
         $this->mBindParam = array_merge($this->mBindParam,$aBindValues);
-        return "{$this->mAlias}.`{$sField}` {$sOp} {$sBindField}";
+        return $this->mAlias?"{$this->mAlias}.`{$sField}` {$sOp} {$sBindField}":"`{$sField}` {$sOp} {$sBindField}";
     }
 
 	/**
@@ -769,6 +809,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 
 	public function prepare($sSql,$aParam = array()){
 		$this->mPdoStatement = $this->mLink->prepare($sSql);
+		Debug::trace("prepare语句:{$sSql}\tfile\t".__FILE__."\tline\t".__LINE__);
 	}
 
     /**

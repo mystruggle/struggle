@@ -371,10 +371,35 @@ class BaseModel extends \struggle\libraries\Object{
         $aInfo['table'] = $this->getTableName();
         $aInfo['operation'] = 'INSERT';
         $aInfo['data']      = $data;
-        $res = $this->db->save($aInfo);
-        $aInfo = array();
-        return $res;
+        $retval = $this->db->save($aInfo);
+        return $retval;
         
+    }
+    
+    
+    /**
+     * 删除操作
+     * @param array $data 
+     * @return boolean
+     */
+    public function delete($data = array()){
+        $aOpt = array();
+        $aOpt['table'] = $this->getTableName();
+        $aOpt['operation'] = 'DELETE';
+        $aOpt['where'] = $data;
+        if ($aOpt['where']){
+            if (is_array($aOpt['where'])){
+                $aWhere = array();
+                foreach ($aOpt['where'] as $name=>$value){
+                    $aWhere["`{$name}`"] = $value;
+                }
+                $aOpt['where'] = $aWhere;
+            }
+        }elseif (isset($this->mSelectElement['where'])){
+            $aOpt['where'] = $this->mSelectElement['where'];
+        }
+        $retval = $this->db->delete($aOpt);
+        return $retval;
     }
     
     public function count($opt = ''){
@@ -393,6 +418,26 @@ class BaseModel extends \struggle\libraries\Object{
             $this->mSelectElement[$name] = '';
         }
         $this->db->reset();
+    }
+    
+    
+    /**
+     * 添加绑定数据
+     * @param array $data
+     * @return array
+     */
+    public function create($data){
+       if (!is_array($data))
+           return false;
+       $aData = array();
+       $aField = $this->db->getFields($this->getTableName());
+       foreach ($data as $name=>$value){
+           if (in_array($name, $aField)){
+               $this->bindValue(":{$name}",$value);
+               $aData["`{$name}`"] = ":{$name}"; 
+           }
+       }
+       return $aData;
     }
     
     

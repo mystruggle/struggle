@@ -46,12 +46,22 @@ var TableManaged = function () {
                         'sLast':'尾页'
                     }
                 },
+                //'bStateSave':true,
                 "aoColumnDefs": [{
                         'bSortable': false,
                         'aTargets': [0],
                         'mData':null,
                         'mRender':function(data,type,full){
                         	return '<input type="checkbox" class="checkboxes" value="1">';
+                        }
+                    },
+                    {
+                        'bSortable': false,
+                        'aTargets': [8],
+                        'mData':null,
+                        'mRender':function(data,type,full){
+                        	var operator = jQuery.parseJSON(full[8]);
+                        	return '<button  class="btn green mini" onclick="TableManaged.del(\''+operator.del+'\')">删除</button><button  class="btn blue mini" value="1">编辑</button>';
                         }
                     }
                 ],
@@ -158,6 +168,24 @@ var TableManaged = function () {
             jQuery('#sample_3_wrapper .dataTables_length select').select2(); // initialzie select2 dropdown
             */
 
+        },
+        del:function(url){
+        	if(confirm('确定要删除吗？')){
+	        	jQuery.ajax({
+	        		url:url,
+	        		dataType:'json',
+	        		type:'get',
+	        		success:function(feed,ts,jqXhr){
+	        			alert(feed.message);
+	        			if(feed.status){
+	        				$('#menu_1').dataTable().fnDraw(false);
+	        			}
+	        		},
+	        		error:function(xhr,eTxt,eThrown){
+	        			alert(eTxt);
+	        		}
+	        	});
+        	}
         }
 
     };

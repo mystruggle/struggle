@@ -26,7 +26,7 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 
     <meta http-equiv='content-type' content="text/html;charset=utf-8" />
 
-    <title>{html layout:default/后台管理}</title>
+    <title>后台管理</title>
 
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
 
@@ -36,26 +36,26 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
 
-    <link href="{html css:bootstrap.min.css}" rel="stylesheet" type="text/css"/>
+    <link href="../Public/Default/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
 
-    <link href="{html css:bootstrap-responsive.min.css}" rel="stylesheet" type="text/css"/>
+    <link href="../Public/Default/css/bootstrap-responsive.min.css" rel="stylesheet" type="text/css"/>
 
-    <link href="{html css:font-awesome.min.css}" rel="stylesheet" type="text/css"/>
+    <link href="../Public/Default/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
 
-    <link href="{html css:style-metro.css}" rel="stylesheet" type="text/css"/>
+    <link href="../Public/Default/css/style-metro.css" rel="stylesheet" type="text/css"/>
 
-    <link href="{html css:style.css}" rel="stylesheet" type="text/css"/>
+    <link href="../Public/Default/css/style.css" rel="stylesheet" type="text/css"/>
 
-    <link href="{html css:style-responsive.css}" rel="stylesheet" type="text/css"/>
+    <link href="../Public/Default/css/style-responsive.css" rel="stylesheet" type="text/css"/>
 
-    <link href="{html css:default.css}" rel="stylesheet" type="text/css" id="style_color"/>
+    <link href="../Public/Default/css/default.css" rel="stylesheet" type="text/css" id="style_color"/>
 
-    <link href="{html css:uniform.default.css}" rel="stylesheet" type="text/css"/>
+    <link href="../Public/Default/css/uniform.default.css" rel="stylesheet" type="text/css"/>
 
     <!-- END GLOBAL MANDATORY STYLES -->
     
 
-    <link rel="shortcut icon" href="{html image:favicon.ico}" />
+    <link rel="shortcut icon" href="../Public/Default/images/favicon.ico" />
 
 
 </head>
@@ -87,9 +87,9 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 
                 <!-- BEGIN LOGO -->
 
-                <a class="brand" href="{url index}">
+                <a class="brand" href="<?PHP echo "?m=index&a=index";?>">
 
-                <img src="{html image:logo.png}" alt="logo" />
+                <img src="../Public/Default/images/logo.png" alt="logo" />
 
                 </a>
 
@@ -99,7 +99,7 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 
                 <a href="javascript:;" class="btn-navbar collapsed" data-toggle="collapse" data-target=".nav-collapse">
 
-                <img src="{html image:menu-toggler.png}" alt="" />
+                <img src="../Public/Default/images/menu-toggler.png" alt="" />
 
                 </a>          
 
@@ -249,7 +249,7 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 
                                 <a href="inbox.html?a=view">
 
-                                <span class="photo"><img src="{html image:avatar2.jpg}" alt="" /></span>
+                                <span class="photo"><img src="../Public/Default/images/avatar2.jpg" alt="" /></span>
 
                                 <span class="subject">
 
@@ -275,7 +275,7 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 
                                 <a href="inbox.html?a=view">
 
-                                <span class="photo"><img src="{html image:avatar3.jpg}" alt="" /></span>
+                                <span class="photo"><img src="../Public/Default/images/avatar3.jpg" alt="" /></span>
 
                                 <span class="subject">
 
@@ -301,7 +301,7 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 
                                 <a href="inbox.html?a=view">
 
-                                <span class="photo"><img src="{html image:avatar1.jpg}" alt="" /></span>
+                                <span class="photo"><img src="../Public/Default/images/avatar1.jpg" alt="" /></span>
 
                                 <span class="subject">
 
@@ -505,7 +505,7 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
 
-                        <img alt="" src="{html image:avatar1_small.jpg}" />
+                        <img alt="" src="../Public/Default/images/avatar1_small.jpg" />
 
                         <span class="username">Bob Nilson</span>
 
@@ -592,34 +592,34 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
                     <!-- END RESPONSIVE QUICK SEARCH FORM -->
 
                 </li>
-{foreach sourceBySql='\struggle\M('Menu')->getSidebarMenus()' name='menu' list='index,value'}
-<li class='{if condition='$menuChain[0] eq $index'}start active{/if}'>
- <a href='{$value['link']}'>
- <i class='{$value['icon']}'></i>
- <span class='title'>{$value['name']}</span>
- {if condition='isset($value['submenu'])'}<span class='arrow'></span>{/if}
+<?php foreach($menu AS $index=>$value):?>
+<li class='<?php if($menuChain[0] == $index):?>start active<?php endif;?>'>
+ <a href='<?php echo $value['link'];?>'>
+ <i class='<?php echo $value['icon'];?>'></i>
+ <span class='title'><?php echo $value['name'];?></span>
+ <?php if(isset($value['submenu'])):?><span class='arrow'></span><?php endif;?>
  </a>
- {if condition='isset($value['submenu'])'}
-    {foreach name='$value['submenu']' list='index2,value2'}
+ <?php if(isset($value['submenu'])):?>
+    <?php foreach($value['submenu'] AS $index2=>$value2):?>
     <ul class='sub-menu'>
-	  {if condition='!isset($menuChain[2]) and isset($menuChain[1]) and ($menuChain[1] eq $index2)'}
+	  <?php if(!isset($menuChain[2]) and isset($menuChain[1]) and ($menuChain[1] == $index2)):?>
       <li class='active'>
-	  {elseif condition='isset($menuChain[2]) and isset($menuChain[1]) and ($menuChain[1] eq $index2)'}
+	  <?php elseif(isset($menuChain[2]) and isset($menuChain[1]) and ($menuChain[1] == $index2)):?>
       <li class='open'>
-	  {else /}
+	  <?php else:?>
 	  <li class=''>
-	  {/if}
-        <a href='{$value2['link']}'>
-        <i class='{$value2['icon']}'></i>
-        <span class='title'>{$value2['name']}</span>
-        {if condition='isset($value2['submenu'])'}<span class='arrow'></span>{/if}
+	  <?php endif;?>
+        <a href='<?php echo $value2['link'];?>'>
+        <i class='<?php echo $value2['icon'];?>'></i>
+        <span class='title'><?php echo $value2['name'];?></span>
+        <?php if(isset($value2['submenu'])):?><span class='arrow'></span><?php endif;?>
         </a>
       </li>
     </ul>
-    {/foreach}
- {/if}
+    <?php endforeach;?>
+ <?php endif;?>
 </li>
-{/foreach}
+<?php endforeach;?>
                 <li class=" "><!--start active-->
 
                     <a href="index.html">
@@ -1308,7 +1308,7 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 
                 </li>
 
-                <li class="{html layout:controller/layout}">
+                <li class="">
 
                     <a href="javascript:;">
 
@@ -1325,7 +1325,7 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 
                         <li >
 
-                            <a href="{url index/user}">
+                            <a href="<?PHP echo "?m=index&a=user";?>">
 
                             用户管理</a>
 
@@ -1625,17 +1625,17 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 
                                 <i class="icon-home"></i>
 
-                                <a href="{url Index/index}">首页</a> 
+                                <a href="<?PHP echo "?m=Index&a=index";?>">首页</a> 
 
                                 <i class="icon-angle-right"></i>
 
                             </li>
-                            {foreach name='menuChainInfo' list='index,value'}
+                            <?php foreach($menuChainInfo AS $index=>$value):?>
                             <li>
-                              <a href="{$value['link']}">{$value['name']}</a>
-                              {if condition='isset($menuChainInfo[$index+1])'}<i class='icon-angle-right'></i>{/if}
+                              <a href="<?php echo $value['link'];?>"><?php echo $value['name'];?></a>
+                              <?php if(isset($menuChainInfo[$index+1])):?><i class='icon-angle-right'></i><?php endif;?>
                              </li>
-                            {/foreach}
+                            <?php endforeach;?>
 
                             <!--li class="pull-right no-text-shadow">
 
@@ -1662,7 +1662,121 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
             
             
             <!-- BEGIN PAGE CONTAINER-->
-            {content}
+               
+                <!-- BEGIN PAGE CONTENT-->
+
+                <div class="row-fluid">
+
+                    <div class="span12">
+
+                        <!-- BEGIN EXAMPLE TABLE PORTLET-->
+
+                        <div class="portlet box grey">
+
+                            <div class="portlet-title">
+
+                                <div class="caption"><i class="icon-globe"></i>菜单管理</div>
+
+                                <div class="tools">
+
+                                    <a href="javascript:;" class="collapse"></a>
+
+                                    <a href="#portlet-config" data-toggle="modal" class="config"></a>
+
+                                    <a href="javascript:;" class="reload"></a>
+
+                                    <a href="javascript:;" class="remove"></a>
+
+                                </div>
+
+                            </div>
+
+                            <div class="portlet-body">
+
+                                <div class="clearfix">
+
+                                    <div class="btn-group">
+
+                                        <button id="menu_editable_1_new" class="btn green" onclick='location.href="<?PHP echo "?m=menu&a=add";?>"'>
+                                                                                                        新增 <i class="icon-plus"></i>
+                                        </button>
+
+                                    </div>
+
+                                    <div class="btn-group pull-right">
+
+                                        <button class="btn dropdown-toggle" data-toggle="dropdown">工具 <i class="icon-angle-down"></i>
+
+                                        </button>
+
+                                        <ul class="dropdown-menu pull-right">
+
+                                            <li><a href="#">Print</a></li>
+
+                                            <li><a href="#">Save as PDF</a></li>
+
+                                            <li><a href="#">Export to Excel</a></li>
+
+                                        </ul>
+
+                                    </div>
+
+                                </div>
+
+                                <table class="table table-striped table-bordered table-hover" id="menu_1">
+
+                                    <thead>
+
+                                        <tr>
+
+                                            <th style="width:8px;"><input type="checkbox" class="group-checkable" data-set="#menu_1 .checkboxes" /></th>
+                                            <?php foreach($model->_listField() AS $index=>$field):?>
+                                            <?php if($index==1):?>
+                                            <th><?php echo \struggle\L($field);?></th>
+                                            <?php else:?>
+                                            <th class="hidden-480"><?php echo \struggle\L($field);?></th>
+                                            <?php endif;?>
+                                            <?php endforeach;?>
+
+                                            <th >操作</th>
+
+                                        </tr>
+
+                                    </thead>
+
+                                    <tbody>
+
+                                        <tr class="odd gradeX">
+
+                                            <td><input type="checkbox" class="checkboxes" value="1" /></td>
+
+                                            <td>shuxer</td>
+
+                                            <td class="hidden-480"><a href="mailto:shuxer@gmail.com">shuxer@gmail.com</a></td>
+
+                                            <td class="hidden-480">120</td>
+
+                                            <td class="center hidden-480">12 Jan 2012</td>
+
+                                            <td ><span class="label label-success">Approved</span></td>
+
+                                        </tr>
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        </div>
+
+                        <!-- END EXAMPLE TABLE PORTLET-->
+
+                    </div>
+
+                </div>
+                
+
             <!-- END PAGE CONTAINER-->    
             </div>
         </div>
@@ -1673,7 +1787,15 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 
     <!-- END CONTAINER -->
 
+  <div id="dialog_confirm" title="Empty the recycle bin?" class="hide">
 
+      <p><span class="icon icon-warning-sign"></span>
+
+          These items will be permanently deleted and cannot be recovered. Are you sure?
+
+      </p>
+
+  </div>
 
 
 
@@ -1719,39 +1841,39 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 
     <!-- BEGIN CORE PLUGINS 核心插件 -->
 
-    <script src="{html js:jquery-1.10.1.min.js}" type="text/javascript"></script>
+    <script src="../Public/Default/js/jquery-1.10.1.min.js" type="text/javascript"></script>
 
-    <script src="{html js:jquery-migrate-1.2.1.min.js}" type="text/javascript"></script>
+    <script src="../Public/Default/js/jquery-migrate-1.2.1.min.js" type="text/javascript"></script>
 
     <!-- IMPORTANT! Load jquery-ui-1.10.1.custom.min.js before bootstrap.min.js to fix bootstrap tooltip conflict with jquery ui tooltip -->
 
-    <script src="{html js:jquery-ui-1.10.1.custom.min.js}" type="text/javascript"></script>      
+    <script src="../Public/Default/js/jquery-ui-1.10.1.custom.min.js" type="text/javascript"></script>      
 
-    <script src="{html js:bootstrap.min.js}" type="text/javascript"></script>
+    <script src="../Public/Default/js/bootstrap.min.js" type="text/javascript"></script>
 
     <!--[if lt IE 9]>
 
-    <script src="{html js:excanvas.min.js}"></script>
+    <script src="../Public/Default/js/excanvas.min.js"></script>
 
-    <script src="{html js:respond.min.js}"></script>  
+    <script src="../Public/Default/js/respond.min.js"></script>  
 
     <![endif]-->   
 
-    <script src="{html js:jquery.slimscroll.min.js}" type="text/javascript"></script>
+    <script src="../Public/Default/js/jquery.slimscroll.min.js" type="text/javascript"></script>
 
-    <script src="{html js:jquery.blockui.min.js}" type="text/javascript"></script>  
+    <script src="../Public/Default/js/jquery.blockui.min.js" type="text/javascript"></script>  
 
-    <script src="{html js:jquery.cookie.min.js}" type="text/javascript"></script>
+    <script src="../Public/Default/js/jquery.cookie.min.js" type="text/javascript"></script>
 
-    <script src="{html js:jquery.uniform.min.js}" type="text/javascript" ></script>
+    <script src="../Public/Default/js/jquery.uniform.min.js" type="text/javascript" ></script>
 
     <!-- END CORE PLUGINS -->
     
     
 
 <script type='text/javascript'>
-var _themePath = '{$GLOBALS['Sle']['Frontend']['themePath']}';
-var _menuListUrl = '{url menu/index?act=getListData}';
+var _themePath = '<?php echo $GLOBALS['Sle']['Frontend']['themePath'];?>';
+var _menuListUrl = '<?PHP echo "?m=menu&a=index&act=getListData";?>';
 </script>
 </body>
 

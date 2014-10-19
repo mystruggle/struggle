@@ -37,7 +37,6 @@ class MenuModel extends Model{
 				}
 				$this->_isSelected($value['ctl_name'], $value['act_name']) && $iSelectId = $value['id'];
                 $aResult[$value['id']] = $value;
-				//$sDep        .= $value['id'].'|';
 				unset($aMenu[$index]);
             }
         }
@@ -46,20 +45,46 @@ class MenuModel extends Model{
         
         //二级菜单
 		foreach($aMenu as $index=>$value){
-			if(in_array($value['parent_id'],array_keys($aResult))){
+			if(in_array($value['parent_id'],array_keys($aDep[0]))){
                 if (empty($value['ctl_name']) || empty($value['act_name'])){
                     $value['link'] = 'javascript:;';
                 }else{
 					$value['link'] = $this->_genLink($value['ctl_name'],$value['act_name']);
 				}
 				$this->_isSelected($value['ctl_name'], $value['act_name']) && $iSelectId = $value['id'];
-				$aResult[$value['parent_id']]['submenu'][$value['id']] = $value;
-				//$sDep  = str_replace($value['parent_id'].',',"{$value['parent_id']},{$value['parent_id']}{$value['id']},",$sDep);
+				$aResult[$value['id']] = $value;
 				unset($aMenu[$index]);
 			}
 		}
 		$aDep[] = $aResult;
 		$aResult = array();
+		
+		//处理菜单上下级关系
+		$iSelectId = null;
+		$iDepLen = count($aDep)-1;
+		for ($i=$iDepLen;$i>=0;$i--){
+		    foreach ($aDep[$i] as $value){
+		        if ($i == $iDepLen){
+		            $value['selected'] = false;
+		            if (Sle::app()->route->module == $value['ctl_name'] && Sle::app()->route->action == $value['act_name']){
+		                $value['selected'] = true;
+		                $iSelectId = $value['parent_id'];
+		            }
+		        }else{
+		            $value['selected'] = false;
+		            if ($iSelectId == $value['id']){
+		                $value['selected'] = true;
+		                $iSelectId = $value['parent_id'];
+		            }
+		        }
+		        if ($i>0)
+		            $aDep[$i-1][$value['parent_id']]['submenu'][$value['id']] = $value;
+		        else 
+		            $aDep[$i][$value['id']]['selected'] = $value['selected'];
+		    }
+		    if ($i>0)
+		        unset($aDep[$i]);
+		}
 		
 		//菜单链处理
 		$aMenuChain = explode(',',$this->_getMenuDep($iSelectId,$sDep));

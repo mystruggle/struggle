@@ -61,6 +61,7 @@ class MenuModel extends Model{
 		
 		//处理菜单上下级关系
 		$iSelectId = null;
+		$aMenuChain = array();
 		$iDepLen = count($aDep)-1;
 		for ($i=$iDepLen;$i>=0;$i--){
 		    foreach ($aDep[$i] as $value){
@@ -69,12 +70,18 @@ class MenuModel extends Model{
 		            if (Sle::app()->route->module == $value['ctl_name'] && Sle::app()->route->action == $value['act_name']){
 		                $value['selected'] = true;
 		                $iSelectId = $value['parent_id'];
+		                $aMenuChain[] = $value['id'];
 		            }
 		        }else{
 		            $value['selected'] = false;
-		            if ($iSelectId == $value['id']){
+		            if (is_null($iSelectId) && Sle::app()->route->module == $value['ctl_name'] && Sle::app()->route->action == $value['act_name']){
 		                $value['selected'] = true;
 		                $iSelectId = $value['parent_id'];
+		                $aMenuChain[] = $value['id'];
+		            }elseif ($iSelectId == $value['id']){
+		                $value['selected'] = true;
+		                $iSelectId = $value['parent_id'];
+		                $aMenuChain[] = $value['id'];
 		            }
 		        }
 		        if ($i>0)

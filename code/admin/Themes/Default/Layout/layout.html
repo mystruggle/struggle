@@ -593,18 +593,18 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 
                 </li>
 {foreach sourceBySql='\struggle\M('Menu')->getSidebarMenus()' name='menu' list='index,value'}
-<li class='{if condition='$menuChain[0] eq $index'}start active{/if}'>
+<li class='{if condition='$value['selected']'}start active{/if}'>
  <a href='{$value['link']}'>
  <i class='{$value['icon']}'></i>
  <span class='title'>{$value['name']}</span>
- {if condition='isset($value['submenu'])'}<span class='arrow'></span>{/if}
+ {if condition='isset($value['submenu'])'}<span class='arrow {if condition='$value['selected']'} open{/if} '></span>{/if}
  </a>
  {if condition='isset($value['submenu'])'}
     {foreach name='$value['submenu']' list='index2,value2'}
     <ul class='sub-menu'>
-	  {if condition='!isset($menuChain[2]) and isset($menuChain[1]) and ($menuChain[1] eq $index2)'}
+	  {if condition='!isset($menuChain[2]) and $value2['selected']'}
       <li class='active'>
-	  {elseif condition='isset($menuChain[2]) and isset($menuChain[1]) and ($menuChain[1] eq $index2)'}
+	  {elseif condition='isset($menuChain[2]) and $value2['selected']'}
       <li class='open'>
 	  {else /}
 	  <li class=''>

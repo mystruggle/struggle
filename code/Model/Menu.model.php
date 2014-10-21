@@ -66,15 +66,15 @@ class MenuModel extends Model{
 		for ($i=$iDepLen;$i>=0;$i--){
 		    foreach ($aDep[$i] as $value){
 		        if ($i == $iDepLen){
-		            $value['selected'] = false;
-		            if (Sle::app()->route->module == $value['ctl_name'] && Sle::app()->route->action == $value['act_name']){
+		            $value['selected'] = false;//&& Sle::app()->route->action == $value['act_name']
+		            if (Sle::app()->route->module == $value['ctl_name'] ){
 		                $value['selected'] = true;
 		                $iSelectId = $value['parent_id'];
 		                $aMenuChain[] = $value['id'];
 		            }
 		        }else{
-		            $value['selected'] = false;
-		            if (is_null($iSelectId) && Sle::app()->route->module == $value['ctl_name'] && Sle::app()->route->action == $value['act_name']){
+		            $value['selected'] = false;//&& Sle::app()->route->action == $value['act_name']
+		            if (is_null($iSelectId) && Sle::app()->route->module == $value['ctl_name'] ){
 		                $value['selected'] = true;
 		                $iSelectId = $value['parent_id'];
 		                $aMenuChain[] = $value['id'];
@@ -92,12 +92,13 @@ class MenuModel extends Model{
 		    if ($i>0)
 		        unset($aDep[$i]);
 		}
-		
+		$aResult = $aDep[0];
 		//菜单链处理
-		$aMenuChain = explode(',',$this->_getMenuDep($iSelectId,$sDep));
-		Sle::app()->controller->assgin('menuChain',$aMenuChain);
+		//$aMenuChain = explode(',',$this->_getMenuDep($iSelectId,$sDep));
+		//Sle::app()->controller->assgin('menuChain',$aMenuChain);
 		$aMenuChainInfo = array();
 		$aNodeInfo = array();
+		$aMenuChain = array_reverse($aMenuChain);
 		foreach ($aMenuChain as $id){
 		    $aNodeInfo = empty($aNodeInfo)?$aResult[$id]:$aNodeInfo['submenu'][$id];
 		    if ($aNodeInfo['parent_id'])
@@ -105,6 +106,7 @@ class MenuModel extends Model{
 		    else 
 		      $aMenuChainInfo[$id]['name'] = $aNodeInfo['name'];
 		    $aMenuChainInfo[$id]['link']   = $this->_genLink($aNodeInfo['ctl_name'], $aNodeInfo['act_name']);
+		    empty($aMenuChainInfo[$id]['link']) && $aMenuChainInfo[$id]['link'] = 'javascript:;';
 		}
 		Sle::app()->controller->assgin('menuChainInfo',$aMenuChainInfo);
         return $aResult;

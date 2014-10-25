@@ -386,6 +386,12 @@ class BaseModel extends \struggle\libraries\Object{
         $aOpt = array();
         $aOpt['table'] = $this->getTableName();
         $aOpt['operation'] = 'DELETE';
+        if (isset($data['field'])){
+            $aOpt['field'] = $data['field'];
+            unset($data['field']);
+        }elseif(isset($this->mSelectElement['field'])){
+            $aOpt['field'] = $this->mSelectElement['field'];
+        }
         $aOpt['where'] = $data;
         if ($aOpt['where']){
             if (is_array($aOpt['where'])){
@@ -399,8 +405,30 @@ class BaseModel extends \struggle\libraries\Object{
             $aOpt['where'] = $this->mSelectElement['where'];
         }
         $retval = $this->db->delete($aOpt);
+        $this->resetElement();
         return $retval;
     }
+    
+    /**
+     * 数据库修改方法
+     * @param array $data  需要修改的数据
+     */
+    public function update($data){
+        $aOpt = array();
+        $aOpt['table'] = $this->getTableName();
+        $aOpt['operation'] = 'UPDATE';
+        $aOpt['data'] = $data;
+        $aOpt['where'] = '';
+        if (isset($this->mSelectElement['where'])){
+            $aOpt['where'] = $this->mSelectElement['where'];
+        }
+        $retval = $this->db->update($aOpt);
+        $this->resetElement();
+        return $retval;
+    }
+    
+    
+    
     
     public function count($opt = ''){
         $this->mSelectElement['count'] = 'count(*) as count';

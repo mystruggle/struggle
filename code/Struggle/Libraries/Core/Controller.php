@@ -222,7 +222,7 @@ class BaseController extends \struggle\libraries\Object{
                 $aTplInfo = explode('/', $tpl);
                 $sTplPath = \struggle\ctop($aTplInfo[0]).'/'.\struggle\ptoc($oRoute->action);
                 if (isset($aTplInfo[1]) && $aTplInfo[1]){
-                    $sTplPath = \struggle\ctop($aTplInfo[1]).'/'.\struggle\ptoc($aTplInfo[0]);
+                    $sTplPath = \struggle\ctop($aTplInfo[0]).'/'.\struggle\ptoc($aTplInfo[1]);
                 }
                 $sFile = $oView->ThemePath.$oView->Theme.'/'.$sTplPath.'.'.$oView->TplSuffix;
                 

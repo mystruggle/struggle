@@ -46,15 +46,32 @@ class MenuController extends Controller{
     
     private function save(){
         $oMenu = \struggle\M('Menu');
-        $a = $oMenu->create($_POST);
-        $this->redirect('','新增'.($oMenu->save($a)?'成功':'失败'));        
+        $aData = $oMenu->create($_POST);
+        $aData['create_time'] = time();
+        $this->redirect('','新增'.($oMenu->save($aData)?'成功':'失败'));        
     }
     
-    
+
     public function actionDelete(){
         $oMenu = \struggle\M('Menu');
         $retval = $oMenu->delete(array('id'=>$_GET['id']));
         die(json_encode(array('status'=>$retval,'message'=>($retval?'删除成功！':'删除失败'))));
+    }
+
+    
+    public function actionUpdate(){
+        $oMenu = \struggle\M('Menu');
+        Sle::app()->client->registerClient('jQuery(document).ready(function(){App.init();FormValidation.init();});',Client::POS_BODY_BOTTOM);
+        if ($_GET['act'] == 'save'){
+            $data = $oMenu->create($_POST);
+            unset($data['id']);
+            $data['create_time'] = time();
+            $bStat = $oMenu->where(array('id'=>$_POST['id']))->update($data);
+            $this->redirect('','更新'.($bStat?'成功':'失败'));
+            return;
+        }
+        $aRow = $oMenu->where(array('id'=>$_GET['id']))->find();
+        $this->layout('',array('data'=>$aRow));
     }
 
     

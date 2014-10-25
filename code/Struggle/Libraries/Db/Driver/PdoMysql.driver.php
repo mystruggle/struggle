@@ -209,6 +209,49 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
         return $this->mErrorCode?false:true;
     }
     
+    
+    /**
+     * 数据库更新操作
+     * @param array $option   更新操作参数
+     * @return boolean
+     */
+    public function update($option){
+        if (!is_array($option))
+            return false;
+        $sSql = '';
+        if (isset($option['operation']) && strtolower($option['operation']) == 'update'){
+            $sSql .= 'UPDATE ';
+        }
+        if (isset($option['table'])){
+            $sSql .= $option['table'].' ';
+        }
+        if (isset($option['data']) && is_array($option['data'])){
+            $sSql .= 'SET ';
+            foreach ($option['data'] as $name=>$value){
+                if ($this->mBindParam)
+                    $sSql .= "{$name}={$value} ,";
+                else 
+                    $sSql .= "{$name}='{$value}' ,";
+            }
+            $sSql = rtrim($sSql,',');
+        }
+        if (isset($option['where'])){
+            $sAlias = $this->mAlias;
+            $this->mAlias = '';
+            $this->_where($option['where']);
+            $this->mAlias = $sAlias;
+            $sSql .= $this->mSelectInfo['where'];
+        }
+        if (!$sSql)
+            return false;
+        $this->prepare($sSql);
+        $this->_beginBind();
+        $this->execute();
+        //$a='00'或$a='0..'多个时empty($a)为false，当$a='0'时empty($a)为true
+        is_numeric($this->mErrorCode) && $this->mErrorCode = intval($this->mErrorCode);
+        return $this->mErrorCode?false:true;
+    }
+    
     /**
      * 检查是否需要统计
      */

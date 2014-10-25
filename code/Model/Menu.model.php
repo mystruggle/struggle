@@ -26,7 +26,6 @@ class MenuModel extends Model{
         $aResult = array();
 		$aDep = array();   
 		$iSelectId = 0;
-		
 		//一级菜单
         foreach ($aMenu as $index=>$value){
             if (intval($value['parent_id']) === 0){
@@ -58,6 +57,23 @@ class MenuModel extends Model{
 		}
 		$aDep[] = $aResult;
 		$aResult = array();
+
+		//三级菜单
+		foreach($aMenu as $index=>$value){
+		    if(in_array($value['parent_id'],array_keys($aDep[1]))){
+		        if (empty($value['ctl_name']) || empty($value['act_name'])){
+		            $value['link'] = 'javascript:;';
+		        }else{
+		            $value['link'] = $this->_genLink($value['ctl_name'],$value['act_name']);
+		        }
+		        $this->_isSelected($value['ctl_name'], $value['act_name']) && $iSelectId = $value['id'];
+		        $aResult[$value['id']] = $value;
+		        unset($aMenu[$index]);
+		    }
+		}
+		$aDep[] = $aResult;
+		$aResult = array();
+		
 		
 		//处理菜单上下级关系
 		$iSelectId = null;
@@ -93,9 +109,9 @@ class MenuModel extends Model{
 		        unset($aDep[$i]);
 		}
 		$aResult = $aDep[0];
+
+		Debug::trace(print_r($aResult,true).',fuck');
 		//菜单链处理
-		//$aMenuChain = explode(',',$this->_getMenuDep($iSelectId,$sDep));
-		//Sle::app()->controller->assgin('menuChain',$aMenuChain);
 		$aMenuChainInfo = array();
 		$aNodeInfo = array();
 		$aMenuChain = array_reverse($aMenuChain);
@@ -121,36 +137,7 @@ class MenuModel extends Model{
 		return Sle::app()->route->genUrl("{$ctlName}/{$actName}");
     }
 
-    /**
-	 * 获取菜单节点位置
-	 * @param integer $id 搜索的节点，用于定位在那个节点链上
-	 * @param string  $dep 全部的节点链
-	 * @param integer $pos  需要返回的节点，为0返回链
-	 */
-	private function _getMenuDep($id,$dep,$pos = 0){
-		$dep ='|'.ltrim($dep,'|');
-		$aDepOfSort = array();
-		foreach (explode('|', $dep) as $value){
-		    if(empty($value)) continue;
-		    $aChin = explode(',', $value);
-		    $iParent = array_shift($aChin);
-		    $i = 0;
-		    do{
-		        if (intval(substr($aChin[$i], 0,strlen($iParent))) == intval($iParent)){
-		            $aDepOfSort[$iParent][] = substr($aChin[$i],strlen($iParent)+1);
-		        }
-		    }while($aChin);
-		}
-		$iIdPos = strpos($dep,$id);
-		$iVerticalPos = strpos($dep,'|',$iIdPos);
-		$dep = substr($dep,0,$iVerticalPos);
-		$iVerticalPos = strrpos($dep,'|');
-		$dep = substr($dep,$iVerticalPos+1);
-		$aDep = explode(',',$dep);
-		if($pos && isset($aDep[$pos-1]))
-			return $aDep[$pos-1];
-		return $dep;
-	}
+   
 	
 	public function getAllMenu(){
 	    $aMenu = $this->field('id,name')->findAll();

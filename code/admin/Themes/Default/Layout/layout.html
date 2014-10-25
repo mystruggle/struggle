@@ -592,6 +592,7 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
                     <!-- END RESPONSIVE QUICK SEARCH FORM -->
 
                 </li>
+ <!-- start 一级菜单 -->
 {foreach sourceBySql='\struggle\M('Menu')->getSidebarMenus()' name='menu' list='index,value'}
 <li class='{if condition='$value['selected']'}start active{/if}'>
  <a href='{$value['link']}'>
@@ -599,9 +600,10 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
  <span class='title'>{$value['name']}</span>
  {if condition='isset($value['submenu'])'}<span class='arrow {if condition='$value['selected']'} open{/if} '></span>{/if}
  </a>
+ <!-- start 二级菜单 -->
  {if condition='isset($value['submenu'])'}
-    {foreach name='$value['submenu']' list='index2,value2'}
     <ul class='sub-menu'>
+    {foreach name='$value['submenu']' list='index2,value2'}
 	  {if condition='!isset($menuChain[2]) and $value2['selected']'}
       <li class='active'>
 	  {elseif condition='isset($menuChain[2]) and $value2['selected']'}
@@ -614,12 +616,35 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
         <span class='title'>{$value2['name']}</span>
         {if condition='isset($value2['submenu'])'}<span class='arrow'></span>{/if}
         </a>
+        <!-- start 三级菜单 -->
+        {if condition='isset($value2['submenu'])'}
+		    <ul class='sub-menu'>
+		    {foreach name='$value2['submenu']' list='index3,value3'}
+		      {if condition='!isset($menuChain[3]) and $value3['selected']'}
+		      <li class='active'>
+		      {elseif condition='isset($menuChain[3]) and $value3['selected']'}
+		      <li class='open'>
+		      {else /}
+		      <li class=''>
+		      {/if}
+		        <a href='{$value3['link']}'>
+		        <i class='{$value3['icon']}'></i>
+		        <span class='title'>{$value3['name']}</span>
+		        {if condition='isset($value3['submenu'])'}<span class='arrow'></span>{/if}
+		        </a>
+		      </li>
+		     {/foreach}
+		   </ul>
+        {/if}
+        <!-- end 三级菜单 -->
       </li>
-    </ul>
     {/foreach}
+    </ul>
  {/if}
+ <!-- end 二级菜单 -->
 </li>
 {/foreach}
+<!-- end 一级菜单 -->
                 <li class=" "><!--start active-->
 
                     <a href="index.html">

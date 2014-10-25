@@ -8,7 +8,7 @@
 
                             <div class="portlet-title">
 
-                                <div class="caption"><i class="icon-reorder"></i>菜单新增</div>
+                                <div class="caption"><i class="icon-reorder"></i>菜单修改</div>
 
                                 <div class="tools">
 
@@ -30,7 +30,7 @@
 
                                 <!--h3></h3-->
 
-                                <form action="{url menu/add?act=save}" id="form_menu_1" method='post' enctype="application/x-www-form-urlencoded" class="form-horizontal">
+                                <form action="{url menu/update?act=save}" id="form_menu_1" method='post' enctype="application/x-www-form-urlencoded" class="form-horizontal">
 
                                     <div class="alert alert-error hide">
 
@@ -79,7 +79,7 @@
 
                                         <div class="controls">
 
-                                            <textarea class="span6 m-wrap" rows="3" name='desc' value='{$data['desc']}' ></textarea>
+                                            <textarea class="span6 m-wrap" rows="3" name='desc' >{$data['desc']}</textarea>
 
                                         </div>
 
@@ -155,13 +155,10 @@
                                     
 
                                     <div class="form-actions">
-
                                         <button type="submit" class="btn green">{field confirm|\struggle\L}</button>
-
                                         <button type="button" class="btn" onclick='location.href="{url menu/index}"'>{field cancel|\struggle\L}</button>
-
                                     </div>
-
+                                    <input type='hidden' name='id' value='{$data['id']}' />
                                 </form>
 
                                 <!-- END FORM-->

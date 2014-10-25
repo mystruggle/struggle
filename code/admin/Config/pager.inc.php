@@ -1,6 +1,14 @@
 <?php
 use struggle\libraries\Client;
 return array(
+    'global'=>array(
+        Client::POS_HEAD_BOTTOM => array(
+                //'fullcalendar.css',
+        ),
+        Client::POS_BODY_BOTTOM => array(
+            //
+        )
+    ),
     'index'=>array(
             'index'=>array(
                     Client::POS_BODY_BOTTOM=>array(
@@ -33,33 +41,59 @@ return array(
             ),
     ),
     'menu'=>array(
+            'global' =>array(
+                Client::POS_BODY_BOTTOM =>array(
+                    'jquery.validate.min.js',
+                    'form-validation.js',
+                    'additional-methods.min.js',
+                    'select2.min.js',
+                    'app.js',
+                ),
+                Client::POS_HEAD_BOTTOM =>array(
+                    'select2_metro.css',
+                ),
+            ),
             'index'=>array(
                 Client::POS_BODY_BOTTOM =>array(
-                        'select2.min.js',
+                        //'select2.min.js',
                         'jquery.dataTables.js',
                         'DT_bootstrap.js',
                         'table-managed.js',
-                        'app.js',
-                        'jquery.validate.min.js',
-                        'additional-methods.min.js',
-                        'form-validation.js',
+                        //'app.js',
+                        //'jquery.validate.min.js',
+                        //'additional-methods.min.js',
+                        //'form-validation.js',
                 ),
                 Client::POS_HEAD_BOTTOM=>array(
-                        'select2_metro.css',
+                        //'select2_metro.css',
                         'DT_bootstrap.css',
                 ),
             ),
             'add'=>array(
                Client::POS_BODY_BOTTOM=>array(
-                    'jquery.validate.min.js',
-                    'additional-methods.min.js',
-                    'select2.min.js',
+                    //'jquery.validate.min.js',
+                    //'additional-methods.min.js',
+                    //'select2.min.js',
                     'chosen.jquery.min.js',
-                    'app.js',
-                    'form-validation.js',
+                    //'app.js',
+                    //'form-validation.js',
                 ),
                Client::POS_HEAD_BOTTOM=>array(
-                    'select2_metro.css',
+                    //'select2_metro.css',
+                    'chosen.css',
+                ),
+            ),
+            'update'=>array(
+               Client::POS_BODY_BOTTOM=>array(
+                    //'jquery.validate.min.js',
+                    //'additional-methods.min.js',
+                    //'select2.min.js',
+                    'chosen.jquery.min.js',
+                    //'app.js',
+                    //'form-validation.js',
+                ),
+               Client::POS_HEAD_BOTTOM=>array(
+                    //'select2_metro.css',
                     'chosen.css',
                 ),
             ),

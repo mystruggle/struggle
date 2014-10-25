@@ -17,6 +17,7 @@ abstract class Db extends \struggle\libraries\Object{
     abstract public function getFields($table);
     abstract public function save($data);
     abstract public function delete($option);
+    abstract public function update($option);
     abstract public function reset();
 	//abstract public function findAll();
 	//abstract public function findBySql();

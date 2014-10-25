@@ -28,7 +28,7 @@ var TableManaged = function () {
                 ],
                 // set the initial value
                 'bServerSide':true,
-                "iDisplayLength": 2,
+                "iDisplayLength": 5,
                 "sDom": "<'row-fluid'<'span12'f>r>t<'row-fluid'<'span4'l><'span2'i><'span6'p>>",
                 "sPaginationType": "bootstrap",
                 "oLanguage": {
@@ -61,7 +61,7 @@ var TableManaged = function () {
                         'mData':null,
                         'mRender':function(data,type,full){
                         	var operator = jQuery.parseJSON(full[8]);
-                        	return '<button  class="btn green mini" onclick="TableManaged.del(\''+operator.del+'\')">删除</button><button  class="btn blue mini" value="1">编辑</button>';
+                        	return '<button  class="btn green mini" onclick="TableManaged.del(\''+operator.del+'\')">删除</button>&nbsp;&nbsp;<button  class="btn blue mini" onclick="TableManaged.edit(\''+operator.edit+'\')" >编辑</button>';
                         }
                     }
                 ],
@@ -186,7 +186,11 @@ var TableManaged = function () {
 	        		}
 	        	});
         	}
+        },
+        edit:function(url){
+        	location.href = url;
         }
+      
 
     };
 

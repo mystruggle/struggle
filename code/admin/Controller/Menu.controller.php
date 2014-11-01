@@ -20,7 +20,7 @@ class MenuController extends Controller{
     
     private function _getListData(){
         $oModel = \struggle\M('Menu');
-        $aData = $oModel->count()->field('id,name,icon,`desc`,parent_id,orderby,create_time')->limit($_GET['iDisplayStart'],$_GET['iDisplayLength'])->findAll();
+        $aData = $oModel->count()->field('id,name,icon,`desc`,parent_id,orderby,create_time')->limit($_POST['iDisplayStart'],$_POST['iDisplayLength'])->findAll();
         $iCount = $oModel->getCount();
         $aResponseData = array();
         foreach ($aData as $data){
@@ -28,7 +28,7 @@ class MenuController extends Controller{
             $sDelUrl  = Sle::app()->route->genUrl('menu/delete?id='.$data['id']);
             $aResponseData[] = array('',$data['id'],$data['name'],$data['icon'],$data['desc'],$data['parent_id'],$data['orderby'],date('Y-m-d H:i:s',$data['create_time']),'{"edit":"'.$sEditUrl.'","del":"'.$sDelUrl.'"}');
         }
-        $aResponseData = array('iTotalRecords'=>$iCount,'sEcho'=>$_GET['sEcho'],'iTotalDisplayRecords'=>$iCount,'aaData'=>$aResponseData);
+        $aResponseData = array('iTotalRecords'=>$iCount,'sEcho'=>$_POST['sEcho'],'iTotalDisplayRecords'=>$iCount,'aaData'=>$aResponseData);
         echo  json_encode($aResponseData);
         exit;
     }
@@ -48,7 +48,7 @@ class MenuController extends Controller{
         $oMenu = \struggle\M('Menu');
         $aData = $oMenu->create($_POST);
         $aData['create_time'] = time();
-        $this->redirect('','新增'.($oMenu->save($aData)?'成功':'失败'));        
+        $this->redirect('新增'.($oMenu->save($aData)?'成功':'失败'));        
     }
     
 
@@ -67,7 +67,7 @@ class MenuController extends Controller{
             unset($data['id']);
             $data['create_time'] = time();
             $bStat = $oMenu->where(array('id'=>$_POST['id']))->update($data);
-            $this->redirect('','更新'.($bStat?'成功':'失败'));
+            $this->redirect('更新'.($bStat?'成功':'失败'));
             return;
         }
         $aRow = $oMenu->where(array('id'=>$_GET['id']))->find();

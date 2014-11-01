@@ -5,7 +5,7 @@
 
                     <div class="span12 page-404">
 
-                        <div class="number">Tips</div>
+                        <div class="number">Tip</div>
 
                         <div class="details">
 
@@ -13,7 +13,7 @@
 
                             <p>
 
-                               系统将在3秒钟后跳转，请稍后..<br />
+                               系统将在<font color='red'>{$time}</font>秒钟后跳转，请稍后..<br />
 
                                 或直接点击<a href="{$url}">这里</a>跳转.
 
@@ -42,6 +42,15 @@
             </div>
 
             <!-- END PAGE CONTAINER-->     
+<script type='text/javascript'>
+var time = {$time};
+var cls = setInterval(function(){
+        if(time<=0){
+            clearInterval(cls);
+        }
+        document.getElementsByTagName('font')[0].innerHTML = time;
+        time--;
+},1000);
+</script>
+<meta http-equiv='refresh' content='{$time};url={$url}' />
 
-
-<meta http-equiv='refresh' content='3;url={$url}' />

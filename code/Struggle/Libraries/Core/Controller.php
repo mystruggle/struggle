@@ -49,7 +49,7 @@ class BaseController extends \struggle\libraries\Object{
 	    return false;
 	}
 	
-	protected function redirect($url = '',$message = ''){
+	protected function redirect($message = '',$url = '', $interval = 3){
 	    if (!$url){
 	        $sModule = Sle::app()->route->module;
 	        $url = Sle::app()->route->scheme.
@@ -59,7 +59,12 @@ class BaseController extends \struggle\libraries\Object{
 	               Sle::app()->route->genUrl("{$sModule}/index");
 	        
 	    }
-	    $this->layout('tpl:'.APP_PUBLIC.'Default/html/redirect.html',array('message'=>$message,'url'=>$url));
+	    header('location:'.Sle::app()->route->genUrl(Sle::app()->route->module.'/redirect?'.http_build_query(array('message'=>$message,'url'=>$url,'interval'=>$interval))));
+	}
+	
+	public function actionRedirect(){
+	    //print_r($_GET['message']);die;
+	    $this->layout('tpl:'.APP_PUBLIC.'Default/html/redirect.html',array('message'=>urldecode($_GET['message']),'url'=>urldecode($_GET['url']),'time'=>$_GET['interval']));
 	}
 	
 	

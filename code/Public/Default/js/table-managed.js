@@ -1,23 +1,3 @@
-            jQuery.fn.dataTableExt.oApi.fnMultiFilter = function( oSettings, oData ) {
-            	for ( var key in oData )
-            	{
-            	if ( oData.hasOwnProperty(key) )
-            	{
-            	for ( var i=0, iLen=oSettings.aoColumns.length ; i<iLen ; i++ )
-            	{
-            	if( oSettings.aoColumns[i].sName == key )
-            	{
-            	/* Add single column filter */
-            	oSettings.aoPreSearchCols[ i ].sSearch = oData[key];
-            	break;
-            	}
-            	}
-            	}
-            	}
-            	this.oApi._fnReDraw( oSettings );
-            	};
-
-
 
 var TableManaged = function () {
 
@@ -50,6 +30,7 @@ var TableManaged = function () {
                 // set the initial value
                 'bServerSide':true,
                 "sServerMethod":"post",
+                "bFilter":false,
                 "iDisplayLength": 5,
                 "sDom": "<'row-fluid'<'span12'f>r>t<'row-fluid'<'span4'l><'span2'i><'span6'p>>",
                 "sPaginationType": "bootstrap",
@@ -89,15 +70,15 @@ var TableManaged = function () {
                 ],
                 'sAjaxSource':_menuListUrl,
                 fnInfoCallback:function(){
-                    jQuery('.dataTables_filter').html('<label style="float:none;">菜单名称：<input type="text" /></label>&nbsp;&nbsp;&nbsp;&nbsp;<button class="btn">搜索<i class="icon-search"></i></button>');
                     var set = jQuery('#menu_1 .group-checkable').attr('data-set');
                     jQuery(set).uniform();
                 }
             });
-
-            oDT.fnMultiFilter({"title":"fuck"});
+            jQuery('#menu_1 thead th').each(function(index){
+            	if(index != 0 && index!=8)
+            	jQuery('#menu_1').prev().children('.span12').append('<input type="text" style="margin-right:5px;width:'+jQuery(this).css('width')+'" placeholder="search '+jQuery(this).text()+'" />');
+            });
             
-            //fnMultiFilter({});
             
             jQuery('#menu_1 .group-checkable').change(function () {
                 var set = jQuery(this).attr("data-set");

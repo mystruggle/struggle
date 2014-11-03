@@ -75,8 +75,10 @@ var TableManaged = function () {
                 }
             });
             jQuery('#menu_1 thead th').each(function(index){
-            	if(index != 0 && index!=8)
-            	jQuery('#menu_1').prev().children('.span12').append('<input type="text" style="margin-right:5px;width:'+jQuery(this).css('width')+'" placeholder="search '+jQuery(this).text()+'" />');
+            	if(index != 0 && index!=8 && index!=3 && index!=6){
+            	oSearchWrapper = jQuery('#menu_1').prev().children('.span12');
+            	oSearchWrapper.append('<input type="text" style="margin-right:7px;" placeholder="search '+jQuery(this).text()+'" />');
+            	}
             });
             
             

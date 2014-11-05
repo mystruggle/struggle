@@ -74,11 +74,17 @@ var TableManaged = function () {
                     jQuery(set).uniform();
                 }
             });
+            
+            
+            oSearchWrapper = jQuery('#menu_1').prev().children('.span12');
             jQuery('#menu_1 thead th').each(function(index){
             	if(index != 0 && index!=8 && index!=3 && index!=6){
-            	oSearchWrapper = jQuery('#menu_1').prev().children('.span12');
-            	oSearchWrapper.append('<input type="text" style="margin-right:7px;" placeholder="search '+jQuery(this).text()+'" />');
+            	    oSearchWrapper.append('<input type="text" style="margin-right:7px;" placeholder="search '+jQuery(this).text()+'" />');
             	}
+            });
+            oSearchWrapper.delegate('input','blur',function(){
+                oDT.column(0).search( this.value ).draw();
+            	//this.api().column(0).search($(this).val(),true,false).draw();
             });
             
             

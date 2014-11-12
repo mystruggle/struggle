@@ -44,6 +44,7 @@ create table if not exists sle_controller(
 )engine=innodb default character set utf8 collate utf8_general_ci comment '控制器表';
 insert into  sle_controller values(null,'Index','首页','首页');
 insert into  sle_controller values(null,'Menu','菜单管理','菜单管理');
+insert into  sle_controller values(null,'ModuleManage','控制器管理','控制器管理');
 
 
 create table if not exists sle_action(

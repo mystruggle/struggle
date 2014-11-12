@@ -48,8 +48,8 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
     protected $mBindParam     = array();  //绑定的参数
 	private   $mPdoStatement  = null;
 	protected $mFetchMode     = \PDO::FETCH_BOTH;
-	private   $mFieldRegexp      = '/`([^`]+)`(?:\.(gt|lt|ge|le|eq|neq|in|link|notin)$)?/i';
-	private   $mFieldExpMap   = array("gt"=>">","lt"=>"<","ge"=>">=","le"=>"<=","eq"=>"=");
+	private   $mFieldRegexp      = '/`([^`]+)`(?:\.(gt|lt|ge|le|eq|neq|in|like|notin)$)?/i';
+	private   $mFieldExpMap   = array("gt"=>">","lt"=>"<","ge"=>">=","le"=>"<=","eq"=>"=","like"=>'like');
 	private   $mDbIntegerType = array('tinyint','smallint','mediumint','int','integer','bigint',
 		                              'float','double','decimal','numeric','bit');
 	private   $mTablePrefix = '';

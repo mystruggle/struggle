@@ -11,17 +11,28 @@ var TableManaged = function () {
             }
             
             // begin first table
+			/*
+             * l - length changing input control
+             * f - filtering input
+             * t - The table!
+             * i - Table information summary
+             * p - pagination control
+             * r - processing display element
+			 * <>  表示 <div></div>
+			 * <"class" >表示<div class="class"></div>
+			 * <"#id" >表示<div id="class"></div>
+             */
             var oDT = jQuery('#menu_1').dataTable({
                 "aoColumns": [
-                  { "bSortable": false },
-                  null,
-                  { "bSortable": false ,'sClass':'center','sName':'title'},
-                  null,
-                  { "bSortable": false },
-                  { "bSortable": false },
-                  null,
-                  null,
-                  null,
+                  { "bSortable": false},
+                  { "bSortable": false,"sName":"id"},
+                  { "bSortable": false ,'sClass':'center','sName':'name'},
+                  { "bSortable": false,"bSearch":'' },
+                  { "bSortable": false,"sName":'desc' },
+                  { "bSortable": false ,"sName":'parent_id'},
+                  { "bSortable": false ,"bSearch":''},
+                  { "bSortable": false ,"sName":'create_time'},
+                  { "bSortable": false ,"bSearch":''}
                 ],
                 "aLengthMenu": [
                     [5, 15, 20, -1],
@@ -30,9 +41,9 @@ var TableManaged = function () {
                 // set the initial value
                 'bServerSide':true,
                 "sServerMethod":"post",
-                "bFilter":false,
+                "bFilter":true,
                 "iDisplayLength": 5,
-                "sDom": "<'row-fluid'<'span12'f>r>t<'row-fluid'<'span4'l><'span2'i><'span6'p>>",
+                "sDom": "<'row-fluid'<'span12'>r>t<'row-fluid'<'span4'l><'span2'i><'span6'p>>",
                 "sPaginationType": "bootstrap",
                 "oLanguage": {
                 	"sSearch":'查询：',
@@ -72,20 +83,58 @@ var TableManaged = function () {
                 fnInfoCallback:function(){
                     var set = jQuery('#menu_1 .group-checkable').attr('data-set');
                     jQuery(set).uniform();
-                }
-            });
-            
-            
-            oSearchWrapper = jQuery('#menu_1').prev().children('.span12');
-            jQuery('#menu_1 thead th').each(function(index){
-            	if(index != 0 && index!=8 && index!=3 && index!=6){
-            	    oSearchWrapper.append('<input type="text" style="margin-right:7px;" placeholder="search '+jQuery(this).text()+'" />');
-            	}
-            });
+                },
+				initComplete:function(){
+                    var oSearchWrapper = jQuery('#menu_1').prev().children('.span12');
+					$('table thead th').each(function(index,element){
+						if(index != 0 && index!=8 && index!=3 && index!=6){
+							var sSearchName = '';
+							if(index == 1)sSearchName = 'id';
+							if(index == 2)sSearchName = 'name';
+							if(index == 4)sSearchName = 'desc';
+							if(index == 5)sSearchName = 'parent_id';
+							if(index == 7)sSearchName = 'create_time';
+							var oSearch = jQuery('<input type="text" name="'+sSearchName+'"style="margin-right:7px;" placeholder="search '+jQuery(this).text()+'" />');
+            	            oSearchWrapper.append(oSearch);
+							oSearch.on('keydown',function(e){
+								var key = e.which;
+								if(key != 13)return;
+								e.preventDefault();
+								var data = '';
+								oSearchWrapper.children().each(function(){
+									var sKey = $(this).attr('name');
+									var sVal = $(this).val();
+									data += '"'+sKey+'":"'+sVal+'",';
+								});
+								if(data.length>0){
+									data = "{"+data.substr(0,data.length-1)+'}';
+									data = jQuery.parseJSON(data);
+								}
+					            oDT.fnMultiFilter(data);
+							});
+						}
+					});
+		/*
+					jQuery('#menu_1 thead th').each(function(index){
+						if(index != 0 && index!=8 && index!=3 && index!=6){
+							oSearchWrapper.append('<input type="text" style="margin-right:7px;" placeholder="search '+jQuery(this).text()+'" />');
+						}
+					});
             oSearchWrapper.delegate('input','blur',function(){
                 oDT.column(0).search( this.value ).draw();
             	//this.api().column(0).search($(this).val(),true,false).draw();
             });
+					*/
+
+
+
+
+
+
+				}
+            });
+            
+
             
             
             jQuery('#menu_1 .group-checkable').change(function () {

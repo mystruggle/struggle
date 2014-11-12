@@ -14,6 +14,7 @@ class View extends \struggle\libraries\Object{
     //protected $mTplData = array();
     protected $mWidgetTplPath = '';
     protected $mPublicTplPath  = '';
+	private   $mLogicTag  = array('gt'=>'>','ge'=>'>=','lt'=>'<','le'=>'<=','eq'=>'==');
     
     public function __construct(){
         parent::__construct();
@@ -325,6 +326,50 @@ class View extends \struggle\libraries\Object{
     private function _close_foreach(){
         return '<?php endforeach;?>';
     }
+
+
+    /**
+	 * 模板标签for
+	 * @params array 标签属性
+	 * @return string
+	 * @example
+	 * for($i=0;$i<=count($menuChainInfo);$i+=1)
+	 * 
+	 * $menuChainInfo = count($menuChainInfo);
+	 * {forcount='i,0' logic='le' name='menuChainInfo' sep='1'}
+	 * 或
+	 * {forcount='i,0' logic='le' name='count($menuChainInfo)' sep='1'}
+	 */
+	private function _for($params){
+		$sFor = '';
+		if ($aAttr = $this->parseTagAttr($params)){
+			$sCount = 'i';   //计数器变量名
+			$iCount = 0;    //计数器出事化值
+			$sLogic = 'le';
+			$iSep = 1;
+			if(!isset($aAttr['name']) || empty($aAttr['name'])) {
+				Debug::trace("模板标签for参数有误,name属性为必须".print_r($params,true),Debug::SYS_ERROR);
+				return '';
+			}
+			$sName = (strpos($aAttr['name'],'(')!==false)?$aAttr['name']:'$'.ltrim($aAttr['name'],'$');
+			if(isset($aAttr['count']) && $aAttr['count']){
+				$aCount = explode(',',$aAttr['count']);
+				isset($aCount[0]) && $sCount = $aCount[0];
+				isset($aCount[1]) && $iCount = $aCount[1];
+			}
+			isset($this->mLogicTag[$aAttr['logic']]) && $sLogic = $this->mLogicTag[$aAttr['logic']];
+			(isset($aAttr['sep']) && $aAttr['sep']) && $iSep =$aAttr['sep'];
+			$sFor = "<?php for(".'$'."{$sCount}={$iCount},".'$'."_tmp_for_limit = {$sName};".'$'."{$sCount}{$sLogic}".'$'."_tmp_for_limit;".'$'."{$sCount}".($iSep>0?'+':'-')."={$iSep}):?>";
+		}else{
+		    Debug::trace("模板标签for参数有误".print_r($params,true),Debug::SYS_ERROR);
+			return '';
+		}
+		return $sFor;
+	}
+
+	private function _close_for(){
+		return '<?php endfor;?>';
+	}
     
     /**
      * 解析标签属性，使其以数组形式存在
@@ -334,11 +379,14 @@ class View extends \struggle\libraries\Object{
      */
     private function parseTagAttr($attr){
         $xRlt = array('status'=>true,'msg'=>'');
+		Debug::trace('解析标签属性'.$attr,Debug::SYS_NOTICE);
         $aAttr = preg_split('/\s+(?=[^=]+?=\s*\'|".+\'|")/i', trim($attr));
+		Debug::trace('提取标签属性'.print_r($aAttr,true),Debug::SYS_NOTICE);
         $aReturn = array();
         if (is_array($aAttr) && $aAttr){
             foreach ($aAttr as  $attr){
                 preg_match('/^([^=]+)=\s*[\'|"](.+)[\'|"]$/s', $attr,$match);
+				Debug::trace('分别提取属性名称和值'.print_r($match,true),Debug::SYS_NOTICE);
                 if($xRlt['status'] && $match){
                     $sAttrVal = $match[2];
                     if ($sAttrVal[0] =="'"){
@@ -357,6 +405,7 @@ class View extends \struggle\libraries\Object{
             $xRlt['status'] = false;
             $xRlt['msg'] = '标签属性有误'.print_r($aAttr,true).' '.__METHOD__.' line '.__LINE__;
         }
+		Debug::trace('提取属性名称和值后的数组形式'.print_r($aReturn,true),Debug::SYS_NOTICE);
         return $aReturn;
     }
 

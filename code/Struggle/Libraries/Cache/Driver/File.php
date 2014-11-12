@@ -146,6 +146,7 @@ class File extends Object{
             return true;
         }
         $aHandle[$sKey] = fopen($this->mFile, $this->mMode);
+		//debug_print_backtrace();
         if (!\struggle\isResource($aHandle[$sKey])){
             $this->error = "文件打开失败{$this->mFile}\t".__METHOD__."\tline\t".__LINE__;
             return false;

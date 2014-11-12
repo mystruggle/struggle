@@ -1,5 +1,4 @@
-<?php 
-//phpinfo();die;///
-define('SLE_PATH', 'Struggle/');
+<?php
+define('SLE_PATH', '/git/struggle/code/Struggle/');
 define('APP_DEBUG', 'rescue');//true
 require SLE_PATH.'Sle.php';

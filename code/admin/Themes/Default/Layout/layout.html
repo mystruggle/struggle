@@ -1655,12 +1655,12 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
                                 <i class="icon-angle-right"></i>
 
                             </li>
-                            {foreach name='menuChainInfo' list='index,value'}
+                            {for count='i,0' logic='lt' name='count($menuChainInfo)' sep='1'}
                             <li>
-                              <a href="{$value['link']}">{$value['name']}</a>
-                              {if condition='isset($menuChainInfo[$index+1])'}<i class='icon-angle-right'></i>{/if}
+                              <a href="{$menuChainInfo[$i]['link']}">{$menuChainInfo[$i]['name']}</a>
+                              {if condition='$i != ($_tmp_for_limit-1)'}<i class='icon-angle-right'></i>{/if}
                              </li>
-                            {/foreach}
+                            {/for}
 
                             <!--li class="pull-right no-text-shadow">
 

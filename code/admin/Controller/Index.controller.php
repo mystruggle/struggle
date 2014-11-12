@@ -5,8 +5,8 @@ use struggle\libraries\Client;
 
 class IndexController extends Controller{
     public function actionIndex(){
-        $d = \struggle\M('User');
-        
+        $oMenu = \struggle\M('Menu');
+        $this->assgin('model', $oMenu);
         Sle::app()->client->registerClient($this->_indexJs(),Client::POS_BODY_BOTTOM);
         
         $this->layout();

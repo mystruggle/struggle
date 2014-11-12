@@ -55,45 +55,69 @@ return array(
             ),
             'index'=>array(
                 Client::POS_BODY_BOTTOM =>array(
-                        //'select2.min.js',
                         'jquery.dataTables.js',
                         'DT_bootstrap.js',
+                        'fnMultiFilter.js',
                         'table-managed.js',
-                        //'app.js',
-                        //'jquery.validate.min.js',
-                        //'additional-methods.min.js',
-                        //'form-validation.js',
                 ),
                 Client::POS_HEAD_BOTTOM=>array(
-                        //'select2_metro.css',
                         'DT_bootstrap.css',
                 ),
             ),
             'add'=>array(
                Client::POS_BODY_BOTTOM=>array(
-                    //'jquery.validate.min.js',
-                    //'additional-methods.min.js',
-                    //'select2.min.js',
                     'chosen.jquery.min.js',
-                    //'app.js',
-                    //'form-validation.js',
                 ),
                Client::POS_HEAD_BOTTOM=>array(
-                    //'select2_metro.css',
                     'chosen.css',
                 ),
             ),
             'update'=>array(
                Client::POS_BODY_BOTTOM=>array(
-                    //'jquery.validate.min.js',
-                    //'additional-methods.min.js',
-                    //'select2.min.js',
                     'chosen.jquery.min.js',
-                    //'app.js',
-                    //'form-validation.js',
                 ),
                Client::POS_HEAD_BOTTOM=>array(
-                    //'select2_metro.css',
+                    'chosen.css',
+                ),
+            ),
+    ),
+    'moduleManage'=>array(
+            'global' =>array(
+                Client::POS_BODY_BOTTOM =>array(
+                    'jquery.validate.min.js',
+                    'form-validation.js',
+                    'additional-methods.min.js',
+                    'select2.min.js',
+                    'app.js',
+                ),
+                Client::POS_HEAD_BOTTOM =>array(
+                    'select2_metro.css',
+                ),
+            ),
+            'index'=>array(
+                Client::POS_BODY_BOTTOM =>array(
+                        'jquery.dataTables.js',
+                        'DT_bootstrap.js',
+                        'fnMultiFilter.js',
+                        'table-managed.js',
+                ),
+                Client::POS_HEAD_BOTTOM=>array(
+                        'DT_bootstrap.css',
+                ),
+            ),
+            'add'=>array(
+               Client::POS_BODY_BOTTOM=>array(
+                    'chosen.jquery.min.js',
+                ),
+               Client::POS_HEAD_BOTTOM=>array(
+                    'chosen.css',
+                ),
+            ),
+            'update'=>array(
+               Client::POS_BODY_BOTTOM=>array(
+                    'chosen.jquery.min.js',
+                ),
+               Client::POS_HEAD_BOTTOM=>array(
                     'chosen.css',
                 ),
             ),

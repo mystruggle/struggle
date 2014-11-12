@@ -4,7 +4,7 @@ use struggle\Sle;
 use struggle\libraries\Client;
 use struggle\libraries\Debug;
 
-class MenuController extends Controller{
+class ModuleManageController extends Controller{
     public function actionIndex(){
         if (isset($_GET['act']) && $_GET['act']){
             $sMethod = '_'.$_GET['act'];

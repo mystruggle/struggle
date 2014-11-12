@@ -109,20 +109,20 @@ class MenuModel extends Model{
 		        unset($aDep[$i]);
 		}
 		$aResult = $aDep[0];
-
-		Debug::trace(print_r($aResult,true).',fuck');
 		//菜单链处理
 		$aMenuChainInfo = array();
 		$aNodeInfo = array();
 		$aMenuChain = array_reverse($aMenuChain);
-		foreach ($aMenuChain as $id){
+		foreach ($aMenuChain as $index=>$id){
 		    $aNodeInfo = empty($aNodeInfo)?$aResult[$id]:$aNodeInfo['submenu'][$id];
 		    if ($aNodeInfo['parent_id'])
-		      $aMenuChainInfo[$id]['name'] = $aNodeInfo['ctl_title'];
+		      $aMenuChainInfo[$index]['name'] = $aNodeInfo['ctl_title'];
 		    else 
-		      $aMenuChainInfo[$id]['name'] = $aNodeInfo['name'];
-		    $aMenuChainInfo[$id]['link']   = $this->_genLink($aNodeInfo['ctl_name'], $aNodeInfo['act_name']);
-		    empty($aMenuChainInfo[$id]['link']) && $aMenuChainInfo[$id]['link'] = 'javascript:;';
+		      $aMenuChainInfo[$index]['name'] = $aNodeInfo['name'];
+			$aMenuChainInfo[$index]['id'] = $id;
+
+		    $aMenuChainInfo[$index]['link']   = $this->_genLink($aNodeInfo['ctl_name'], $aNodeInfo['act_name']);
+		    empty($aMenuChainInfo[$index]['link']) && $aMenuChainInfo[$index]['link'] = 'javascript:;';
 		}
 		Sle::app()->controller->assgin('menuChainInfo',$aMenuChainInfo);
         return $aResult;

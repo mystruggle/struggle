@@ -4,6 +4,9 @@ var TableManaged = function () {
     return {
 		default:{
 			"formName":'',
+			"dataUrl":'',
+			"searchField":'',
+			"columns":'',
 		},
         //main function to initiate the module
         init: function () {
@@ -15,12 +18,10 @@ var TableManaged = function () {
 			if(arguments.length > 0)
 			    option = arguments[0];
 			this.default.formName = option.formName;
-			this.default.dataUrl = option.dataUrl;
+			this.default.dataUrl = decodeURIComponent(option.dataUrl);
 			this.default.searchField = option.searchField;
+			this.default.columns = option.columns;
 
-			jQuery(["name1","value1"]).each(function(index,data){
-				console.log(index+','+data+',');
-			});
             
             // begin first table
 			/*
@@ -34,18 +35,8 @@ var TableManaged = function () {
 			 * <"class" >表示<div class="class"></div>
 			 * <"#id" >表示<div id="class"></div>
              */
-            var oDT = jQuery('#menu_1').dataTable({
-                "aoColumns": [
-                  { "bSortable": false},
-                  { "bSortable": false,"sName":"id"},
-                  { "bSortable": false ,'sClass':'center','sName':'name'},
-                  { "bSortable": false,"bSearch":'' },
-                  { "bSortable": false,"sName":'desc' },
-                  { "bSortable": false ,"sName":'parent_id'},
-                  { "bSortable": false ,"bSearch":''},
-                  { "bSortable": false ,"sName":'create_time'},
-                  { "bSortable": false ,"bSearch":''}
-                ],
+            var oDT = jQuery(TableManaged.default.formName).dataTable({
+                "aoColumns": TableManaged.default.columns,
                 "aLengthMenu": [
                     [5, 15, 20, -1],
                     [5, 15, 20, "All"] // change per page values here
@@ -83,31 +74,24 @@ var TableManaged = function () {
                     },
                     {
                         'bSortable': false,
-                        'aTargets': [8],
+                        'aTargets': [TableManaged.default.columns.length-1],
                         'mData':null,
                         'mRender':function(data,type,full){
-                        	var operator = jQuery.parseJSON(full[8]);
+                        	var operator = jQuery.parseJSON(full[TableManaged.default.columns.length-1]);
                         	return '<button  class="btn green mini" onclick="TableManaged.del(\''+operator.del+'\')">删除</button>&nbsp;&nbsp;<button  class="btn blue mini" onclick="TableManaged.edit(\''+operator.edit+'\')" >编辑</button>';
                         }
                     }
                 ],
-                'sAjaxSource':_menuListUrl,
+                'sAjaxSource':this.default.dataUrl,
                 fnInfoCallback:function(){
-                    var set = jQuery('#menu_1 .group-checkable').attr('data-set');
+                    var set = jQuery(TableManaged.default.formName+' .group-checkable').attr('data-set');
                     jQuery(set).uniform();
                 },
 				initComplete:function(){
-                    var oSearchWrapper = jQuery('#menu_1').prev().children('.span12');
-					//
+                    var oSearchWrapper = jQuery(TableManaged.default.formName).prev().children('.span12');
 					$('table thead th').each(function(index,element){
-						if(index != 0 && index!=8 && index!=3 && index!=6){
-							var sSearchName = '';
-							if(index == 1)sSearchName = 'id';
-							if(index == 2)sSearchName = 'name';
-							if(index == 4)sSearchName = 'desc';
-							if(index == 5)sSearchName = 'parent_id';
-							if(index == 7)sSearchName = 'create_time';
-							var oSearch = jQuery('<input type="text" name="'+sSearchName+'"style="margin-right:7px;" placeholder="search '+jQuery(this).text()+'" />');
+						if(typeof(TableManaged.default.searchField[index]) != 'undefined' && TableManaged.default.searchField[index] != ''){
+							var oSearch = jQuery('<input type="text" name="'+TableManaged.default.searchField[index]+'"style="margin-right:7px;" placeholder="search '+jQuery(this).text()+'" />');
             	            oSearchWrapper.append(oSearch);
 							oSearch.on('keydown',function(e){
 								var key = e.which;
@@ -133,7 +117,7 @@ var TableManaged = function () {
 
             
             
-            jQuery('#menu_1 .group-checkable').change(function () {
+            jQuery(TableManaged.default.formName+' .group-checkable').change(function () {
                 var set = jQuery(this).attr("data-set");
                 var checked = jQuery(this).is(":checked");
                 jQuery(set).each(function () {
@@ -159,7 +143,7 @@ var TableManaged = function () {
 	        		success:function(feed,ts,jqXhr){
 	        			alert(feed.message);
 	        			if(feed.status){
-	        				$('#menu_1').dataTable().fnDraw(false);
+	        				$(TableManaged.default.formName).dataTable().fnDraw(false);
 	        			}
 	        		},
 	        		error:function(xhr,eTxt,eThrown){

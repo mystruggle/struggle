@@ -33,13 +33,13 @@ class ModuleManageController extends Controller{
 		if($aData){
 			$oModel->where($aData);
 		}
-        $aData = $oModel->count()->field('id,name,icon,`desc`,parent_id,orderby,create_time')->limit($_POST['iDisplayStart'],$_POST['iDisplayLength'])->findAll();
+        $aData = $oModel->count()->field('id,name,title,`desc`')->limit($_POST['iDisplayStart'],$_POST['iDisplayLength'])->findAll();
         $iCount = $oModel->getCount();
         $aResponseData = array();
         foreach ($aData as $data){
-            $sEditUrl = Sle::app()->route->genUrl('menu/update?id='.$data['id']);
-            $sDelUrl  = Sle::app()->route->genUrl('menu/delete?id='.$data['id']);
-            $aResponseData[] = array('',$data['id'],$data['name'],$data['icon'],$data['desc'],$data['parent_id'],$data['orderby'],date('Y-m-d H:i:s',$data['create_time']),'{"edit":"'.$sEditUrl.'","del":"'.$sDelUrl.'"}');
+            $sEditUrl = Sle::app()->route->genUrl('moduleManage/update?id='.$data['id']);
+            $sDelUrl  = Sle::app()->route->genUrl('moduleManage/delete?id='.$data['id']);
+            $aResponseData[] = array('',$data['id'],$data['name'],$data['title'],$data['desc'],'{"edit":"'.$sEditUrl.'","del":"'.$sDelUrl.'"}');
         }
         $aResponseData = array('iTotalRecords'=>$iCount,'sEcho'=>$_POST['sEcho'],'iTotalDisplayRecords'=>$iCount,'aaData'=>$aResponseData);
         echo  json_encode($aResponseData);

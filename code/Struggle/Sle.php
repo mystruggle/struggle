@@ -79,11 +79,6 @@ buildAppDir($aBuildAppDir);
 
 
 
-//定义页面theme路径
-$GLOBALS['Sle']['Frontend']['themePath'] = rtrim(APP_PUBLIC.C('VIEW_THEME'),'/').'/';
-
-
-
 //加载语言配置文件
 $sLangFile = CONF_PATH.'zh-cn.php';
 try {

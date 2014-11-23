@@ -1,5 +1,6 @@
 <?php
 use struggle\libraries\Client;
+use struggle\Sle;
 return array(
     'global'=>array(
         Client::POS_HEAD_BOTTOM => array(
@@ -47,7 +48,7 @@ return array(
                     'form-validation.js',
                     'additional-methods.min.js',
                     'select2.min.js',
-                    'app.js',
+                    'app.js?theme=__THEME_NAME__&themePath=__THEME_PATH__//.js',
                 ),
                 Client::POS_HEAD_BOTTOM =>array(
                     'select2_metro.css',
@@ -61,7 +62,7 @@ return array(
                         'table-managed.js',
 						'jQuery(document).ready(function() {
 							App.init();
-							TableManaged.init();
+							TableManaged.init({"formName":"#menu_1","columns":[{"bSortable":false},{"bSortable":false,"sName":"id"},{"bSortable":false,"sName":"name","sClass":"center"},{"bSortable":false,"bSearch":""},{"bSortable":false,"sName":"desc"},{"bSortable":false,"sName":"parent_id"},{"bSortable":false,"bSearch":""},{"bSortable":false,"sName":"create_time"},{"bSortable":false,"bSearch":""}],"dataUrl":"'.urlencode(Sle::app()->route->genUrl('menu/index?act=getListData')).'","searchField":["","id","name","","desc","parent_id","","create_time"]});
 						});',
                 ),
                 Client::POS_HEAD_BOTTOM=>array(
@@ -92,7 +93,7 @@ return array(
                     'form-validation.js',
                     'additional-methods.min.js',
                     'select2.min.js',
-                    'app.js',
+                    'app.js?theme=__THEME_NAME__&themePath=__THEME_PATH__//.js',
                 ),
                 Client::POS_HEAD_BOTTOM =>array(
                     'select2_metro.css',
@@ -104,11 +105,11 @@ return array(
                         'DT_bootstrap.js',
                         'fnMultiFilter.js',
                         'table-managed.js',
-					    "jQuery(document).ready(function(){\n\t
-						App.init();\n\t
-						TableManaged.init({\"formName\":\"#controller_form\",\"dataUrl\":\"\"});\n\t
-						FormValidation.init();\n
-						});//.js",
+					    'jQuery(document).ready(function(){
+						App.init();
+						TableManaged.init({"formName":"#controller_form","columns":[{"bSortable":false},{"bSortable":false,"sName":"id"},{"bSortable":false,"sName":"name"},{"bSortable":false,"sName":"title"},{"bSortable":false,"sName":"desc"},{"bSortable":false}],"dataUrl":"'.urlencode(Sle::app()->route->genUrl('ModuleManage/index?act=getListData')).'","searchField":["","id","name","title","desc"]});
+						FormValidation.init();
+						});//.js',
                 ),
                 Client::POS_HEAD_BOTTOM=>array(
                         'DT_bootstrap.css',

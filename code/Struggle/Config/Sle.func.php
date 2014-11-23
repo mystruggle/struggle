@@ -276,6 +276,20 @@ function C($name, $value = null){
 function L($name, $value = null){
     static $aLang=array();
 	if(is_null($value)){
+		$aKey = array();
+		$sMultiKeyLan = '';
+		if(strpos($name,'.')!==false){
+			$aKey = explode('.',$name);
+		}
+
+		foreach($aKey as $key){
+			if($sMultiKeyLan)
+				$sMultiKeyLan = $sMultiKeyLan[$key];
+			else
+				$sMultiKeyLan = $aLang[$key];
+		}
+		if($sMultiKeyLan)
+			return $sMultiKeyLan;
 	    return $aLang[strtolower($name)];
 	}
 	readConf($name, $value, $aLang);

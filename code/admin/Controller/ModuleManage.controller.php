@@ -11,15 +11,14 @@ class ModuleManageController extends Controller{
             $this->$sMethod();
             return ;
         }
-        $oMenu = \struggle\M('Menu');
+        $oMenu = \struggle\M('Controller');
         $this->assgin('model', $oMenu);
-        Sle::app()->client->registerClient($this->_js(),Client::POS_BODY_BOTTOM);
         $this->layout();
     }
     
     
     private function _getListData(){
-        $oModel = \struggle\M('Menu');
+        $oModel = \struggle\M('Controller');
 		$aSearchField = explode(',',$_POST['sColumns']);
 		$aData = array();
 		foreach($aSearchField as $index=>$field){
@@ -75,7 +74,6 @@ class ModuleManageController extends Controller{
     
     public function actionUpdate(){
         $oMenu = \struggle\M('Menu');
-        Sle::app()->client->registerClient('jQuery(document).ready(function(){App.init();FormValidation.init();});',Client::POS_BODY_BOTTOM);
         if ($_GET['act'] == 'save'){
             $data = $oMenu->create($_POST);
             unset($data['id']);

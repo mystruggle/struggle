@@ -141,20 +141,22 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
     public function find($aOpt = array()){
         $this->parseOpt($aOpt);
 		$this->prepare($this->buildSelect());
+		$aBindParam = $this->mBindParam;
 		$this->_beginBind();
 		$this->execute();
 		$aRecordset = $this->fetch();
-        $this->isCount();
+        $this->isCount($aBindParam);
         return $aRecordset;
     }
     
     public function findAll($options = array()){
         $this->parseOpt($options);
         $this->prepare($this->buildSelect());
+		$aBindParam = $this->mBindParam;
         $this->_beginBind();
         $this->execute();
         $aRecordset = $this->fetchAll();
-        $this->isCount();
+        $this->isCount($aBindParam);
         return $aRecordset;
     }
     
@@ -255,9 +257,11 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
     /**
      * 检查是否需要统计
      */
-    private function isCount(){
+    private function isCount($bindParam){
         if (isset($this->mSelectInfo['count']) && $this->mSelectInfo['count']){
             $this->prepare($this->buildSelectCount());
+			$this->mBindParam = $bindParam;
+			$this->_beginBind();
             $this->execute();
             $aCount = $this->fetch();
             $this->count = $aCount['count'];
@@ -807,7 +811,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 
 	public function bindValue($name,$value){
 		if(is_string($name)){
-		    $this->mBindParam[$name] = $value;
+		    $this->mbindparam[$name] = $value;
 			return true;
 		}elseif(is_array($name)){
             foreach($name as $key=>$val){

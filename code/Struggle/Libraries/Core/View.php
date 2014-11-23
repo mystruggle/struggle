@@ -14,6 +14,8 @@ class View extends \struggle\libraries\Object{
     //protected $mTplData = array();
     protected $mWidgetTplPath = '';
     protected $mPublicTplPath  = '';
+    //自定义常量数组
+    protected $mConstants = array(); 
 	private   $mLogicTag  = array('gt'=>'>','ge'=>'>=','lt'=>'<','le'=>'<=','eq'=>'==');
     
     public function __construct(){
@@ -23,6 +25,13 @@ class View extends \struggle\libraries\Object{
         \struggle\C('VIEW_TPL_SUFFIX') && $this->mTplSuffix   = \struggle\C('VIEW_TPL_SUFFIX');
         \struggle\C('VIEW_THEME')      && $this->mTheme       = \struggle\C('VIEW_THEME');
         $this->mPublicTplPath = APP_PUBLIC."{$this->mTheme}/html/";
+        //获取已定义常量
+        static $aConstants = array();
+        if(!$aConstants){
+            $aConstants = get_defined_constants(true);
+            $aConstants = $aConstants['user'];
+        }
+        $this->mConstants = $aConstants;
         
     }
     
@@ -424,7 +433,14 @@ class View extends \struggle\libraries\Object{
 		return '<?PHP echo "'.$oRoute->genUrl($path).'";?>';
     }
     
-    
+    /**
+	 * html 功能模板标签，针对html标签属性功能标签
+	 * @param string 
+	 * @return string
+	 * @example
+	 * script或link标签属性
+	 * {html type/theme:path/file?name=value}
+	 */
     private function _html($params){
         $xRlt = array('status'=>true,'msg'=>'');
         $sThemes = 'Default';
@@ -447,6 +463,17 @@ class View extends \struggle\libraries\Object{
             $xRlt['msg']    = "参数格式错误,{$params}".__METHOD__.' line '.__LINE__;
             Debug::trace($xRlt['msg'], Debug::SYS_ERROR);
         }
+
+		//如果存在问号，取出问号部分
+		$sQuesPart = '';
+		if(($iQuesPos = strrpos($params,'?'))!==false) {
+		    $sQuesPart = substr($params,$iQuesPos+1);
+            Debug::trace("问号部分{$sQuesPart}");
+			$params = substr($params,0,$iQuesPos);
+			$sQuesPart = $this->replaceGlobalConst($sQuesPart);
+		    Debug::trace("问号部分替换变量值后{$sQuesPart}");
+		}
+
         //截取冒号后面的字符串
         $sColonAfter = ltrim(substr($params, $iThemePos+1),'/');
         switch (strtolower($sType)){
@@ -497,6 +524,7 @@ class View extends \struggle\libraries\Object{
                 }else {
                     $xReturn = $sJsFile;
                 }
+                $xReturn = $sQuesPart?$xReturn."?{$sQuesPart}":$xReturn;
                 break;
             case 'image':
                 $sType = 'images';
@@ -530,6 +558,20 @@ class View extends \struggle\libraries\Object{
         }
         return $xReturn;
     }
+
+
+    /**
+	 * 替换字符串中包含的全局常量
+	 * @access public
+	 * @param string $str
+	 * @return string
+	 */
+	public function replaceGlobalConst($str){
+		foreach($this->mConstants as $constant=>$value){
+			$str = str_replace($constant,urlencode($value),$str);
+		}
+		return $str;
+	}
     
     /**
      * 组装html相关元素存放路径

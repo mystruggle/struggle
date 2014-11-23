@@ -28,7 +28,7 @@ return array(
                             'fullcalendar.min.js',
                             'jquery.easy-pie-chart.js',
                             'jquery.sparkline.min.js',
-                            'app.js',
+                            'app.js?theme=__THEME_NAME__&themePath=__THEME_PATH__//.js',
                             'index.js',
                     ),
                     Client::POS_HEAD_BOTTOM=>array(
@@ -59,6 +59,10 @@ return array(
                         'DT_bootstrap.js',
                         'fnMultiFilter.js',
                         'table-managed.js',
+						'jQuery(document).ready(function() {
+							App.init();
+							TableManaged.init();
+						});',
                 ),
                 Client::POS_HEAD_BOTTOM=>array(
                         'DT_bootstrap.css',
@@ -100,6 +104,11 @@ return array(
                         'DT_bootstrap.js',
                         'fnMultiFilter.js',
                         'table-managed.js',
+					    "jQuery(document).ready(function(){\n\t
+						App.init();\n\t
+						TableManaged.init({\"formName\":\"#controller_form\",\"dataUrl\":\"\"});\n\t
+						FormValidation.init();\n
+						});//.js",
                 ),
                 Client::POS_HEAD_BOTTOM=>array(
                         'DT_bootstrap.css',

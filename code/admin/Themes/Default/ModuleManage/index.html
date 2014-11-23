@@ -11,7 +11,7 @@
 
                             <div class="portlet-title">
 
-                                <div class="caption"><i class="icon-globe"></i>菜单管理</div>
+                                <div class="caption"><i class="icon-globe"></i>{$actionInfo['name']}</div>
 
                                 <div class="tools">
 
@@ -59,13 +59,13 @@
 
                                 </div>
 
-                                <table class="table table-striped table-bordered table-hover" id="menu_1">
+                                <table class="table table-striped table-bordered table-hover" id="controller_form">
 
                                     <thead>
 
                                         <tr>
 
-                                            <th style="width:8px;"><input type="checkbox" class="group-checkable" data-set="#menu_1 .checkboxes" /></th>
+                                            <th style="width:8px;"><input type="checkbox" class="group-checkable" data-set="#controller_form .checkboxes" /></th>
                                             {foreach name='model->_listField()' list='index,field'}
                                             {if condition='$index==1'}
                                             <th>{$field|\struggle\L}</th>

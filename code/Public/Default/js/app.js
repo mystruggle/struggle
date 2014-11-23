@@ -8,6 +8,7 @@ var App = function () {
     var isIE8 = false;
     var isIE9 = false;
     var isIE10 = false;
+	var themePath = '';
 
     var sidebarWidth = 225;
     var sidebarCollapsedWidth = 35;
@@ -716,7 +717,27 @@ var App = function () {
 
         //main function to initiate template pages
         init: function () {
-
+            var aScript = document.getElementsByTagName('script');
+			for(var i in aScript){
+				if(aScript[i].src.indexOf('app.js')>=0){
+					var aQues = new Array();
+					aQues = aScript[i].src.split('?');
+					if(typeof(aQues[1]) == 'undefined')
+						break;
+					aQues = aQues[1].split('&');
+					var sQues = '';
+					for(var j in aQues){
+						var aPair = aQues[j].split('=');
+						sQues += '"'+aPair[0]+'":"'+aPair[1]+'",';
+					}
+					if(sQues){
+						sQues = sQues.substr(0,sQues.length-1);
+						var oQues = jQuery.parseJSON('{'+sQues+'}');
+						this.themePath = decodeURIComponent(oQues.themePath);
+					}
+					break;
+				}
+			}
             //IMPORTANT!!!: Do not modify the core handlers call order.
 
             //core handlers
@@ -785,7 +806,7 @@ var App = function () {
         blockUI: function (el, centerY) {
             var el = jQuery(el);
             el.block({
-                    message: '<img src="'+_themePath+'images/ajax-loading.gif" align="">',
+                    message: '<img src="'+this.themePath+'images/ajax-loading.gif" align="">',
                     centerY: centerY != undefined ? centerY : true,
                     css: {
                         top: '10%',

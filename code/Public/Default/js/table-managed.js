@@ -2,13 +2,25 @@
 var TableManaged = function () {
 
     return {
-
+		default:{
+			"formName":'',
+		},
         //main function to initiate the module
         init: function () {
             
             if (!jQuery().dataTable) {
                 return;
             }
+			var option = {};
+			if(arguments.length > 0)
+			    option = arguments[0];
+			this.default.formName = option.formName;
+			this.default.dataUrl = option.dataUrl;
+			this.default.searchField = option.searchField;
+
+			jQuery(["name1","value1"]).each(function(index,data){
+				console.log(index+','+data+',');
+			});
             
             // begin first table
 			/*
@@ -86,6 +98,7 @@ var TableManaged = function () {
                 },
 				initComplete:function(){
                     var oSearchWrapper = jQuery('#menu_1').prev().children('.span12');
+					//
 					$('table thead th').each(function(index,element){
 						if(index != 0 && index!=8 && index!=3 && index!=6){
 							var sSearchName = '';
@@ -113,24 +126,7 @@ var TableManaged = function () {
 					            oDT.fnMultiFilter(data);
 							});
 						}
-					});
-		/*
-					jQuery('#menu_1 thead th').each(function(index){
-						if(index != 0 && index!=8 && index!=3 && index!=6){
-							oSearchWrapper.append('<input type="text" style="margin-right:7px;" placeholder="search '+jQuery(this).text()+'" />');
-						}
-					});
-            oSearchWrapper.delegate('input','blur',function(){
-                oDT.column(0).search( this.value ).draw();
-            	//this.api().column(0).search($(this).val(),true,false).draw();
-            });
-					*/
-
-
-
-
-
-
+					});//table thead th
 				}
             });
             
@@ -150,93 +146,9 @@ var TableManaged = function () {
                 jQuery.uniform.update(set);
             });
 
-            jQuery('#sample_1_wrapper .dataTables_filter input').addClass("m-wrap medium"); // modify table search input
-            jQuery('#sample_1_wrapper .dataTables_length select').addClass("m-wrap xsamll"); // modify table per page dropdown
-            //jQuery('#sample_1_wrapper .dataTables_length select').select2(); // initialzie select2 dropdown
-/*
-            // begin second table
-            $('#sample_2').dataTable({
-                "aLengthMenu": [
-                    [5, 15, 20, -1],
-                    [5, 15, 20, "All"] // change per page values here
-                ],
-                // set the initial value
-                "iDisplayLength": 5,
-                "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
-                "sPaginationType": "bootstrap",
-                "oLanguage": {
-                    "sLengthMenu": "_MENU_ per page",
-                    "oPaginate": {
-                        "sPrevious": "Prev",
-                        "sNext": "Next"
-                    }
-                },
-                "aoColumnDefs": [{
-                        'bSortable': false,
-                        'aTargets': [0]
-                    }
-                ]
-            });
-
-            jQuery('#sample_2 .group-checkable').change(function () {
-                var set = jQuery(this).attr("data-set");
-                var checked = jQuery(this).is(":checked");
-                jQuery(set).each(function () {
-                    if (checked) {
-                        $(this).attr("checked", true);
-                    } else {
-                        $(this).attr("checked", false);
-                    }
-                });
-                jQuery.uniform.update(set);
-            });
-
-            jQuery('#sample_2_wrapper .dataTables_filter input').addClass("m-wrap small"); // modify table search input
-            jQuery('#sample_2_wrapper .dataTables_length select').addClass("m-wrap small"); // modify table per page dropdown
-            jQuery('#sample_2_wrapper .dataTables_length select').select2(); // initialzie select2 dropdown
-
-            // begin: third table
-            $('#sample_3').dataTable({
-                "aLengthMenu": [
-                    [5, 15, 20, -1],
-                    [5, 15, 20, "All"] // change per page values here
-                ],
-                // set the initial value
-                "iDisplayLength": 5,
-                "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
-                "sPaginationType": "bootstrap",
-                "oLanguage": {
-                    "sLengthMenu": "_MENU_ per page",
-                    "oPaginate": {
-                        "sPrevious": "Prev",
-                        "sNext": "Next"
-                    }
-                },
-                "aoColumnDefs": [{
-                        'bSortable': false,
-                        'aTargets': [0]
-                    }
-                ]
-            });
-
-            jQuery('#sample_3 .group-checkable').change(function () {
-                var set = jQuery(this).attr("data-set");
-                var checked = jQuery(this).is(":checked");
-                jQuery(set).each(function () {
-                    if (checked) {
-                        $(this).attr("checked", true);
-                    } else {
-                        $(this).attr("checked", false);
-                    }
-                });
-                jQuery.uniform.update(set);
-            });
-
-            jQuery('#sample_3_wrapper .dataTables_filter input').addClass("m-wrap small"); // modify table search input
-            jQuery('#sample_3_wrapper .dataTables_length select').addClass("m-wrap small"); // modify table per page dropdown
-            jQuery('#sample_3_wrapper .dataTables_length select').select2(); // initialzie select2 dropdown
-            */
-
+            //jQuery('#sample_1_wrapper .dataTables_filter input').addClass("m-wrap medium"); // modify table search input
+            //jQuery('#sample_1_wrapper .dataTables_length select').addClass("m-wrap xsamll"); // modify table per page dropdown
+            
         },
         del:function(url){
         	if(confirm('确定要删除吗？')){

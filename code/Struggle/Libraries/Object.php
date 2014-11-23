@@ -48,6 +48,21 @@ class Object{
     
     public function halt(){
     }
+
+
+    /**
+     * 再封装eval
+     * @param string code php代码
+     * @return mixed 失败返回false;成功取决于字符串开始是否包含return,如果包含返回结果取决于代码表达式执行结果，否则返回true
+     */
+    protected function doEval($code){
+        //eval 如果$code包含有return则返回$code中return值；否则$code被成功执行返回null，代码有错则返回false
+        $retval = eval($code);
+        if(strtolower(substr(ltrim($code),0,6)) != 'return'){
+            return is_null($retval)?true:false;
+        }
+        return $retval;
+    }
     
     
     /*

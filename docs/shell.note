@@ -1,0 +1,9 @@
+#显示某段日期
+startDate=$1
+endDate=$2
+#endDate=$(date +%Y%m%d)
+startSec=`date -d "$startDate" "+%s"`
+endSec=`date -d "$endDate" "+%s"`
+for((i=$startSec;i<=$endSec;i+=86400)); do
+    echo `date -d "@$i" "+%Y%m%d"`
+done

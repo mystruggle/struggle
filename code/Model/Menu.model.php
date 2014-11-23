@@ -124,6 +124,7 @@ class MenuModel extends Model{
 		    $aMenuChainInfo[$index]['link']   = $this->_genLink($aNodeInfo['ctl_name'], $aNodeInfo['act_name']);
 		    empty($aMenuChainInfo[$index]['link']) && $aMenuChainInfo[$index]['link'] = 'javascript:;';
 		}
+		Sle::app()->controller->assgin('actionInfo',$aMenuChainInfo[count($aMenuChainInfo)-1]);
 		Sle::app()->controller->assgin('menuChainInfo',$aMenuChainInfo);
         return $aResult;
     }
@@ -162,13 +163,13 @@ class MenuModel extends Model{
     
     public function _listField(){
         return array(
-            'id',
-            'name',
-            'icon',
-            'desc',
-            'parent_id',
-            'orderby',
-            'create_time'
+            'menu.id',
+            'menu.name',
+            'menu.icon',
+            'menu.desc',
+            'menu.parent_id',
+            'menu.orderby',
+            'menu.create_time'
         );
     }
 

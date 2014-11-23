@@ -13,7 +13,6 @@ class MenuController extends Controller{
         }
         $oMenu = \struggle\M('Menu');
         $this->assgin('model', $oMenu);
-        Sle::app()->client->registerClient($this->_js(),Client::POS_BODY_BOTTOM);
         $this->layout();
     }
     

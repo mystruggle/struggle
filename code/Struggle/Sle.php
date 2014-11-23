@@ -25,8 +25,6 @@ require_once SLE_PATH.'Libraries/Define.inc.php';
 //加载全局核心函数
 require_once SLE_PATH.'Config/Sle.func.php';
 
-//加载Object类文件
-require_cache('');
 
 //部署项目目录
 $aBuildAppDir = array(APP_ROOT, APP_CACHE, APP_RUNTIME, APP_CONTROLLER,
@@ -49,6 +47,9 @@ try {
     halt("异常错误: {$e->getMessage()}  {$e->getFile()} 第{$e->getLine()}行");
 }
 
+
+
+
 //项目配置文件
 $sAppConfFile = APP_CONF.'Config.php';
 try {
@@ -58,6 +59,24 @@ try {
 }catch (\Exception $e){
     halt("异常错误: {$e->getMessage()}  {$e->getFile()} 第{$e->getLine()}行");
 }
+
+//如果改变主题将新建新主题目录
+if(defined('__THEME_NAME__')){
+	halt("错误：__THEME_NAME__常亮已定义 in file ".__FILE__.' line '.__LINE__);
+}
+define('__THEME_NAME__',C('VIEW_THEME'));
+if(defined('__THEME_PATH__')){
+	halt("错误：__THEME_PATH__ 常亮已定义 in file ".__FILE__.' line '.__LINE__);
+}
+define('__THEME_PATH__',APP_PUBLIC.C('VIEW_THEME').'/');
+
+$aBuildAppDir = array(APP_PUBLIC.__THEME_NAME__.'/',APP_PUBLIC.__THEME_NAME__.'/html/',
+                      APP_PUBLIC.__THEME_NAME__.'/js/',APP_PUBLIC.__THEME_NAME__.'/css/',
+                      APP_PUBLIC.__THEME_NAME__.'/images/', APP_THEME.__THEME_NAME__.'/');
+
+buildAppDir($aBuildAppDir);
+
+
 
 
 //定义页面theme路径

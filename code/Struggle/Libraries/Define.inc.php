@@ -1,5 +1,5 @@
 <?php
-
+namespace struggle;
 //如果是后台必须设置该常量SLE_FRONTEND
 $sFrontend = '';
 if (defined('SLE_FRONTEND')){

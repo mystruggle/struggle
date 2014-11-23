@@ -72,11 +72,19 @@ class Client extends Object{
     
     
     private function _getJsExpr($js,$pos){
+		$js = str_replace('//.js','',$js);
+		$sQuesAfter = '';
+		if(($iQuesPos = strrpos($js,'?'))!==false){
+			$sQuesAfter = substr($js,$iQuesPos);
+		    Debug::trace("js文件{$js},问号后面字符串{$sQuesAfter}");
+			$js = substr($js,0,$iQuesPos);
+			$sQuesAfter = Sle::app()->view->replaceGlobalConst($sQuesAfter);
+		}
         $sFile = $js;
         $xRlt = array('status'=>true,'msg'=>'执行'.__METHOD__);
         !file_exists($sFile) && $sFile = $this->mJsBasePath.$sFile;
         if (file_exists($sFile) && is_string($sFile)){
-            $this->mDynAttr['pager'][$pos][] = "<script type='text/javascript' src='{$sFile}'></script>";
+            $this->mDynAttr['pager'][$pos][] = "<script type='text/javascript' src='{$sFile}{$sQuesAfter}'></script>";
         }elseif ($js && is_string($js)){
             $this->mDynAttr['pager'][$pos][] = "<script type='text/javascript'>\n{$js}\n</script>";
         }else{

@@ -17,32 +17,13 @@ class Object{
 	}
 
 
-/*
-	public function __get($sName){
-		$sAttr = "m{$sName}";
-		if(property_exists($this,$sAttr)){
-			$sMethod = "_{$sName}";
-			if(method_exists($this,$sMethod)){
-				return $this->$sMethod();
-			}else{
-			    return $this->$sAttr;
-			}
-		}
-		return false;
-	}
-*/
-	public function __set($sName,$mVal){
-		$sName = "m{$sName}";
-		$sMethod = "_".ucfirst($sName);
-		if(property_exists($this,$sName)){
-			$this->$sName = $mVal;
-		}elseif(method_exists($this,$sMethod)){
-			$this->$sMethod($mVal);
-		}
-		return false;
-	}
+    public function __set($name, $value){
+        //
+    }
 
-    
+    public function __get($name){
+        //
+    }
     
     
     

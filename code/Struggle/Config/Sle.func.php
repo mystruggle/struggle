@@ -583,7 +583,10 @@ function autoLoad($name){
 	$sName = str_replace('_','.',ucfirst(ptoc(basename($sName)))).'.php';
 	try{
 		//include 失败返回false并发警告,成功返回1，除非包含文件有return
-		if (!include $sName)throw new \Exception("找不到文件{$name}.");
+		if (!include $sName){
+            //debug_print_backtrace();
+            throw new \Exception("找不到文件{$name}.");
+        }
 	}catch(Exception $e){
 		halt("异常错误: {$e->getMessage()}  {$e->getFile()} 第{$e->getLine()}行");
 	}

@@ -4,21 +4,21 @@ use struggle\Sle;
 use struggle\libraries\Client;
 use struggle\libraries\Debug;
 
-class MenuController extends Controller{
+class ActionManageController extends Controller{
     public function actionIndex(){
         if (isset($_GET['act']) && $_GET['act']){
             $sMethod = '_'.$_GET['act'];
             $this->$sMethod();
             return ;
         }
-        $oMenu = \struggle\M('Menu');
+        $oMenu = \struggle\M('Action');
         $this->assgin('model', $oMenu);
         $this->layout();
     }
     
     
     private function _getListData(){
-        $oModel = \struggle\M('Menu');
+        $oModel = \struggle\M('Action');
 		$aSearchField = explode(',',$_POST['sColumns']);
 		$aData = array();
 		foreach($aSearchField as $index=>$field){
@@ -33,48 +33,52 @@ class MenuController extends Controller{
 		if($aData){
 			$oModel->where($aData);
 		}
-        $aData = $oModel->count()->field('id,name,icon,`desc`,parent_id,orderby,create_time')->limit($_POST['iDisplayStart'],$_POST['iDisplayLength'])->findAll();
+        $aData = $oModel->count()->field('id,name,title,`desc`')->limit($_POST['iDisplayStart'],$_POST['iDisplayLength'])->findAll();
         $iCount = $oModel->getCount();
         $aResponseData = array();
         foreach ($aData as $data){
-            $sEditUrl = Sle::app()->route->genUrl('menu/update?id='.$data['id']);
-            $sDelUrl  = Sle::app()->route->genUrl('menu/delete?id='.$data['id']);
-            $aResponseData[] = array('',$data['id'],$data['name'],$data['icon'],$data['desc'],$data['parent_id'],$data['orderby'],date('Y-m-d H:i:s',$data['create_time']),'{"edit":"'.$sEditUrl.'","del":"'.$sDelUrl.'"}');
+            $sEditUrl = Sle::app()->route->genUrl('actionManage/update?id='.$data['id']);
+            $sDelUrl  = Sle::app()->route->genUrl('actionManage/delete?id='.$data['id']);
+            $aResponseData[] = array('',$data['id'],$data['name'],$data['title'],$data['desc'],'{"edit":"'.$sEditUrl.'","del":"'.$sDelUrl.'"}');
         }
-        $aResponseData = array('iTotalRecords'=>$iCount,'sEcho'=>$_POST['sEcho'],'iTotalDisplayRecords'=>$iCount,'aaData'=>$aResponseData);
+        $aResponseData = array('iTotalRecords'=>$iCount,'sEcho'=>$_POST['sEcho'],'iTotalDisplayRecords'=>$iCount,'iDisplayStart'=>$_POST['iDisplayStart'],'aaData'=>$aResponseData);
         echo  json_encode($aResponseData);
         exit;
     }
     
     public function actionAdd(){
+        $oActModel = \struggle\M('Action');
+        $oActModel->data = $_POST;
         if (isset($_REQUEST['act']) && $_REQUEST['act'] == 'save'){
             $this->save();
             return true;
         }
+        $this->assgin('data', $oActModel->data);
         $this->layout();
     }
     
     private function save(){
-        $oMenu = \struggle\M('Menu');
+        $oActModel = \struggle\M('Action');
+        $oActModel->validate();
         $aData = $oMenu->create($_POST);
-        $aData['create_time'] = time();
+        //$aData['create_time'] = time();
         $this->redirect('新增'.($oMenu->save($aData)?'成功':'失败'));        
     }
     
 
     public function actionDelete(){
-        $oMenu = \struggle\M('Menu');
+        $oMenu = \struggle\M('Action');
         $retval = $oMenu->delete(array('id'=>$_GET['id']));
         die(json_encode(array('status'=>$retval,'message'=>($retval?'删除成功！':'删除失败'))));
     }
 
     
     public function actionUpdate(){
-        $oMenu = \struggle\M('Menu');
+        $oMenu = \struggle\M('Action');
         if ($_GET['act'] == 'save'){
             $data = $oMenu->create($_POST);
             unset($data['id']);
-            $data['create_time'] = time();
+            //$data['create_time'] = time();
             $bStat = $oMenu->where(array('id'=>$_POST['id']))->update($data);
             $this->redirect('更新'.($bStat?'成功':'失败'));
             return;
@@ -84,12 +88,10 @@ class MenuController extends Controller{
     }
 
     
+   
     public function _beforeAction(){
         $aFile = array(
 					'js'=>array(
-						'jquery.validate.min.js',
-						'form-validation.js',
-						'additional-methods.min.js',
 						'select2.min.js',
 						'app.js?theme=__THEME_NAME__&themePath=__THEME_PATH__',
 					),
@@ -101,25 +103,21 @@ class MenuController extends Controller{
 			$aFile['js'] = array_merge($aFile['js'],array('jquery.dataTables.js','DT_bootstrap.js','fnMultiFilter.js','table-managed.js'));
 			$aFile['css'] = array_merge($aFile['css'],array('DT_bootstrap.css'));
 		}elseif(in_array(__ACTION__,array('Update','Add'))){
-			$aFile['js'] = array_merge($aFile['js'],array('chosen.jquery.min.js'));
+			$aFile['js'] = array_merge($aFile['js'],array('jquery.validate.min.js','form-validation.js','additional-methods.min.js','chosen.jquery.min.js'));
 			$aFile['css'] = array_merge($aFile['css'],array('chosen.css'));
 		}
 
-
         $sJs = 'jQuery(document).ready(function() {
                     App.init();
-					TableManaged.init({"formName":"#menu_1",
-					"columns":[{"bSortable":false},
+					TableManaged.init({"formName":"#action_form",
+                    "columns":[{"bSortable":false},
 					{"bSortable":false,"sName":"id"},
-					{"bSortable":false,"sName":"name","sClass":"center"},
-					{"bSortable":false,"bSearch":""},
+					{"bSortable":false,"sName":"name"},
+					{"bSortable":false,"sName":"title"},
 					{"bSortable":false,"sName":"desc"},
-					{"bSortable":false,"sName":"parent_id"},
-					{"bSortable":false,"bSearch":""},
-					{"bSortable":false,"sName":"create_time"},
-					{"bSortable":false,"bSearch":""}],
-					"dataUrl":"'.urlencode(Sle::app()->route->genUrl('menu/index?act=getListData')).'",
-					"searchField":["","id","name","","desc","parent_id","","create_time"]});
+					{"bSortable":false}],
+					"dataUrl":"'.urlencode(Sle::app()->route->genUrl('ActionManage/index?act=getListData')).'",
+					"searchField":["","id","name","title","desc"]});
                });';
 
 	    foreach($aFile as $type=>$files){
@@ -135,11 +133,25 @@ class MenuController extends Controller{
 		    Sle::app()->client->register(array('content'=>$sJs,'pos'=>'body,bottom','isFile'=>false,'type'=>'js'));
 		elseif(in_array(__ACTION__,array('Update','Add'))){
 			$sJs = 'jQuery(document).ready(function(){
-							App.init();
-							FormValidation.init({"formName":"#form_menu_1"});
-							FormValidation.addValidMethod("menuName",["[\u4e00-\u9fa5a-z_0-9]","ig"],"只能包含汉字、a-z、_、0-9");
-				    });';
+                        App.init();
+                        FormValidation.init({"formName":"#form_action_1"});
+                    });';
 			Sle::app()->client->register(array('content'=>$sJs,'pos'=>'body,bottom','isFile'=>false,'type'=>'js'));
 		}
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

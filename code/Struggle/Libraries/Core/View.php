@@ -3,6 +3,7 @@ namespace struggle\libraries\core;
 use struggle\libraries\Debug;
 use struggle\Sle;
 use \struggle\libraries\cache\driver\File;
+use \struggle\libraries\Client;
 
 
 class View extends \struggle\libraries\Object{
@@ -17,6 +18,10 @@ class View extends \struggle\libraries\Object{
     //自定义常量数组
     protected $mConstants = array(); 
 	private   $mLogicTag  = array('gt'=>'>','ge'=>'>=','lt'=>'<','le'=>'<=','eq'=>'==');
+    //
+    private    $mJs = '';
+    //
+    private    $mCss = '';
     
     public function __construct(){
         parent::__construct();
@@ -43,6 +48,31 @@ class View extends \struggle\libraries\Object{
         if (method_exists($this, $sMethodName))
             return $this->$sMethodName();
         return false;
+    }
+
+
+    /**
+     * 添加需要导入的js
+     * @access public
+     * @param string $content     导入的内容
+     * @param integer $pos        导入的位置
+     * @return boolean 
+     */
+    public function addJs($content,$pos){
+        $this->mJs[$pos][] = $content;
+        return true;
+    }
+
+    /**
+     * 添加需要导入的css
+     * @access public
+     * @param string $content     导入的内容
+     * @param integer $pos        导入的位置
+     * @return boolean 
+     */
+    public function addCss($content,$pos){
+        $this->mCss[$pos][] = $content;
+        return true;
     }
     
     /**
@@ -261,6 +291,7 @@ class View extends \struggle\libraries\Object{
         }else{
             $sIncludeFile .=".{$this->mTplSuffix}";
         }
+		$sIncludeFile = $this->replaceGlobalConst($sIncludeFile);
         if (!realpath($sIncludeFile)){
             $sIncludeFile = ltrim($sIncludeFile,'/');
             $sIncludeFile = "{$this->mPublicTplPath}{$sIncludeFile}";
@@ -567,6 +598,7 @@ class View extends \struggle\libraries\Object{
 	 * @return string
 	 */
 	public function replaceGlobalConst($str){
+		//Debug::trace("全局常量".print_r($this->mConstants,true));
 		foreach($this->mConstants as $constant=>$value){
 			$str = str_replace($constant,urlencode($value),$str);
 		}
@@ -649,12 +681,67 @@ class View extends \struggle\libraries\Object{
     
     
     /**
-     * 获取配置变量  TODO;
-     * @param unknown $param
-     * @return unknown
+     * 导入js代码
+     * @access public
+     * @param string &$html
+     * @return string
      */
-    private function _config($param){
-        return $param;
+    public function importJs(&$html){
+        $aJs = $this->mJs?$this->mJs:array();
+        foreach ($aJs as $pos=>$js){
+            switch ($pos){
+                case Client::POS_HEAD_TOP:
+                    $sJs = implode("\n", $aJs[Client::POS_HEAD_TOP]);
+                    $html = preg_replace('/(?<=\<head\>)/i', "\n{$sJs}", $html);
+                    break;
+                case Client::POS_HEAD_BOTTOM:
+                    $sJs = implode("\n", $aJs[Client::POS_HEAD_BOTTOM]);
+                    $html = preg_replace('/(?=\<\/head\>)/i', "{$sJs}\n", $html);
+                    break;
+                case Client::POS_BODY_BOTTOM:
+                    $sJs = implode("\n", $aJs[Client::POS_BODY_BOTTOM]);
+                    $html = preg_replace('/(?=\<\/body\>)/i', "{$sJs}\n", $html);
+                    break;
+                case Client::POS_BODY_AFTER:
+                    $sJs = implode("\n", $aJs[Client::POS_BODY_AFTER]);
+                    $html = preg_replace('/(?<=\<\/body\>)/i', "\n{$sJs}", $html);
+                    break;
+                default:
+            }
+        }
+        return true;
+    }
+
+
+
+    /**
+     * 导入css代码
+     * @access public
+     * @param string &$html
+     * @return string
+     */
+    public function importCss(&$html){
+        $aCss = $this->mCss?$this->mCss:array();
+        foreach ($aCss as $pos=>$css){
+            switch ($pos){
+                case Client::POS_HEAD_TOP:
+                    $sCss = implode("\n", $aCss[Client::POS_HEAD_TOP]);
+                    $html = preg_replace('/(?<=\<head\>)/i', "\n{$sCss}", $html);
+                    break;
+                case Client::POS_HEAD_BOTTOM:
+                    $sCss = implode("\n", $aCss[Client::POS_HEAD_BOTTOM]);
+                    $html = preg_replace('/(?=\<\/head\>)/i', "{$sCss}\n", $html);
+                    break;
+                case Client::POS_BODY_BOTTOM:
+                    $sCss = implode("\n", $aCss[Client::POS_BODY_BOTTOM]);
+                    $html = preg_replace('/(?=\<\/body\>)/i', "{$sCss}\n", $html);
+                    break;
+                case Client::POS_BODY_AFTER:
+                    $sCss = implode("\n", $aCss[Client::POS_BODY_AFTER]);
+                    $html = preg_replace('/(?<=\<\/body\>)/i', "\n{$sCss}", $html);
+                    break;
+            }
+        }
     }
     
     

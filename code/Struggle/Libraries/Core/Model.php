@@ -45,8 +45,16 @@ class BaseModel extends \struggle\libraries\Object{
 	private   $mAlias      = '';    //当前模型别名
 	private   $mPriKey     = '';   //当前模型的主键
 	private   $mCurModel = '';     //当前调用的模型
-	//属
-	private   $data = array();
+    private   $mError    = '';
+    private   $mErrorCode = '';
+    //验证错误信息
+    private   $mValidError = '';
+    private   $mValidMessage = '';
+	//需要处理的数据
+	private   $mData = array();
+	protected $ruleReg = array(
+		    'required'=>true,
+		);
 
 
     public function __construct(){
@@ -87,6 +95,13 @@ class BaseModel extends \struggle\libraries\Object{
         if (method_exists($this, $sMethodName))
             return $this->$sMethodName();
         return false;
+    }
+
+    public function __set($name, $value){
+        $sName = 'm'.strtoupper($name[0]).substr($name,1);
+        if(property_exists($this,$sName)){
+            $this->$sName = $value;
+        }
     }
     
     
@@ -466,6 +481,76 @@ class BaseModel extends \struggle\libraries\Object{
            }
        }
        return $aData;
+    }
+
+
+    /**
+     * 内置验证方法
+     */
+	public function validate(){
+		if(isset($this->rules) && $this->rules){
+			if(!is_array($this->rules)){
+				Debug::trace("校验规则须为数组类型".print_r($this->rules,true)."\tfile\t".__FILE__."\tline\t".__LINE__,Debug::SYS_ERROR);
+			}
+			foreach($this->rules as $rule){
+                if(!isset($rule[0]) || empty($rule[0]) || !isset($rule[1]) || empty($rule[1])) {
+                    $this->mValidError = '参数非法';
+                    return false;
+                }
+                if(!isset($this->mData[$rule[0]])) {
+                    //不需要验证的字段
+                    continue;
+                }
+                //内置验证规则
+                if(!isset($rule[2]) || empty($rule[2])){
+                    if(!isset($this->ruleReg[$rule[1]])){
+                        $this->mValidError = '该验证方法不支持';
+                        return false;
+                    }
+
+                    switch(strtolower($rule[1])){
+                        case 'required':
+                            return !empty($this->mData[$rule[0]]);
+                            break;
+                        case 'number'://合法的有效数字
+                            if(!@preg_match('/^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?$/',$this->mData[$rule[0]])){
+                                $this->mValidMessage = '不是合法有效数字';
+                                return false;
+                            }
+                            return true;
+                            break;
+                        case 'digits'://整数
+                            return !empty($this->mData[$rule[0]]);
+                            break;
+                    }
+                }else{
+                    //用户自定义规则
+                    return $this->_UserRule($this->mData[$rule[0]],$rule[1],$rule[2]);
+                }
+			}
+		}
+        return false;
+	}
+
+
+
+    /**
+     * 处理用户自定义规则
+     */
+    private function _UserRule($value,$rule,$type){
+        if(strtolower($type) == 'match'){
+            return @preg_match($rule,$value);
+        }
+        $this->mValidError = '不支持该类型匹配';
+        return false;
+    }
+
+    public function getValidError(){
+        return $this->mValidError;
+    }
+
+    public function getValidMessage(){
+        return $this->mValidMessage;
     }
     
     

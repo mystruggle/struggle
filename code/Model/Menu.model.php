@@ -8,6 +8,9 @@ class MenuModel extends Model{
     public $table = 'menu';
     public $alias = 'm'; 
     public $priKey = 'id';
+	protected $rules = array(
+		          'name'=>'required',
+		      );
     public $relation = array(
         'Controller'=>array( 
            'forginKey'=>'ctl_id',

@@ -1,0 +1,138 @@
+<form action="{url __MODULE__/__ACTION__?act=save}" id="form_menu_1" method='post' enctype="application/x-www-form-urlencoded" class="form-horizontal">
+
+<div class="alert alert-error hide">
+
+	<button class="close" data-dismiss="alert"></button>
+																 输入有误，请检查下列项！
+	<!-- You have some form errors. Please check below.-->
+
+</div>
+
+<div class="alert alert-success hide">
+
+	<button class="close" data-dismiss="alert"></button>
+																验证成功！
+	<!--Your form validation is successful!-->
+
+</div>
+
+<div class="control-group">
+
+	<label class="control-label">{field menu.name|\struggle\L}<span class="required">*</span></label>
+
+	<div class="controls">
+
+		<input type="text" name="name" class="span6 m-wrap" value='{if condition="isset($data['name'])"}{$data['name']}{/if}' />
+
+	</div>
+
+</div>
+
+<div class="control-group">
+
+	<label class="control-label">{field menu.icon|\struggle\L}</label>
+
+	<div class="controls">
+
+		<input name="icon" type="text" class="span6 m-wrap" value='{if condition="isset($data['icon'])"}{$data['icon']}{/if}' />
+
+	</div>
+
+</div>
+
+
+<div class="control-group">
+
+	<label class="control-label">{field menu.desc|\struggle\L}</label>
+
+	<div class="controls">
+
+		<textarea class="span6 m-wrap" rows="3" name='desc'  value='{if condition="isset($data['desc'])"}{$data['desc']}{/if}' ></textarea>
+
+	</div>
+
+</div>
+
+<div class="control-group">
+
+	<label class="control-label">{field menu.orderby|\struggle\L}</label>
+
+	<div class="controls">
+
+		<input name="orderby" type="text" class="span6 m-wrap"   value='{if condition="isset($data['orderby'])"}{$data['orderby']}{/if}' />
+
+	</div>
+
+</div>
+
+<div class="control-group">
+
+	<label class="control-label">{field menu.ctl_id|\struggle\L}</label>
+
+	<div class="controls">
+
+		<select class="span6 m-wrap" name="ctl_id">
+
+			<option value="">请选择...</option>
+			{foreach sourceBySql='\struggle\M('Controller')->getAllCtl()' name='ctl' list='value'}
+			<option value="{$value['id']}" {if condition='isset($data) and $value['id'] == $data['ctl_id']'} selected {/if}>{$value['name']}</option>
+			{/foreach}
+		</select>
+
+	</div>
+
+</div>
+
+<div class="control-group">
+
+	<label class="control-label">{field menu.act_id|\struggle\L}</label>
+
+	<div class="controls">
+
+		<select class="span6 m-wrap" name="act_id">
+
+			<option value="">请选择...</option>
+			{foreach sourceBySql='\struggle\M('Action')->getAllAct()' name='act' list='value'}
+			<option value="{$value['id']}" {if condition='isset($data) and $value['id'] == $data['act_id']'} selected {/if}>{$value['name']}</option>
+			{/foreach}
+		</select>
+
+	</div>
+
+</div>
+
+<div class="control-group">
+
+	<label class="control-label">{field menu.parent_id|\struggle\L}<span class="required">*</span></label>
+
+	<div class="controls">
+
+		<select class="span6 m-wrap" name="parent_id">
+
+			<option value="0">请选择...</option>
+			{foreach sourceBySql='\struggle\M('Menu')->getAllMenu()' name='parent' list='value'}
+			<option value="{$value['id']}" {if condition='isset($data) and $value['id'] == $data['parent_id']'} selected='selected' {/if} >{$value['name']}</option>
+			{/foreach}
+		</select>
+
+	</div>
+
+</div>
+
+
+
+
+<div class="form-actions">
+
+	<button type="submit" class="btn green">{field confirm|\struggle\L}</button>
+
+	<button type="button" class="btn" onclick='location.href="{url menu/index}"'>{field cancel|\struggle\L}</button>
+	<input type='hidden' name='id' value="{if condition="isset($data['id'])"}{$data['id']}{/if}" />
+
+</div>
+
+</form>
+
+
+
+

@@ -1,0 +1,68 @@
+<form action="{url __MODULE__/__ACTION__?act=save}" id="form_controller_1" method='post' enctype="application/x-www-form-urlencoded" class="form-horizontal">
+
+                                    <div class="alert alert-error hide">
+
+                                        <button class="close" data-dismiss="alert"></button>
+                                                                                                     输入有误，请检查下列项！
+                                        <!-- You have some form errors. Please check below.-->
+
+                                    </div>
+
+                                    <div class="alert alert-success hide">
+
+                                        <button class="close" data-dismiss="alert"></button>
+                                                                                                    验证成功！
+                                        <!--Your form validation is successful!-->
+
+                                    </div>
+
+                                    <div class="control-group">
+
+                                        <label class="control-label">{field controller.name|\struggle\L}<span class="required">*</span></label>
+
+                                        <div class="controls">
+
+                                            <input type="text" name="name" class="span6 m-wrap" value='{if condition="isset($data['name'])"}{$data['name']}{/if}' />
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="control-group">
+
+                                        <label class="control-label">{field controller.title|\struggle\L}</label>
+
+                                        <div class="controls">
+
+                                            <input name="title" type="text" class="span6 m-wrap" value='{if condition="isset($data['title'])"}{$data['title']}{/if}' />
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="control-group">
+
+                                        <label class="control-label">{field controller.desc|\struggle\L}</label>
+
+                                        <div class="controls">
+
+                                            <textarea class="span6 m-wrap" rows="3" name='desc' >{if condition="isset($data['desc'])"}{$data['desc']}{/if}</textarea>
+
+                                        </div>
+
+                                    </div>
+                                    
+
+                                    
+
+                                    <div class="form-actions">
+
+                                        <button type="submit" class="btn green">{field confirm|\struggle\L}</button>
+
+                                        <button type="button" class="btn" onclick='location.href="{url moduleManage/index}"'>{field cancel|\struggle\L}</button>
+										<input type='hidden' name='id' value="{if condition="isset($data['id'])"}{$data['id']}{/if}" />
+
+                                    </div>
+
+                                </form>

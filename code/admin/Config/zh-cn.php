@@ -22,4 +22,11 @@ return array(
 			'title'=>'名称',
 			'desc'=>'描述',
 		),
+		'action'=>array(
+		    'controller'=>'动作管理',
+		    'id'=>'序号',
+			'name'=>'动作',
+			'title'=>'名称',
+			'desc'=>'描述',
+		),
 );

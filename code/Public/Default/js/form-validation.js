@@ -2,6 +2,7 @@ var FormValidation = function () {
 
 
     return {
+		default:{},
         //main function to initiate the module
         init: function () {
 
@@ -86,16 +87,22 @@ var FormValidation = function () {
                 allowClear: true
             });
 */
-            var form2 = $('#form_menu_1');
-            var error2 = $('.alert-error', form2);
-            var success2 = $('.alert-success', form2);
 
-            form2.validate({
+			var option = {};
+			if(arguments.length > 0)
+			    option = arguments[0];
+			this.default.formName = option.formName;
+
+            var form = $(this.default.formName);
+            var err = $('.alert-error', form);
+            var oSuccess = $('.alert-success', form);
+
+            form.validate({
                 errorElement: 'span', //default input error message container
                 errorClass: 'help-inline', // default input error message class
                 focusInvalid: false, // do not focus the last invalid input
                 ignore: "",
-                rules: {
+/*                rules: {
                     name: {
                         required: true,
                         menuName:true
@@ -137,7 +144,7 @@ var FormValidation = function () {
                         minlength: jQuery.format("Please select  at least {0} types of Service")
                     }
                 },
-
+*/
                 errorPlacement: function (error, element) { // render error placement for each input type
                     if (element.attr("name") == "education") { // for chosen elements, need to insert the error after the chosen container
                         error.insertAfter("#form_2_education_chzn");
@@ -151,9 +158,9 @@ var FormValidation = function () {
                 },
 
                 invalidHandler: function (event, validator) { //display error alert on form submit   
-                    success2.hide();
-                    error2.show();
-                    App.scrollTo(error2, -200);
+                    oSuccess.hide();
+                    err.show();
+                    App.scrollTo(err, -200);
                 },
 
                 highlight: function (element) { // hightlight error inputs
@@ -181,13 +188,15 @@ var FormValidation = function () {
                 },
 
                 submitHandler: function (form) {
-                    success2.show();
-                    error2.hide();
+                    oSuccess.show();
+                    err.hide();
                     form.submit();
                 }
 
             });
-
+            $(':input[name="name"]').rules('remove');
+			//form.rules('remove');
+         /*
             $.validator.addMethod('menuName',function(value,element,param){
             	$iLength = value.length;
             	var regexp = /[\u4e00-\u9fa5a-z_0-9]/i;
@@ -196,7 +205,7 @@ var FormValidation = function () {
             	}
             	return true;
             },$.validator.format('只能包含汉字、a-z、_、0-9'));
-            /*
+
             //apply validation on chosen dropdown value change, this only needed for chosen dropdown integration.
             $('.chosen, .chosen-with-diselect', form2).change(function () {
                 form2.validate().element($(this)); //revalidate the chosen dropdown value and show error or success message for the input
@@ -206,9 +215,32 @@ var FormValidation = function () {
             $('.select2', form2).change(function () {
                 form2.validate().element($(this)); //revalidate the chosen dropdown value and show error or success message for the input
             });
+*/          
+        },
+	    addValidMethod:function(name,rule,message){
+            $.validator.addMethod(name,function(value,element,param){
+				var sMode = '';
+				if(typeof(rule[1])!=='undefined'){
+					sMode = rule[1];
+				}
+            	var regexp = new RegExp(rule,sMode);
+            	if(!regexp.test(value)){
+            		return false;
+            	}
+            	return true;
+            },$.validator.format(message));
+        }/*,
+		addValidRule:function(rules){
+			if(Object.prototype.toString.call(rules) === '[object Array]'){
+			}
+			$.validator.addClassRules({
+				rule:
+			});
+		},
+		addValidRuleMsg:function(message){
+			$.validator.addClassMessage();
+		}
 */
-        }
-
     };
 
 }();

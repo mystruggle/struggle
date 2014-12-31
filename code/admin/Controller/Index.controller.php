@@ -7,7 +7,6 @@ class IndexController extends Controller{
     public function actionIndex(){
         $oMenu = \struggle\M('Menu');
         $this->assgin('model', $oMenu);
-        Sle::app()->client->registerClient($this->_indexJs(),Client::POS_BODY_BOTTOM);
         
         $this->layout();
     }
@@ -26,10 +25,39 @@ class IndexController extends Controller{
     
     
     /**
-     * 返回当前首页js
-     * @return string
+     * 预处理前端文件
+     * @return void
      */
-    private function _indexJs(){
+    public function _beforeAction(){
+        $aFile = array(
+			        'js'=>array(
+						'jquery.vmap.js',
+						'jquery.vmap.russia.js',
+						'jquery.vmap.world.js',
+						'jquery.vmap.europe.js',
+						'jquery.vmap.germany.js',
+						'jquery.vmap.usa.js',
+						'jquery.vmap.sampledata.js',
+						'jquery.flot.js',
+						'jquery.flot.resize.js',
+						'jquery.pulsate.min.js',
+						'date.js',
+						'daterangepicker.js',
+						'jquery.gritter.js',
+						'fullcalendar.min.js',
+						'jquery.easy-pie-chart.js',
+						'jquery.sparkline.min.js',
+						'app.js?theme=__THEME_NAME__&themePath=__THEME_PATH__',
+						'index.js'
+		            ),
+					'css'=>array(
+						'jquery.gritter.css',
+						'daterangepicker.css',
+						'fullcalendar.css',
+						'jqvmap.css',
+						'jquery.easy-pie-chart.css',
+					),
+        );
         $sJs = 'jQuery(document).ready(function() {
                     App.init(); 
                     Index.init();
@@ -41,7 +69,16 @@ class IndexController extends Controller{
                     Index.initDashboardDaterange();
                     Index.initIntro();
               });';
-        return $sJs;
+	    foreach($aFile as $type=>$files){
+			foreach($files as $file){
+				$tType = 'js';
+				strtolower($type) == 'css' && $tType = 'css';
+				$tPos = 'body,bottom';
+				$tType == 'css' && $tPos = 'head,bottom';
+                Sle::app()->client->register(array('content'=>$file,'pos'=>$tPos,'isFile'=>true,'type'=>$tType));
+			}
+		}
+		Sle::app()->client->register(array('content'=>$sJs,'pos'=>'body,bottom','isFile'=>false,'type'=>'js'));
         
         
     }

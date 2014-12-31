@@ -82,7 +82,11 @@ class Route extends Object{
 			if(!method_exists($oController,$sMethod)){
 				throw new \Exception("调用模块、方法{$sClassName}::{$sMethod}不存在！");
 			}
+		    defined('__MODULE__') || define('__MODULE__',$this->module);
+		    defined('__ACTION__') || define('__ACTION__',$this->action);
+			$oController->_beforeAction();
 			$oController->$sMethod();
+			$oController->_afterAction();
         }
     }
 
@@ -118,6 +122,7 @@ class Route extends Object{
 		if(!$path){
 			$path = 'index/index';
 		}
+		$path = Sle::app()->view->replaceGlobalConst($path);
         $aPath = parse_url($path);
 		$xRlt['msg'] = 'url参数'.$path.',参数解析后'.print_r($aPath,true).' line '.__LINE__;
         $sUrlModule = '';

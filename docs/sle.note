@@ -7,3 +7,14 @@
   1)设置一个常量，决定是否在页面显示，还是只在后台记录日志
   2)日志分等级：系统：错误sys_error,警告sys_warning,提示sys_notice
                 应用：错误app_error,警告app_warning,提示app_notice
+
+
+
+
+
+
+
+
+Sle框架规则
+-- 模型
+ 1、文件名首字母要大写，以.model.php结尾；类名以Model结尾

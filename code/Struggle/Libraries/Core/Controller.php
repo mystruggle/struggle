@@ -175,35 +175,17 @@ class BaseController extends \struggle\libraries\Object{
 		extract($this->mTplData);
 		include $file;
 		$sTxt=ob_get_clean();
-		$this->_before($sTxt);
+		$this->_beforeOutput($sTxt);
 		echo $sTxt;
 		return true;
     }
-    
-    private function _before(&$content){
-        $aJs = \struggle\Sle::app()->client->pager;
-        $aJs || $aJs = array();
-        foreach ($aJs as $pos=>$js){
-            switch ($pos){
-                case Client::POS_HEAD_TOP:
-                    $sJs = implode("\n", $aJs[Client::POS_HEAD_TOP]);
-                    $content = preg_replace('/(?<=\<head\>)/i', "\n{$sJs}", $content);
-                    break;
-                case Client::POS_HEAD_BOTTOM:
-                    $sJs = implode("\n", $aJs[Client::POS_HEAD_BOTTOM]);
-                    $content = preg_replace('/(?=\<\/head\>)/i', "{$sJs}\n", $content);
-                    break;
-                case Client::POS_BODY_BOTTOM:
-                    $sJs = implode("\n", $aJs[Client::POS_BODY_BOTTOM]);
-                    $content = preg_replace('/(?=\<\/body\>)/i', "{$sJs}\n", $content);
-                    break;
-                case Client::POS_BODY_AFTER:
-                    $sJs = implode("\n", $aJs[Client::POS_BODY_AFTER]);
-                    $content = preg_replace('/(?<=\<\/body\>)/i', "\n{$sJs}", $content);
-                    break;
-            }
-        }
-        
+
+	public function _beforeAction(){}
+	public function _afterAction(){}
+
+    private function _beforeOutput(&$tplCon){
+        Sle::app()->view->importJs($tplCon);
+        Sle::app()->view->importCss($tplCon);
     }
     
     

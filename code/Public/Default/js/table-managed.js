@@ -43,6 +43,7 @@ var TableManaged = function () {
                 ],
                 // set the initial value
                 'bServerSide':true,
+                'bStateSave':true,
                 "sServerMethod":"post",
                 "bFilter":true,
                 "iDisplayLength": 5,
@@ -63,7 +64,6 @@ var TableManaged = function () {
                         'sLast':'尾页'
                     }
                 },
-                //'bStateSave':true,
                 "aoColumnDefs": [{
                         'bSortable': false,
                         'aTargets': [0],
@@ -143,7 +143,12 @@ var TableManaged = function () {
 	        		success:function(feed,ts,jqXhr){
 	        			alert(feed.message);
 	        			if(feed.status){
-	        				$(TableManaged.default.formName).dataTable().fnDraw(false);
+							var oDT2 = $(TableManaged.default.formName).dataTable();
+							var iCurrentPage = oDT2.fnSettings()._iDisplayStart; 
+							var oSettings = oDT2.fnSettings(); 
+							oSettings._iDisplayStart = iCurrentPage;
+							oDT2.fnDraw(oSettings);
+	        				//$(TableManaged.default.formName).dataTable().fnDraw(oSettings);
 	        			}
 	        		},
 	        		error:function(xhr,eTxt,eThrown){

@@ -811,7 +811,7 @@ class PdoMysqlDriver extends \struggle\libraries\db\Db{
 
 	public function bindValue($name,$value){
 		if(is_string($name)){
-		    $this->mbindparam[$name] = $value;
+		    $this->mBindParam[$name] = $value;
 			return true;
 		}elseif(is_array($name)){
             foreach($name as $key=>$val){

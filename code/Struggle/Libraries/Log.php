@@ -1,6 +1,6 @@
 <?php
-namespace struggle\libraries;
-use struggle as sle;
+namespace Struggle\Libraries;
+use Struggle as sle;
 
 class Log{
     private static $itsStorageHandle = null;
@@ -37,7 +37,7 @@ class Log{
                 sle\C('log_ext')  && $aOpt['fileExt']  = sle\C('log_ext');
                 sle\C('log_max_size')  && $aOpt['fileMaxSize']  = sle\C('log_max_size');
             }
-            if(!class_exists('struggle\\libraries\\cache\\Cache')){
+            if(!class_exists('Struggle\\Libraries\\Cache\\Cache')){
                 include LIB_PATH.'cache/cache.php';
             }
             self::$itsStorageHandle = cache\Cache::getInstance($sType, $aOpt);

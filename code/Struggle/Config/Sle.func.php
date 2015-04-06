@@ -1,29 +1,41 @@
 <?php
+namespace Struggle;
+
 /*
  * 框架核心函数
  * 
  */
-namespace struggle;
 
 /**
  * 包含文件，区分大小写
- * @param string $name  需要包含的文件，区分大写
+ * @param string $file  文件名，区分大写(传入文件须存在，否则导入失败)
  * @return boolean
  */
-function require_cache($name){
+function require_cache($file){
+	$file = str_replace('\\','/',$file);
+	//提取类名，必须严格按照文件命名规则
+	$sFileName = basename($file);
+	$aFileName = explode('.',$sFileName);
+	$sClassName = $aFileName[0];
     static $aFiles=array();
-    $sKey=md5($name);
+    $sKey=md5($file);
     if (!isset($aFiles[$sKey])){
 		$aFiles[$sKey] = false;
-        if (isFile($name)){
-			require $name;
+        if (isFile($file)){
+			require $file;
+			if(strtolower($aFileName[1]) == 'class'){
+				$sFilePath = realpath($file);
+				$sBasePath = realpath(SLE_PATH);
+				if(strpos($sFilePath,$sBasePath)!==false){
+					$sNamespace = basename(SLE_PATH);
+					$sNamespace .= str_replace($sBasePath,'',$sFilePath);
+				}
+			}
 			$aFiles[$sKey] = true;
         }
     }
     return $aFiles[$sKey];
 }
-
-
 
 
 /**
@@ -502,22 +514,18 @@ function fetchDirs($dir){
  * @param string $sName 模型名称
  * @return mixed 成功返回resource 或 失败 返回 null
 */
-function M($sName = ''){
+function M($name = ''){
 	static $aModel = array();
-	$sModelClassSuffix = 'Model';
-	$sModelNameSpace = '\struggle\model\\';
-    C('MODEL_CLASS_SUFFIX',$sModelClassSuffix);
-    C('MODEL_NAMESPACE',$sModelNameSpace);
-	$sKey = md5(var_export($sName,true));
-	if(empty($sName)){
-		$sClassName = $sModelNameSpace.$sModelClassSuffix;
+	$sKey = md5($name);
+	if(empty($name)){
+		$sClassName ='\Struggle\Libraries\Core\Model';
 		$aModel[$sKey] = new $sClassName;
 	}
 	if(!isset($aModel[$sKey])){
-		$sModelSuffix = '.model.php';
-		$sModelFile = APP_ROOT.APP_MODEL."{$sName}{$sModelSuffix}";
+		$sModelSuffix = '.class.php';
+		$sModelFile = APP_MODEL."{$name}.class.php";
 		if(require_cache($sModelFile)){
-			$sClassName = "{$sModelNameSpace}{$sName}{$sModelClassSuffix}";
+			$sClassName = "\Model\\".$name;
 			if(class_exists($sClassName)){
 				$oModel =  new $sClassName();
 				$aModel[$sKey] = $oModel;
@@ -569,25 +577,33 @@ function ctop($sName){
 
 
 /**
- * 自动加载处理函数
+ * 自动加载类处理函数
  */
 function autoLoad($name){
 	static $aInclude = array();
+	$sClassFileSuffix = '.class.php';
 	$sKey = md5($name);
 	if(isset($aInclude[$sKey])){
 		return $aInclude[$sKey];
 	}
 	//包含文件
-	$sName = $name;
-	strpos($sName,'\\')!==false && $sName = str_replace('\\','/',$sName);
-	$sName = str_replace('_','.',ucfirst(ptoc(basename($sName)))).'.php';
+	$sFile = $name;
+	strpos($sFile,'\\')!==false && $sFile = str_replace('\\','/',$sFile);
+	if(strtolower(substr(trim($sFile,'/'),0,strpos($sFile,'/'))) == 'struggle'){
+        $sLoadPath = dirname(realpath(SLE_PATH));
+    }else{
+        $sLoadPath = dirname(realpath(APP_PATH));
+    }
+    $sFile = rtrim($sLoadPath,'/').'/'.ltrim($sFile,'/').$sClassFileSuffix;
 	try{
 		//include 失败返回false并发警告,成功返回1，除非包含文件有return
-		if (!include $sName){
-            //debug_print_backtrace();
-            throw new \Exception("找不到文件{$name}.");
-        }
-	}catch(Exception $e){
+		if (is_file($sFile)){
+			require_cache($sFile);
+        }else{
+            debug_print_backtrace();
+            throw new \Exception("找不到文件{$sFile}");
+		}
+	}catch(\Exception $e){
 		halt("异常错误: {$e->getMessage()}  {$e->getFile()} 第{$e->getLine()}行");
 	}
 }

@@ -1,0 +1,168 @@
+                <div class="row-fluid">
+
+                    <div class="span12">
+
+                        <!-- BEGIN VALIDATION STATES-->
+
+                        <div class="portlet box grey">
+
+                            <div class="portlet-title">
+
+                                <div class="caption"><i class="icon-reorder"></i>菜单修改</div>
+
+                                <div class="tools">
+
+                                    <a href="javascript:;" class="collapse"></a>
+
+                                    <a href="#portlet-config" data-toggle="modal" class="config"></a>
+
+                                    <a href="javascript:;" class="reload"></a>
+
+                                    <a href="javascript:;" class="remove"></a>
+
+                                </div>
+
+                            </div>
+
+                            <div class="portlet-body form">
+
+                                <!-- BEGIN FORM-->
+
+                                <!--h3></h3-->
+
+                                <form action="{url menu/update?act=save}" id="form_menu_1" method='post' enctype="application/x-www-form-urlencoded" class="form-horizontal">
+
+                                    <div class="alert alert-error hide">
+
+                                        <button class="close" data-dismiss="alert"></button>
+                                                                                                     输入有误，请检查下列项！
+                                        <!-- You have some form errors. Please check below.-->
+
+                                    </div>
+
+                                    <div class="alert alert-success hide">
+
+                                        <button class="close" data-dismiss="alert"></button>
+                                                                                                    验证成功！
+                                        <!--Your form validation is successful!-->
+
+                                    </div>
+
+                                    <div class="control-group">
+
+                                        <label class="control-label">{field menu.name|\struggle\L}<span class="required">*</span></label>
+
+                                        <div class="controls">
+
+                                            <input type="text" name="name" class="span6 m-wrap" value='{$data['name']}' />
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="control-group">
+
+                                        <label class="control-label">{field menu.icon|\struggle\L}</label>
+
+                                        <div class="controls">
+
+                                            <input name="icon" type="text" class="span6 m-wrap" value='{$data['icon']}' />
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="control-group">
+
+                                        <label class="control-label">{field menu.desc|\struggle\L}</label>
+
+                                        <div class="controls">
+
+                                            <textarea class="span6 m-wrap" rows="3" name='desc' >{$data['desc']}</textarea>
+
+                                        </div>
+
+                                    </div>
+                                    
+                                    <div class="control-group">
+
+                                        <label class="control-label">{field menu.orderby|\struggle\L}</label>
+
+                                        <div class="controls">
+
+                                            <input name="orderby" type="text" class="span6 m-wrap" value='{$data['orderby']}' />
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="control-group">
+
+                                        <label class="control-label">{field menu.ctl_id|\struggle\L}</label>
+
+                                        <div class="controls">
+
+                                            <select class="span6 m-wrap" name="ctl_id">
+
+                                                <option value="">请选择...</option>
+                                                {foreach sourceBySql='\struggle\M('Controller')->getAllCtl()' name='ctl' list='value'}
+                                                <option value="{$value['id']}" {if condition='$value['id'] == $data['ctl_id']'} selected {/if}>{$value['name']}</option>
+                                                {/foreach}
+                                            </select>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="control-group">
+
+                                        <label class="control-label">{field menu.act_id|\struggle\L}</label>
+
+                                        <div class="controls">
+
+                                            <select class="span6 m-wrap" name="act_id">
+
+                                                <option value="">请选择...</option>
+                                                {foreach sourceBySql='\struggle\M('Action')->getAllAct()' name='act' list='value'}
+                                                <option value="{$value['id']}" {if condition='$value['id'] == $data['act_id']'} selected {/if}>{$value['name']}</option>
+                                                {/foreach}
+                                            </select>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="control-group">
+
+                                        <label class="control-label">{field menu.parent_id|\struggle\L}<span class="required">*</span></label>
+
+                                        <div class="controls">
+
+                                            <select class="span6 m-wrap" name="parent_id">
+
+                                                <option value="0">请选择...</option>
+                                                {foreach sourceBySql='\struggle\M('Menu')->getAllMenu()' name='parent' list='value'}
+                                                <option value="{$value['id']}" {if condition='$value['id'] == $data['parent_id']'} selected='selected' {/if} >{$value['name']}</option>
+                                                {/foreach}
+                                            </select>
+
+                                        </div>
+
+                                    </div>
+                              
+
+                                    
+
+                                    <div class="form-actions">
+                                        <button type="submit" class="btn green">{field confirm|\struggle\L}</button>
+                                        <button type="button" class="btn" onclick='location.href="{url menu/index}"'>{field cancel|\struggle\L}</button>
+                                    </div>
+                                    <input type='hidden' name='id' value='{$data['id']}' />
+                                </form>
+
+                                <!-- END FORM-->
+
+                            </div>
+
+                        </div>

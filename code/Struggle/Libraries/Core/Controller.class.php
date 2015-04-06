@@ -11,6 +11,8 @@ use Struggle\Libraries\Client;
 use Struggle\Libraries\Exception;
 use Struggle\Libraries\Debug;
 use Struggle\Libraries\Object;
+use Struggle\Libraries\Core\View;
+use Struggle\Libraries\Core\Route;
 
 class Controller extends Object{
     private $msWidgetPath = '';
@@ -22,11 +24,11 @@ class Controller extends Object{
     private $widgetAction = '';
     private $curTpl       = '';//当前模板文件
 	//模块类名后缀
-	public  $moduleSuffix = 'Controller';
+	public  $moduleSuffix = '';
 	//动作方法名前缀
 	public  $methodPrefix = 'action';
 	//控制器文件后缀
-	public  $fileSuffix   = '.controller.php';
+	public  $fileSuffix   = '.class.php';
     
     public function __construct(){
         parent::__construct();
@@ -36,12 +38,21 @@ class Controller extends Object{
 		array_walk($_GET,array($this,'stripSpecialChar'));
 		array_walk($_POST,array($this,'stripSpecialChar'));
 		array_walk($_REQUEST,array($this,'stripSpecialChar'));
-		//初始化Client类 LIB_PATH
-		$sClientFile = LIB_PATH.'Client.php';
-		//Sle::app()->registerClass($sClientFile);
 	}
 	
-	
+	public static function self($new = false){
+		static $obj = null;
+        //is_null(get_resource_type())
+        if(is_object($new)){
+            $obj = $new;
+        }
+		if(is_null($obj) || (is_bool($new) && $new)){
+			$obj = new self;
+		}
+		return $obj;
+	}
+
+
 	public function __get($name){
 	    $sAttrName = 'm'.strtoupper($name[0]).substr($name, 1);
 	    if (property_exists($this, $sAttrName) && !is_null($this->$sAttrName))
@@ -54,19 +65,18 @@ class Controller extends Object{
 	
 	protected function redirect($message = '',$url = '', $interval = 3){
 	    if (!$url){
-	        $sModule = Sle::app()->route->module;
-	        $url = Sle::app()->route->scheme.
-	               Sle::app()->route->host.
-	               (Sle::app()->route->port == 80?'':Sle::app()->route->port).
-	               Sle::app()->route->baseUrl.'index.php'.
-	               Sle::app()->route->genUrl("{$sModule}/index");
+	        $sModule = Route::self()->module;
+	        $url = Route::self()->scheme.
+	               Route::self()->host.
+	               (Route::self()->port == 80?'':Route::self()->port).
+	               Route::self()->baseUrl.'index.php'.
+	               Route::self()->genUrl("{$sModule}/index");
 	        
 	    }
-	    header('location:'.Sle::app()->route->genUrl(Sle::app()->route->module.'/redirect?'.http_build_query(array('message'=>$message,'url'=>$url,'interval'=>$interval))));
+	    header('location:'.Route::self()->genUrl(Route::self()->module.'/redirect?'.http_build_query(array('message'=>$message,'url'=>$url,'interval'=>$interval))));
 	}
 	
 	public function actionRedirect(){
-	    //print_r($_GET['message']);die;
 	    $this->layout('tpl:'.APP_PUBLIC.'Default/html/redirect.html',array('message'=>urldecode($_GET['message']),'url'=>urldecode($_GET['url']),'time'=>$_GET['interval']));
 	}
 	
@@ -98,7 +108,7 @@ class Controller extends Object{
         }
         $this->mTplData = array_merge($this->mTplData,$aTplData);
         if ($this->getCurTpl($sPath)){
-            if ($this->mCompiledTplFile = Sle::app()->view->render($this->curTpl)){
+            if ($this->mCompiledTplFile = View::self()->render($this->curTpl)){
                 return $this->outputComplieFile($this->mCompiledTplFile);
             }
         }
@@ -118,7 +128,7 @@ class Controller extends Object{
         $sTpl    = '';
         $sFile = $tpl; //布局文件路径
         $aRlt  = array('status'=>true,'msg'=>'');
-        $oView =Sle::app()->view;
+        $oView = View::self();
         //tpl:开头表示用户模板文件不是布局文件
         $iPos = strpos($tpl, 'tpl:');
         
@@ -143,7 +153,7 @@ class Controller extends Object{
             $sContentKey = $oView->getFileKey($this->curTpl);
             $sFile = APP_RUNTIME.md5($sFileKey.$sContentKey).'.'.$oView->TplSuffix;
             if (!file_exists($sFile)){
-                $oFile = Sle::app()->file;
+                $oFile = File::self();
                 $oFile->setAttr('mode','wb+');
                 if(!$oFile->open($sFile) || !$oFile->write($sLoyout)){
 					throw new Exception($oFile->error);
@@ -187,8 +197,8 @@ class Controller extends Object{
 	public function _afterAction(){}
 
     private function _beforeOutput(&$tplCon){
-        Sle::app()->view->importJs($tplCon);
-        Sle::app()->view->importCss($tplCon);
+        View::self()->importJs($tplCon);
+        View::self()->importCss($tplCon);
     }
     
     
@@ -202,8 +212,8 @@ class Controller extends Object{
      */
     private function getCurTpl($tpl = ''){
         $sFile = '';
-        $oView = Sle::app()->view;
-        $oRoute = Sle::app()->route;
+        $oView = View::self();
+        $oRoute = Route::self();
         if ($tpl){
             if (file_exists($tpl)){
                 $sFile = $tpl;
@@ -245,7 +255,7 @@ class Controller extends Object{
                 $sWidgetFile = APP_CONTROLLER."{$sModuleName}{$this->mWidgetModuleSuffix}";
                 if(\Struggle\isFile($sWidgetFile) && is_readable($sWidgetFile)){
 					\Struggle\require_cache($sWidgetFile);
-                    $sClassName = Sle::app()->route->namespaceModule.$sModuleName.
+                    $sClassName = Route::self()->namespaceModule.$sModuleName.
 						          \Struggle\ctop(dirname(trim(str_replace('.','/',$this->mWidgetModuleSuffix),'/')));
                     $oWidget = new $sClassName();
                     $sMethodName = "action{$sActName}";
@@ -254,7 +264,7 @@ class Controller extends Object{
                         $oWidget->widgetAction = $sActName;
                         //解析参数
                         if (isset($aTmp['query']) && $aTmp['query']){
-                            Sle::app()->route->registerGlobalVar($aTmp['query']);
+                            Route::self()->registerGlobalVar($aTmp['query']);
                         }
                         $oWidget->$sMethodName();
                     }else{
@@ -289,8 +299,8 @@ class Controller extends Object{
         }
         $this->mTplData = array_merge($this->mTplData,$aData);
 
-        Sle::app()->view->WidgetTplPath='Widget/';
-		if($this->mCompiledTplFile = Sle::app()->view->render($sPath)){
+        View::self()->WidgetTplPath='Widget/';
+		if($this->mCompiledTplFile = View::self()->render($sPath)){
 			extract($this->mTplData);
 			include $this->mCompiledTplFile;
 		}else{
@@ -301,7 +311,7 @@ class Controller extends Object{
 
     public function _include_tpl_($sFile){
         $sIncludeFile = $sFile;
-        $oView = Sle::app()->view;
+        $oView = View::self();
         if (strrpos($sIncludeFile, '.',strrpos($sIncludeFile, '/'))!==false){
             if(substr($sIncludeFile, strrpos($sIncludeFile, '.',strrpos($sIncludeFile, '/'))+1) != $oView->TplSuffix)
                 $sIncludeFile .= ".{$oView->TplSuffix}";
